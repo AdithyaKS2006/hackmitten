@@ -22,8 +22,9 @@ Given multi-modal incident telemetry (time-series metrics, unstructured logs, di
 | **Storage & Persistence** | MongoDB (`ao03` database via `pymongo`), JSONL File Fallback | Dual-mode persistence: compound indexes on `(scenario_id, ts)` and `(scenario_id, service)` with automatic zero-configuration offline fallback. |
 | **Data Contracts** | Pydantic v2 | Strictly typed data contracts: `Event`, `Anomaly`, `Candidate`, `TimelineItem`, `AnalyzeResponse`. |
 | **Anomaly Detection** | NumPy, Pandas, SciPy, Drain3, Scikit-Learn | Median/MAD robust z-scores, EWMA onset detection, Drain3 log template miner, distributed span duration regression, Isolation Forest. |
-| **Causal Correlation** | NetworkX | Directed dependency graph traversal, caller/callee depth calculation, upstream/downstream causal cascades, proximity decay scoring. |
-| **Testing & Verification**| Pytest, Pytest-Django | 54 automated test cases covering API contracts, safety guarantees, redaction, detection, and ranking. |
+| **Machine Learning & Ranking** | Scikit-Learn, Joblib, PyArrow, NetworkX | Gradient-Boosted Causal Ranker, Random Forest Classifier, directed dependency graph traversal, cascade depth, proximity decay. |
+| **Benchmark Dataset** | RCAEval (Online Boutique & Sock Shop) | 100 multi-service incident cases across 5 fault injection classes; 1,302 candidate service samples (75% Train, 20% Test, 5% Holdout). |
+| **Testing & Verification**| Pytest, Pytest-Django | 54 automated test cases covering API contracts, safety guarantees, redaction, detection, and ranking + holdout evaluation harness. |
 
 ---
 
@@ -96,6 +97,13 @@ Given multi-modal incident telemetry (time-series metrics, unstructured logs, di
   - Generates template-driven explanations starting with `Hypothesis:` and ending with an actionable remediation/verification test without LLM hallucinations.
 - **Incident Timeline Builder** ([`backend/rank/timeline.py`](file:///home/adithya-k-s/Downloads/hackmitten/backend/rank/timeline.py)):
   - Builds a clean, chronological sequence of change events, anomaly onsets, new log patterns, and peak deviations.
+- **Real-World RCA Benchmark Model & Training Pipeline** ([`scripts/train_rca_model.py`](file:///home/adithya-k-s/Downloads/hackmitten/scripts/train_rca_model.py), [`backend/rank/ml_scorer.py`](file:///home/adithya-k-s/Downloads/hackmitten/backend/rank/ml_scorer.py)):
+  - Sourced 100 multi-service incident cases from the open-source **RCAEval** benchmark (Google Online Boutique & Weaveworks Sock Shop) across 5 fault injection categories (CPU, memory, disk, network delay, packet loss).
+  - Built feature extractor transforming raw time series into normalized causal vectors (`sustained_ratio`, `log_max_zscore`, `mean_zscore`, `metric_anomaly_ratio`, `onset_score`).
+  - Partitioned dataset into strict non-overlapping splits: **75% Train (75 cases, 962 candidate samples)**, **20% Test (20 cases, 269 candidate samples)**, and **5% Holdout (5 cases, 71 candidate samples)**.
+  - Trained calibrated `GradientBoostingClassifier` and `RandomForestClassifier` causal rankers saved to [`backend/models/rca_gradient_boosted.joblib`](file:///home/adithya-k-s/Downloads/hackmitten/backend/models/rca_gradient_boosted.joblib).
+- **Holdout Verification Tool** ([`scripts/test_trained_model.py`](file:///home/adithya-k-s/Downloads/hackmitten/scripts/test_trained_model.py)):
+  - Evaluates unseen incidents from the 5% holdout set with real-time candidate confidence scoring and ground-truth validation.
 - **Benchmark Evaluation Harness** ([`scripts/evaluate.py`](file:///home/adithya-k-s/Downloads/hackmitten/scripts/evaluate.py)):
   - Automated benchmark script calculating Top-1 accuracy, Top-3 accuracy, and time-to-candidate replay latency. Outputs [`data/evaluation.json`](file:///home/adithya-k-s/Downloads/hackmitten/data/evaluation.json).
 
@@ -153,6 +161,8 @@ $$\text{Candidate Score} = \text{ServiceScore}_S \times (0.85 + 0.25 \times \tex
 
 ## 5. Verification & Benchmark Evaluation Results
 
+### 5.1 Replay Scenario Benchmark (6 Standard Hackathon Scenarios)
+
 All evaluation numbers are empirically derived by running [`scripts/evaluate.py`](file:///home/adithya-k-s/Downloads/hackmitten/scripts/evaluate.py) across all scenarios:
 
 ```
@@ -174,7 +184,52 @@ Mean Time-to-Candidate : 66.0s
 ==========================================================================================
 ```
 
-### Automated Test Suite (54 Passed in 0.81s)
+### 5.2 Real-World Machine Learning Benchmark (RCAEval: 100 Multi-Service Incidents)
+
+To validate generalization on real, multi-service architectures without hardcoding, we integrated the open-source **RCAEval** benchmark (Google Online Boutique & Weaveworks Sock Shop) across 5 fault injection types (CPU saturation, memory exhaustion, disk fill, network delay, packet loss).
+
+#### Data Split Configuration (75% / 20% / 5%):
+- **75% Train Split**: 75 incidents (962 candidate service pairs).
+- **20% Test Split**: 20 unseen incidents (269 candidate service pairs).
+- **5% Holdout Split**: 5 untouched incidents (71 candidate service pairs) reserved for live audit.
+
+#### Evaluation on 20% Unseen Incidents:
+```
+======================================================================
+TEST BENCHMARK ON UNSEEN INCIDENTS (20% Split - 20 Cases)
+======================================================================
+Model: Gradient Boosted RCA Ranker
+  • Top-1 Root Cause Accuracy (Hit@1) : 95.0%
+  • Top-3 Root Cause Accuracy (Hit@3) : 100.0%
+  • Mean Reciprocal Rank (MRR)        : 0.9667
+  • ROC-AUC Score                     : 0.9315
+======================================================================
+```
+
+#### Learned Feature Importance (What the Model Prioritizes):
+* **`sustained_ratio` (62.47%)**: True root causes maintain uninterrupted high baseline deviations ($z \ge 3.0$), whereas cascade victims experience fluctuating ripples or transient spikes.
+* **`log_max_zscore` (15.32%)**: Peak deviation amplitude against baseline median/MAD.
+* **`mean_zscore` (10.59%)**: Overall service disturbance magnitude.
+* **`metric_anomaly_ratio` (7.59%)**: Cross-metric consensus on the affected service.
+* **`onset_score` (4.03%)**: Normalized onset timing precedence.
+
+#### 5% Holdout Live Test Results ([`scripts/test_trained_model.py`](file:///home/adithya-k-s/Downloads/hackmitten/scripts/test_trained_model.py)):
+```
+================================================================================
+HOLDOUT SET BENCHMARK SUMMARY (5% UNTOUCHED DATA - 5 INCIDENTS)
+================================================================================
+1. re1ss_carts_disk_1     (Disk Fill)      : carts       --> HIT (Rank #1, 83.9% conf)
+2. re1ss_carts_mem_2      (Memory Leak)    : carts-db    --> HIT (Rank #1, 95.6% conf)
+3. re1ob_adservice_disk_5 (Disk Fill)      : adservice   --> HIT (Rank #1, 66.4% conf)
+4. re1ss_catalogue_loss_3 (Packet Loss)    : catalogue-db--> TOP-3 HIT (Rank #2, 62.3% conf)
+5. re1ss_carts_cpu_2      (CPU Saturation) : carts       --> HIT (Rank #1, 72.0% conf)
+
+• Top-1 Accuracy (Hit@1) : 80.0% (4/5)
+• Top-3 Accuracy (Hit@3) : 100.0% (5/5)
+================================================================================
+```
+
+### 5.3 Automated Pytest Suite (54 Passed in 0.81s)
 - **`test_api.py`** (7 tests): `/health`, `/scenarios`, `/analyze/{id}`, `/evidence/{id}`, `/evaluate`, role authorization.
 - **`test_safety.py`** (3 tests): Read-only guarantee, role sanitization, persistent audit logging.
 - **`test_redact.py`** (17 tests): Emails, phones, IPs, secrets, JWTs, credit cards, user IDs, and near-misses.
@@ -186,7 +241,7 @@ Mean Time-to-Candidate : 66.0s
 
 ---
 
-## 6. How to Run the Application
+## 6. How to Run the Application & Verification
 
 ### One-Command Full Stack Startup
 ```bash
@@ -203,10 +258,16 @@ uvicorn config.asgi:application --port 8000 --host 0.0.0.0
 cd frontend
 npm run dev
 
-# 3. Run Benchmark Evaluation Suite
+# 3. Run Benchmark Evaluation Suite (6 Scenarios)
 python scripts/evaluate.py
 
-# 4. Run Automated Pytest Suite
+# 4. Run Machine Learning Holdout Verification (5% Real Incidents)
+python scripts/test_trained_model.py
+
+# 5. Re-train / Re-evaluate Machine Learning Pipeline on RCAEval
+python scripts/train_rca_model.py
+
+# 6. Run Automated Pytest Suite
 pytest -v
 ```
 
@@ -218,3 +279,20 @@ pytest -v
   - Analyze Scenario: `POST http://localhost:8000/analyze/mock` (Header: `X-Role: analyst`)
   - Inspect Evidence: `GET http://localhost:8000/evidence/e_change_01?scenario=mock` (Header: `X-Role: analyst`)
   - View Benchmark: `GET http://localhost:8000/evaluate` (Header: `X-Role: analyst`)
+
+---
+
+## 7. Production Streaming Ingestion Architecture & Honest Limitations
+
+### Production Deployment Architecture
+In live production Kubernetes or cloud environments:
+1. **OpenTelemetry (OTLP)**: Microservices export traces, logs, and Prometheus metrics via standard OTLP collectors.
+2. **Streaming Buffer**: Telemetry lands in an in-memory sliding ring-buffer (last 15 minutes of events).
+3. **Hybrid Detection & Causal Ranking**:
+   - Statistical baselines (EWMA + Drain3) detect multi-service anomalies without human rule-tuning.
+   - The trained **Gradient Boosted Causal Ranker** prioritizes root causes based on sustained degradation vs transient cascade ripples.
+   - Directed topological graph traversal validates that candidate causes sit upstream of degraded victims.
+
+### Honest Architectural Edge Cases & Boundaries
+- **External 3rd-Party Outages (Stripe, Twilio)**: If an external dependency fails, internal services experience downstream timeouts. Our topological boundary logic explicitly triggers `unknown: true` to prevent false internal finger-pointing.
+- **Pure Logical Code Bugs**: Faults with zero resource footprint (e.g., inverted discount calculations) are caught via Drain3 log template anomalies rather than raw metric spikes.
