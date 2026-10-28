@@ -149,7 +149,7 @@ export default function TopNav({
           }}
         />
 
-        {searchQuery ? (
+        {searchQuery && (
           <button
             type="button"
             className="search-clear-btn"
@@ -160,8 +160,6 @@ export default function TopNav({
           >
             <span className="material-symbols-outlined sym-icon-xs">close</span>
           </button>
-        ) : (
-          <span className="search-shortcut-pill">Ctrl+K</span>
         )}
 
         {/* Live Search Results Dropdown */}

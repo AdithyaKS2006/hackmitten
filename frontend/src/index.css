@@ -192,14 +192,21 @@ body {
 
 .enterprise-health-card,
 .sidebar-footer-card {
-  padding: 13px 12px;
-  background-color: #ffffff;
-  border: 1px solid #ebd9c8;
-  border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(45, 35, 25, 0.03);
+  padding: 14px 14px;
+  background: linear-gradient(180deg, #ffffff 0%, #fdfbf8 100%) !important;
+  border: 1.2px solid #cbb8a3 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(45, 35, 25, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  transition: all 0.2s ease;
+}
+
+.enterprise-health-card:hover,
+.sidebar-footer-card:hover {
+  border-color: #b47836 !important;
+  box-shadow: 0 4px 14px rgba(180, 120, 54, 0.12) !important;
 }
 
 .system-status-header {
@@ -959,7 +966,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 28px 12px 28px;
+  padding: 18px 24px !important;
+  margin: 16px 28px 12px 28px !important;
+  border-radius: 16px !important;
+  box-sizing: border-box;
 }
 
 .sub-header-left {
@@ -3825,9 +3835,28 @@ body {
 .techinova-hero-banner {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #ffffff 0%, #fdfbf7 60%, #faf3ea 100%) !important;
-  border: 1px solid #ecdcd0 !important;
-  box-shadow: 0 4px 16px rgba(180, 120, 54, 0.06) !important;
+  margin: 16px 28px 12px 28px !important;
+  border-radius: 16px !important;
+  background: linear-gradient(135deg, #ffffff 0%, #fefcf9 60%, #faf3ea 100%) !important;
+  border: 1.2px solid rgba(180, 120, 54, 0.28) !important;
+  box-shadow: 
+    0 2px 6px rgba(45, 35, 25, 0.03),
+    0 10px 28px -4px rgba(180, 120, 54, 0.10),
+    0 18px 36px 0 rgba(180, 120, 54, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+  transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.24s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.techinova-hero-banner:hover {
+  transform: translateY(-1.5px) !important;
+  border-color: rgba(180, 120, 54, 0.5) !important;
+  box-shadow: 
+    0 4px 12px rgba(45, 35, 25, 0.05),
+    0 14px 34px -4px rgba(180, 120, 54, 0.16),
+    0 24px 44px 0 rgba(180, 120, 54, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
 }
 
 .techinova-radar-badge {
@@ -4744,3 +4773,504 @@ code, pre, .font-mono, .s-metric-val, .scenario-id-badge, .code-ref-pill, .incid
 
 
 
+
+
+/* ==========================================================================
+   UNIFORM PAGE DIVISIONS SYSTEM & CONSISTENT INNER STYLING
+   Ensures all views (Incidents, Service Map, Settings, Evaluation, Safety, Reports)
+   match the exact same refined 1.2px borders, 16px radii, and ambient halos.
+   ========================================================================== */
+
+/* 1. Universal Top Header Cards across all pages */
+.incidents-header-card,
+.servicemap-header-card,
+.settings-header-card,
+.eval-hero-card,
+.safety-hero-card,
+.report-embedded-header-bar {
+  background: rgba(255, 255, 255, 0.97) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1.2px solid rgba(220, 205, 185, 0.85) !important;
+  border-radius: 16px !important;
+  padding: 20px 24px !important;
+  box-shadow: 
+    0 2px 6px rgba(45, 35, 25, 0.03),
+    0 8px 24px -2px rgba(180, 120, 54, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+  transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.24s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.incidents-header-card:hover,
+.servicemap-header-card:hover,
+.settings-header-card:hover,
+.eval-hero-card:hover,
+.safety-hero-card:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(180, 120, 54, 0.5) !important;
+  box-shadow: 
+    0 4px 12px rgba(45, 35, 25, 0.05),
+    0 14px 32px -2px rgba(180, 120, 54, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+
+/* 2. Universal Main Content Cards across all pages */
+.incident-card-item,
+.servicemap-graph-card,
+.servicemap-details-card,
+.settings-card,
+.benchmark-results-card,
+.report-document {
+  background: rgba(255, 255, 255, 0.97) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1.2px solid rgba(220, 205, 185, 0.85) !important;
+  border-radius: 16px !important;
+  box-shadow: 
+    0 2px 6px rgba(45, 35, 25, 0.03),
+    0 8px 24px -2px rgba(180, 120, 54, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+  transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.24s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.incident-card-item:hover,
+.settings-card:hover,
+.servicemap-details-card:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(180, 120, 54, 0.5) !important;
+  box-shadow: 
+    0 4px 12px rgba(45, 35, 25, 0.05),
+    0 14px 32px -2px rgba(180, 120, 54, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+
+.incident-card-item.selected {
+  border-color: #b47836 !important;
+  box-shadow: 
+    0 4px 14px rgba(45, 35, 25, 0.06),
+    0 14px 34px -2px rgba(180, 120, 54, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+
+/* 3. Uniform Sub-division Mini-Cards, Chips & Metrics */
+.metrics-grid .metric-card {
+  background: #ffffff !important;
+  border: 1.2px solid #ebd9c8 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 6px rgba(45, 35, 25, 0.04) !important;
+  padding: 18px 20px !important;
+  transition: all 0.2s ease !important;
+}
+
+.metrics-grid .metric-card:hover {
+  transform: translateY(-2px) !important;
+  border-color: #b47836 !important;
+  box-shadow: 0 4px 12px rgba(180, 120, 54, 0.12) !important;
+}
+
+.safety-rule-card {
+  background: #ffffff !important;
+  border: 1.2px solid #ebd9c8 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 6px rgba(45, 35, 25, 0.04) !important;
+  padding: 16px 18px !important;
+  transition: all 0.2s ease !important;
+}
+
+.safety-rule-card:hover {
+  border-color: #b47836 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(180, 120, 54, 0.12) !important;
+}
+
+.role-choice-card,
+.model-choice-card {
+  border: 1.2px solid #ebd9c8 !important;
+  border-radius: 11px !important;
+  background: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(45, 35, 25, 0.03) !important;
+  transition: all 0.2s ease !important;
+}
+
+.role-choice-card:hover,
+.model-choice-card:hover {
+  border-color: #b47836 !important;
+  box-shadow: 0 4px 10px rgba(180, 120, 54, 0.10) !important;
+}
+
+.role-choice-card.selected,
+.model-choice-card.selected {
+  border-color: #b47836 !important;
+  background: #faf4ec !important;
+  box-shadow: 0 4px 12px rgba(180, 120, 54, 0.16) !important;
+}
+
+.stat-pill {
+  border: 1.2px solid #ebd9c8 !important;
+  border-radius: 9px !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 3px rgba(45, 35, 25, 0.04) !important;
+}
+
+.incident-filter-chip {
+  border: 1.2px solid #ebd9c8 !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 3px rgba(45, 35, 25, 0.03) !important;
+  transition: all 0.15s ease !important;
+}
+
+.incident-filter-chip:hover {
+  border-color: #b47836 !important;
+  color: #3b2817 !important;
+}
+
+.incident-filter-chip.active {
+  border-color: #b47836 !important;
+  background-color: #f7ece0 !important;
+  color: #3b2817 !important;
+  font-weight: 700 !important;
+}
+
+/* 4. Uniform Division Headings Typography across all views */
+.incidents-title,
+.servicemap-title,
+.settings-title,
+.eval-hero-title,
+.safety-hero-title {
+  font-family: var(--font-sans) !important;
+  font-size: 17.5px !important;
+  font-weight: 800 !important;
+  color: #1a140e !important;
+  letter-spacing: -0.35px !important;
+  line-height: 1.25 !important;
+  margin: 0 !important;
+}
+
+.incidents-subtitle,
+.servicemap-subtitle,
+.settings-subtitle,
+.eval-hero-desc,
+.safety-hero-desc {
+  font-family: var(--font-sans) !important;
+  font-size: 12.5px !important;
+  color: #615548 !important;
+  line-height: 1.45 !important;
+  margin-top: 3px !important;
+  font-weight: 500 !important;
+}
+
+.incidents-pretitle,
+.servicemap-pretitle,
+.settings-pretitle {
+  font-size: 9.5px !important;
+  font-weight: 800 !important;
+  color: #b47836 !important;
+  letter-spacing: 0.9px !important;
+  text-transform: uppercase !important;
+  margin-bottom: 2px !important;
+  display: inline-block !important;
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN & ADAPTIVE LAYOUTS FOR ALL DEVICES & SCREENS
+   Prevents clumsy layouts when dashboard window is resized or minimized.
+   ========================================================================== */
+
+/* --- 1. Large Tablet / Narrow Laptop (< 1280px) --- */
+@media (max-width: 1280px) {
+  .investigation-split-row {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+  }
+
+  .servicemap-split-grid {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+  }
+
+  .settings-grid {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+  }
+
+  .features-row-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+    gap: 10px !important;
+  }
+}
+
+/* --- 2. Medium Screen / Half-Screen Minimized (< 1080px) --- */
+@media (max-width: 1080px) {
+  .sub-header-bar {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 14px !important;
+  }
+
+  .sub-header-right {
+    flex-wrap: wrap !important;
+    width: 100% !important;
+    justify-content: flex-start !important;
+    gap: 10px !important;
+  }
+
+  .incidents-header-card,
+  .servicemap-header-card,
+  .settings-header-card,
+  .eval-hero-card,
+  .safety-hero-card {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 14px !important;
+  }
+
+  .servicemap-stats-row {
+    flex-wrap: wrap !important;
+    width: 100% !important;
+  }
+
+  .action-bar-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+
+  .scenario-select-container {
+    width: 100% !important;
+  }
+
+  .scenario-select-wrapper {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .nav-tabs-bar {
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding-bottom: 4px !important;
+  }
+}
+
+/* --- 3. Compact Rail Mode on Tablet / Smaller Window (< 992px) --- */
+@media (max-width: 992px) {
+  .app-sidebar {
+    width: 76px !important;
+    min-width: 76px !important;
+    padding: 16px 8px !important;
+  }
+
+  .sidebar-brand {
+    justify-content: center !important;
+    padding: 0 0 16px 0 !important;
+  }
+
+  .brand-text,
+  .nav-item-label,
+  .nav-item-pill,
+  .sidebar-section-label,
+  .system-metrics-mini-list,
+  .status-state-text,
+  .system-version-pill {
+    display: none !important;
+  }
+
+  .nav-item-btn {
+    justify-content: center !important;
+    padding: 10px 0 !important;
+  }
+
+  .nav-item-left {
+    gap: 0 !important;
+  }
+
+  .enterprise-health-card,
+  .sidebar-footer-card {
+    padding: 10px 6px !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .system-status-header {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+    justify-content: center !important;
+  }
+
+  /* Compact Viewport Margins & Paddings */
+  .techinova-hero-banner,
+  .sub-header-bar {
+    margin: 12px 16px 10px 16px !important;
+    padding: 14px 18px !important;
+  }
+
+  .action-bar-row {
+    padding: 4px 16px 10px 16px !important;
+  }
+
+  .tab-investigation-body,
+  .tab-evaluation-body,
+  .tab-safety-body,
+  .tab-page-wrapper {
+    padding: 0 16px 24px 16px !important;
+  }
+
+  .top-navbar {
+    padding: 10px 16px !important;
+  }
+
+  .search-bar-container {
+    width: 100% !important;
+    max-width: 320px !important;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+  }
+}
+
+/* --- 4. Mobile / Ultra-Small Screen (< 768px) --- */
+@media (max-width: 768px) {
+  .app-shell-layout {
+    flex-direction: column !important;
+  }
+
+  .app-sidebar {
+    width: 100% !important;
+    min-width: 100% !important;
+    height: auto !important;
+    position: static !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border-light) !important;
+    padding: 10px 14px !important;
+  }
+
+  .sidebar-brand {
+    justify-content: flex-start !important;
+    padding: 0 !important;
+  }
+
+  .brand-text {
+    display: block !important;
+  }
+
+  .sidebar-nav {
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 8px !important;
+    margin-top: 10px !important;
+    padding-bottom: 4px !important;
+  }
+
+  .nav-item-btn {
+    width: auto !important;
+    padding: 7px 12px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .nav-item-label {
+    display: inline-block !important;
+    font-size: 12px !important;
+  }
+
+  .nav-item-left {
+    gap: 6px !important;
+  }
+
+  .enterprise-health-card,
+  .sidebar-footer-card {
+    display: none !important;
+  }
+
+  .top-navbar {
+    padding: 10px 14px !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+  }
+
+  .search-bar-container {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .top-navbar-right {
+    width: 100% !important;
+    justify-content: flex-end !important;
+  }
+
+  .features-row-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .metrics-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .incidents-cards-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .drawer-panel {
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+
+  /* Smooth horizontal scrolling containers for charts, waveforms & tables */
+  .scrubber-waveform-container,
+  .timeline-scroll-area,
+  .benchmark-results-table,
+  .benchmark-results-card {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .timeline-header-row {
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+  }
+
+  .timeline-type-filters {
+    flex-wrap: wrap !important;
+    width: 100% !important;
+  }
+
+  .topology-header-row,
+  .causes-header-row,
+  .scrubber-header-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+
+  .scrubber-timing-badges {
+    flex-wrap: wrap !important;
+    width: 100% !important;
+  }
+}
+
+/* --- 5. Small Phone (< 480px) --- */
+@media (max-width: 480px) {
+  .features-row-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .techinova-hero-banner,
+  .sub-header-bar {
+    margin: 8px 10px 8px 10px !important;
+    padding: 12px 14px !important;
+  }
+
+  .tab-investigation-body,
+  .tab-evaluation-body,
+  .tab-safety-body,
+  .tab-page-wrapper {
+    padding: 0 10px 16px 10px !important;
+  }
+}
