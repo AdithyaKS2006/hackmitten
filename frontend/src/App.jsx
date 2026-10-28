@@ -184,7 +184,7 @@ export default function App() {
 
                 {/* Timeline Section */}
                 {analysis?.timeline && analysis.timeline.length > 0 && (
-                  <div className="timeline-section-card">
+                  <div className="timeline-section-wrapper">
                     <Timeline
                       timeline={analysis.timeline}
                       selectedService={selectedService}

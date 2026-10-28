@@ -1725,88 +1725,56 @@ body {
   line-height: 1.4;
 }
 
-/* TOP FEATURE IMPORTANCE BOX */
-.feature-importance-card {
-  padding-top: 4px;
-}
-
+/* TOP FEATURE IMPORTANCE BOX (BASE LAYOUT) */
 .features-header {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 8px;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
-.features-icon { font-size: 13px; }
+.features-header-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.features-header-symbol {
+  font-size: 18px !important;
+  color: #b47836;
+}
+
 .features-title {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--text-main);
+}
+
+.features-subtitle-tag {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #786c5e;
+  background: #f5eedf;
+  border: 1px solid #dfd1be;
+  padding: 2px 7px;
+  border-radius: 6px;
 }
 
 .features-row-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
-}
-
-.feature-chip-card {
-  background-color: #ffffff;
-  border: 1px solid var(--border-card);
-  border-radius: 7px;
-  padding: 8px 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.feature-chip-card.feature-active {
-  background-color: #b47836;
-  border-color: #98632a;
-  color: #ffffff;
-}
-
-.feature-top-label {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
-.feature-chip-card.feature-active .feature-top-label {
-  color: #f7eedf;
-}
-
-.chip-name {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.feature-metric-value {
-  font-size: 13px;
-  font-weight: 700;
-  margin-top: 4px;
-  color: var(--text-main);
-}
-
-.feature-chip-card.feature-active .feature-metric-value {
-  color: #ffffff;
+  gap: 10px;
 }
 
 /* ==========================================================================
-   TIMELINE CARD & MODALS
+   TIMELINE SECTION WRAPPER & MODALS
    ========================================================================== */
 
-.timeline-section-card {
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-card);
-  border-radius: 12px;
-  padding: 22px 24px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.02);
-  margin-top: 14px;
+.timeline-section-wrapper {
+  margin-top: 16px;
+  width: 100%;
+  display: block;
 }
 
 /* ==========================================================================
@@ -4109,9 +4077,8 @@ body {
 }
 
 /* ==========================================================================
-   MAIN DASHBOARD DIVISIONS: DISTINCT CREATIVE BORDERS & LAYERED SHADOWS
-   Each main division possesses a unique color signature, dual-line border,
-   top accent strip, and ambient radiant halo.
+   MAIN DASHBOARD DIVISIONS: REFINED ELEGANT BORDERS & SOFT SPREAD HALOS
+   Clean, refined 1.2px borders with an expansive, smooth ambient shadow spread.
    ========================================================================== */
 
 .replay-scrubber-card,
@@ -4120,11 +4087,10 @@ body {
 .division-topology-card,
 .ranked-causes-card,
 .division-causes-card,
-.timeline-section-card,
 .timeline-container-card,
 .division-timeline-card {
   position: relative !important;
-  background: rgba(255, 255, 255, 0.96) !important;
+  background: rgba(255, 255, 255, 0.97) !important;
   backdrop-filter: blur(18px) !important;
   -webkit-backdrop-filter: blur(18px) !important;
   border-radius: 16px !important;
@@ -4134,63 +4100,35 @@ body {
   overflow: visible !important;
 }
 
-/* Top decorative accent line on each main card */
-.replay-scrubber-card::before,
-.division-replay-card::before,
-.topology-graph-card::before,
-.division-topology-card::before,
-.ranked-causes-card::before,
-.division-causes-card::before,
-.timeline-section-card::before,
-.division-timeline-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 16px;
-  right: 16px;
-  height: 4px;
-  border-radius: 4px 4px 0 0;
-  pointer-events: none;
-  z-index: 2;
-}
-
 /* --------------------------------------------------------------------------
-   DIVISION 1: INCIDENT REPLAY SCRUBBER (WARM GOLD / AMBER HORIZON)
+   DIVISION 1: INCIDENT REPLAY SCRUBBER (WARM GOLD / AMBER SPREAD)
    -------------------------------------------------------------------------- */
 .replay-scrubber-card,
 .division-replay-card {
-  border: 2px solid #f59e0b !important;
-  border-top: 3px solid #d97706 !important;
+  border: 1.2px solid rgba(245, 158, 11, 0.45) !important;
   box-shadow: 
-    0 1px 3px rgba(45, 35, 25, 0.04),
-    0 8px 24px -4px rgba(245, 158, 11, 0.16),
-    0 18px 40px -8px rgba(217, 119, 6, 0.10),
-    0 0 0 1px rgba(245, 158, 11, 0.25),
+    0 2px 6px rgba(45, 35, 25, 0.03),
+    0 8px 24px -2px rgba(245, 158, 11, 0.12),
+    0 16px 36px 0 rgba(217, 119, 6, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 1) !important;
-}
-
-.replay-scrubber-card::before,
-.division-replay-card::before {
-  background: linear-gradient(90deg, #f59e0b, #d97706, #fbbf24) !important;
 }
 
 .replay-scrubber-card:hover,
 .division-replay-card:hover {
   transform: translateY(-2px) !important;
-  border-color: #d97706 !important;
+  border-color: rgba(217, 119, 6, 0.7) !important;
   box-shadow: 
-    0 2px 6px rgba(45, 35, 25, 0.06),
-    0 16px 42px -4px rgba(245, 158, 11, 0.25),
-    0 26px 52px -8px rgba(217, 119, 6, 0.14),
-    0 0 0 1.5px rgba(245, 158, 11, 0.45),
+    0 4px 10px rgba(45, 35, 25, 0.05),
+    0 14px 34px -2px rgba(245, 158, 11, 0.20),
+    0 24px 48px 0 rgba(217, 119, 6, 0.10),
     inset 0 1px 0 rgba(255, 255, 255, 1) !important;
 }
 
 .replay-scrubber-card .division-header-icon-box {
   background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
-  border: 1.8px solid #fde68a !important;
+  border: 1.5px solid #fde68a !important;
   color: #d97706 !important;
-  box-shadow: 0 3px 10px rgba(245, 158, 11, 0.18) !important;
+  box-shadow: 0 3px 10px rgba(245, 158, 11, 0.16) !important;
 }
 
 .replay-scrubber-card .division-pretitle-tag {
@@ -4198,42 +4136,34 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   DIVISION 2: SERVICE DEPENDENCY TOPOLOGY (CYBER EMERALD / QUANTUM MESH)
+   DIVISION 2: SERVICE DEPENDENCY TOPOLOGY (CYBER EMERALD SPREAD)
    -------------------------------------------------------------------------- */
 .topology-graph-card,
 .division-topology-card {
-  border: 2px solid #10b981 !important;
-  border-top: 3px solid #059669 !important;
+  border: 1.2px solid rgba(16, 185, 129, 0.45) !important;
   box-shadow: 
-    0 1px 3px rgba(45, 35, 25, 0.04),
-    0 8px 26px -4px rgba(16, 185, 129, 0.18),
-    0 20px 42px -8px rgba(5, 150, 105, 0.10),
-    0 0 0 1px rgba(16, 185, 129, 0.25),
+    0 2px 6px rgba(45, 35, 25, 0.03),
+    0 8px 24px -2px rgba(16, 185, 129, 0.12),
+    0 16px 36px 0 rgba(5, 150, 105, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 1) !important;
-}
-
-.topology-graph-card::before,
-.division-topology-card::before {
-  background: linear-gradient(90deg, #10b981, #059669, #06b6d4) !important;
 }
 
 .topology-graph-card:hover,
 .division-topology-card:hover {
   transform: translateY(-2px) !important;
-  border-color: #059669 !important;
+  border-color: rgba(5, 150, 105, 0.7) !important;
   box-shadow: 
-    0 2px 6px rgba(45, 35, 25, 0.06),
-    0 16px 44px -4px rgba(16, 185, 129, 0.26),
-    0 28px 54px -8px rgba(5, 150, 105, 0.15),
-    0 0 0 1.5px rgba(16, 185, 129, 0.45),
+    0 4px 10px rgba(45, 35, 25, 0.05),
+    0 14px 34px -2px rgba(16, 185, 129, 0.20),
+    0 24px 48px 0 rgba(5, 150, 105, 0.10),
     inset 0 1px 0 rgba(255, 255, 255, 1) !important;
 }
 
 .topology-graph-card .division-header-icon-box {
   background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%) !important;
-  border: 1.8px solid #a7f3d0 !important;
+  border: 1.5px solid #a7f3d0 !important;
   color: #059669 !important;
-  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.18) !important;
+  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.16) !important;
 }
 
 .topology-graph-card .division-pretitle-tag {
@@ -4241,42 +4171,34 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   DIVISION 3: RANKED ROOT CAUSE HYPOTHESES (INCIDENT CRIMSON / RUBY ALERT)
+   DIVISION 3: RANKED ROOT CAUSE HYPOTHESES (INCIDENT CRIMSON SPREAD)
    -------------------------------------------------------------------------- */
 .ranked-causes-card,
 .division-causes-card {
-  border: 2px solid #ef4444 !important;
-  border-top: 3px solid #dc2626 !important;
+  border: 1.2px solid rgba(239, 68, 68, 0.45) !important;
   box-shadow: 
-    0 1px 3px rgba(45, 35, 25, 0.04),
-    0 8px 26px -4px rgba(239, 68, 68, 0.18),
-    0 20px 42px -8px rgba(220, 38, 38, 0.10),
-    0 0 0 1px rgba(239, 68, 68, 0.25),
+    0 2px 6px rgba(45, 35, 25, 0.03),
+    0 8px 24px -2px rgba(239, 68, 68, 0.12),
+    0 16px 36px 0 rgba(220, 38, 38, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 1) !important;
-}
-
-.ranked-causes-card::before,
-.division-causes-card::before {
-  background: linear-gradient(90deg, #ef4444, #dc2626, #f43f5e) !important;
 }
 
 .ranked-causes-card:hover,
 .division-causes-card:hover {
   transform: translateY(-2px) !important;
-  border-color: #dc2626 !important;
+  border-color: rgba(220, 38, 38, 0.7) !important;
   box-shadow: 
-    0 2px 6px rgba(45, 35, 25, 0.06),
-    0 16px 44px -4px rgba(239, 68, 68, 0.26),
-    0 28px 54px -8px rgba(220, 38, 38, 0.15),
-    0 0 0 1.5px rgba(239, 68, 68, 0.45),
+    0 4px 10px rgba(45, 35, 25, 0.05),
+    0 14px 34px -2px rgba(239, 68, 68, 0.20),
+    0 24px 48px 0 rgba(220, 38, 38, 0.10),
     inset 0 1px 0 rgba(255, 255, 255, 1) !important;
 }
 
 .ranked-causes-card .division-header-icon-box {
   background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%) !important;
-  border: 1.8px solid #fecdd3 !important;
+  border: 1.5px solid #fecdd3 !important;
   color: #e11d48 !important;
-  box-shadow: 0 3px 10px rgba(239, 68, 68, 0.18) !important;
+  box-shadow: 0 3px 10px rgba(239, 68, 68, 0.16) !important;
 }
 
 .ranked-causes-card .division-pretitle-tag {
@@ -4284,47 +4206,40 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   DIVISION 4: CORRELATED EVENT TIMELINE (ROYAL VIOLET / INDIGO STREAM)
+   DIVISION 4: CORRELATED EVENT TIMELINE (ROYAL VIOLET SPREAD - CLEAN SINGLE BORDER)
    -------------------------------------------------------------------------- */
-.timeline-section-card,
 .timeline-container-card,
 .division-timeline-card {
-  border: 2px solid #8b5cf6 !important;
-  border-top: 3px solid #7c3aed !important;
+  border: 1.2px solid rgba(139, 92, 246, 0.45) !important;
   box-shadow: 
-    0 1px 3px rgba(45, 35, 25, 0.04),
-    0 10px 30px -4px rgba(139, 92, 246, 0.18),
-    0 22px 44px -8px rgba(124, 58, 237, 0.10),
-    0 0 0 1px rgba(139, 92, 246, 0.25),
+    0 2px 6px rgba(45, 35, 25, 0.03),
+    0 8px 26px -2px rgba(139, 92, 246, 0.12),
+    0 18px 40px 0 rgba(124, 58, 237, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+  padding: 22px 24px !important;
 }
 
-.timeline-section-card::before,
-.division-timeline-card::before {
-  background: linear-gradient(90deg, #8b5cf6, #6366f1, #4f46e5) !important;
-}
-
-.timeline-section-card:hover,
 .timeline-container-card:hover,
 .division-timeline-card:hover {
   transform: translateY(-2px) !important;
-  border-color: #7c3aed !important;
+  border-color: rgba(124, 58, 237, 0.7) !important;
   box-shadow: 
-    0 2px 6px rgba(45, 35, 25, 0.06),
-    0 18px 46px -4px rgba(139, 92, 246, 0.26),
-    0 30px 58px -8px rgba(124, 58, 237, 0.15),
-    0 0 0 1.5px rgba(139, 92, 246, 0.45),
+    0 4px 10px rgba(45, 35, 25, 0.05),
+    0 14px 34px -2px rgba(139, 92, 246, 0.20),
+    0 26px 50px 0 rgba(124, 58, 237, 0.10),
     inset 0 1px 0 rgba(255, 255, 255, 1) !important;
 }
 
-.timeline-section-card .division-header-icon-box {
+.timeline-container-card .division-header-icon-box,
+.division-timeline-card .division-header-icon-box {
   background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%) !important;
-  border: 1.8px solid #ddd6fe !important;
+  border: 1.5px solid #ddd6fe !important;
   color: #7c3aed !important;
-  box-shadow: 0 3px 10px rgba(139, 92, 246, 0.18) !important;
+  box-shadow: 0 3px 10px rgba(139, 92, 246, 0.16) !important;
 }
 
-.timeline-section-card .division-pretitle-tag {
+.timeline-container-card .division-pretitle-tag,
+.division-timeline-card .division-pretitle-tag {
   color: #6d28d9 !important;
 }
 
@@ -4341,41 +4256,41 @@ body {
 }
 
 .candidate-row.rank-1 {
-  border: 2px solid #f87171 !important;
-  border-left: 6px solid #dc2626 !important;
+  border: 1.5px solid #f87171 !important;
+  border-left: 5px solid #dc2626 !important;
   background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%) !important;
-  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 3px 12px rgba(239, 68, 68, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
 }
 
 .candidate-row.rank-2 {
-  border: 1.8px solid #fbbf24 !important;
-  border-left: 6px solid #d97706 !important;
+  border: 1.4px solid #fbbf24 !important;
+  border-left: 5px solid #d97706 !important;
   background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%) !important;
-  box-shadow: 0 3px 10px rgba(245, 158, 11, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 3px 10px rgba(245, 158, 11, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
 }
 
 .candidate-row.rank-3 {
-  border: 1.8px solid #fcd34d !important;
-  border-left: 6px solid #f59e0b !important;
+  border: 1.4px solid #fcd34d !important;
+  border-left: 5px solid #f59e0b !important;
   background: linear-gradient(135deg, #fffdfa 0%, #ffffff 100%) !important;
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
 }
 
 .candidate-row.rank-4 {
-  border: 1.8px solid #a7f3d0 !important;
-  border-left: 6px solid #10b981 !important;
+  border: 1.4px solid #a7f3d0 !important;
+  border-left: 5px solid #10b981 !important;
   background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%) !important;
-  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
 }
 
 .candidate-row:hover {
   transform: translateX(4px) !important;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.07) !important;
 }
 
 /* 2. Percentage Gauges & Score Meter Sub-divisions */
 .candidate-score-container {
-  border: 1.5px solid #e5e7eb !important;
+  border: 1.2px solid #e5e7eb !important;
   background: #ffffff !important;
   padding: 8px 14px !important;
   border-radius: 10px !important;
@@ -4383,16 +4298,16 @@ body {
 }
 
 .score-track-bg {
-  border: 1.5px solid #d1d5db !important;
+  border: 1.2px solid #d1d5db !important;
   height: 11px !important;
   border-radius: 6px !important;
   background: #f3f4f6 !important;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08) !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.07) !important;
   overflow: hidden !important;
 }
 
 .score-percent-label {
-  border: 1.8px solid #d1d5db !important;
+  border: 1.5px solid #d1d5db !important;
   background: #ffffff !important;
   padding: 3px 10px !important;
   border-radius: 8px !important;
@@ -4409,101 +4324,266 @@ body {
   border-color: #fca5a5 !important;
   background: #fef2f2 !important;
   color: #b91c1c !important;
-  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.16) !important;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.14) !important;
 }
 
 .score-percent-label.pct-rank-2 {
   border-color: #fde68a !important;
   background: #fffbeb !important;
   color: #b45309 !important;
-  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.14) !important;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.12) !important;
 }
 
 .score-percent-label.pct-rank-3 {
   border-color: #fed7aa !important;
   background: #fff7ed !important;
   color: #c2410c !important;
-  box-shadow: 0 2px 6px rgba(194, 65, 12, 0.10) !important;
+  box-shadow: 0 2px 6px rgba(194, 65, 12, 0.09) !important;
 }
 
 .score-percent-label.pct-rank-4 {
   border-color: #a7f3d0 !important;
   background: #f0fdf4 !important;
   color: #047857 !important;
-  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.10) !important;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.09) !important;
 }
 
 /* 3. Key Reasoning Box Sub-division */
 .key-reasoning-card.creative-reasoning {
-  border: 2px solid #fde68a !important;
-  border-left: 6px solid #d97706 !important;
+  border: 1.5px solid #fde68a !important;
+  border-left: 5px solid #d97706 !important;
   background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
-  box-shadow: 0 6px 20px rgba(217, 119, 6, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 4px 18px rgba(217, 119, 6, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
   border-radius: 12px !important;
   padding: 16px 20px !important;
   margin-top: 14px !important;
 }
 
-/* 4. Top ML Feature Importance Sub-division Cards */
-.feature-importance-card {
-  border: 1.8px solid #e5e7eb !important;
-  background: #fafaf9 !important;
-  border-radius: 12px !important;
-  padding: 14px 18px !important;
-  margin-top: 14px !important;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+/* 4. Top ML Feature Importance: DISTINCT VISIBLE DIVISION CONTAINER */
+.feature-importance-card,
+.division-feature-importance {
+  border: 1.5px solid #dcd1c2 !important;
+  background: linear-gradient(180deg, #fdfbf7 0%, #ffffff 100%) !important;
+  border-radius: 14px !important;
+  padding: 16px 18px !important;
+  margin-top: 16px !important;
+  box-shadow: 
+    0 2px 6px rgba(45, 35, 25, 0.04),
+    0 8px 22px -3px rgba(45, 35, 25, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
 }
 
+/* 5. Clear, Distinct Styles for Each Inside Metric Chip */
 .feature-chip-card {
-  border: 1.8px solid #e5e7eb !important;
   background: #ffffff !important;
   border-radius: 10px !important;
   padding: 10px 12px !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
-  transition: all 0.2s ease !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
 }
 
 .feature-chip-card:hover {
   transform: translateY(-2px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
 }
 
-.feature-chip-card.feature-active {
-  border: 2px solid #b47836 !important;
-  background: #fffdfa !important;
-  box-shadow: 0 4px 14px rgba(180, 120, 54, 0.16) !important;
+/* Feature 1: Sustained Duration (Top Rank 1 Feature) */
+.feature-chip-card.chip-sustained_ratio {
+  border: 1.5px solid #f59e0b !important;
+  background: linear-gradient(180deg, #fffdf5 0%, #ffffff 100%) !important;
 }
 
+.feature-chip-card.chip-sustained_ratio .chip-icon {
+  color: #d97706 !important;
+}
+
+.feature-chip-card.chip-sustained_ratio .chip-name {
+  color: #92400e !important;
+  font-weight: 700 !important;
+}
+
+.feature-chip-card.chip-sustained_ratio .feature-metric-value {
+  color: #78350f !important;
+  font-size: 14.5px !important;
+  font-weight: 800 !important;
+  background: #fffbeb !important;
+  border: 1px solid #fde68a !important;
+}
+
+.feature-chip-card.chip-sustained_ratio .chip-mini-track {
+  background: #fef3c7 !important;
+  border: 1px solid #fde68a !important;
+}
+
+.chip-mini-fill.fill-sustained_ratio {
+  background: #d97706 !important;
+}
+
+/* Feature 2: Peak Log Spikes */
+.feature-chip-card.chip-log_max_zscore {
+  border: 1.5px solid #f87171 !important;
+  background: linear-gradient(180deg, #fff5f5 0%, #ffffff 100%) !important;
+}
+
+.feature-chip-card.chip-log_max_zscore .chip-icon {
+  color: #e11d48 !important;
+}
+
+.feature-chip-card.chip-log_max_zscore .chip-name {
+  color: #9f1239 !important;
+  font-weight: 700 !important;
+}
+
+.feature-chip-card.chip-log_max_zscore .feature-metric-value {
+  color: #881337 !important;
+  font-size: 14.5px !important;
+  font-weight: 800 !important;
+  background: #fff1f2 !important;
+  border: 1px solid #fecdd3 !important;
+}
+
+.feature-chip-card.chip-log_max_zscore .chip-mini-track {
+  background: #ffe4e6 !important;
+  border: 1px solid #fecdd3 !important;
+}
+
+.chip-mini-fill.fill-log_max_zscore {
+  background: #e11d48 !important;
+}
+
+/* Feature 3: Mean Signal Drift */
+.feature-chip-card.chip-mean_zscore {
+  border: 1.5px solid #a78bfa !important;
+  background: linear-gradient(180deg, #f5f3ff 0%, #ffffff 100%) !important;
+}
+
+.feature-chip-card.chip-mean_zscore .chip-icon {
+  color: #7c3aed !important;
+}
+
+.feature-chip-card.chip-mean_zscore .chip-name {
+  color: #5b21b6 !important;
+  font-weight: 700 !important;
+}
+
+.feature-chip-card.chip-mean_zscore .feature-metric-value {
+  color: #4c1d95 !important;
+  font-size: 14.5px !important;
+  font-weight: 800 !important;
+  background: #ede9fe !important;
+  border: 1px solid #ddd6fe !important;
+}
+
+.feature-chip-card.chip-mean_zscore .chip-mini-track {
+  background: #f5f3ff !important;
+  border: 1px solid #ddd6fe !important;
+}
+
+.chip-mini-fill.fill-mean_zscore {
+  background: #7c3aed !important;
+}
+
+/* Feature 4: Anomaly Ratio */
+.feature-chip-card.chip-metric_anomaly_ratio {
+  border: 1.5px solid #60a5fa !important;
+  background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%) !important;
+}
+
+.feature-chip-card.chip-metric_anomaly_ratio .chip-icon {
+  color: #2563eb !important;
+}
+
+.feature-chip-card.chip-metric_anomaly_ratio .chip-name {
+  color: #1e40af !important;
+  font-weight: 700 !important;
+}
+
+.feature-chip-card.chip-metric_anomaly_ratio .feature-metric-value {
+  color: #1e3a8a !important;
+  font-size: 14.5px !important;
+  font-weight: 800 !important;
+  background: #dbeafe !important;
+  border: 1px solid #bfdbfe !important;
+}
+
+.feature-chip-card.chip-metric_anomaly_ratio .chip-mini-track {
+  background: #eff6ff !important;
+  border: 1px solid #bfdbfe !important;
+}
+
+.chip-mini-fill.fill-metric_anomaly_ratio {
+  background: #2563eb !important;
+}
+
+/* Feature 5: Onset Priority */
+.feature-chip-card.chip-onset_score {
+  border: 1.5px solid #34d399 !important;
+  background: linear-gradient(180deg, #ecfdf5 0%, #ffffff 100%) !important;
+}
+
+.feature-chip-card.chip-onset_score .chip-icon {
+  color: #059669 !important;
+}
+
+.feature-chip-card.chip-onset_score .chip-name {
+  color: #065f46 !important;
+  font-weight: 700 !important;
+}
+
+.feature-chip-card.chip-onset_score .feature-metric-value {
+  color: #064e3b !important;
+  font-size: 14.5px !important;
+  font-weight: 800 !important;
+  background: #d1fae5 !important;
+  border: 1px solid #a7f3d0 !important;
+}
+
+.feature-chip-card.chip-onset_score .chip-mini-track {
+  background: #ecfdf5 !important;
+  border: 1px solid #a7f3d0 !important;
+}
+
+.chip-mini-fill.fill-onset_score {
+  background: #059669 !important;
+}
+
+/* Shared Mini Track and Value Badges */
 .chip-mini-track {
-  border: 1px solid #d1d5db !important;
-  background: #f3f4f6 !important;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.07) !important;
   border-radius: 5px !important;
   height: 6px !important;
   overflow: hidden !important;
 }
 
-.feature-metric-value {
-  border: 1px solid #e5e7eb !important;
-  background: #f9fafb !important;
-  padding: 2px 7px !important;
-  border-radius: 6px !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
-  font-family: var(--font-mono) !important;
-  font-weight: 700 !important;
+.chip-mini-fill {
+  height: 100% !important;
+  border-radius: 5px !important;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-/* 5. Topology Frame & Legend Sub-divisions */
+.feature-metric-value {
+  padding: 3px 8px !important;
+  border-radius: 6px !important;
+  font-family: var(--font-mono) !important;
+  text-align: center !important;
+  display: block !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* 6. Topology Frame & Legend Sub-divisions */
 .topology-canvas-container {
-  border: 2px solid #a7f3d0 !important;
+  border: 1.5px solid #a7f3d0 !important;
   background: linear-gradient(180deg, #f0fdf4 0%, #f8fafc 100%) !important;
   border-radius: 12px !important;
-  box-shadow: inset 0 2px 10px rgba(16, 185, 129, 0.06), 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+  box-shadow: inset 0 2px 8px rgba(16, 185, 129, 0.05), 0 2px 6px rgba(0, 0, 0, 0.02) !important;
   overflow: hidden !important;
 }
 
 .topology-legend .legend-item {
-  border: 1.5px solid #e5e7eb !important;
+  border: 1.2px solid #e5e7eb !important;
   background: #ffffff !important;
   padding: 5px 12px !important;
   border-radius: 8px !important;
@@ -4531,30 +4611,30 @@ body {
   color: #059669 !important;
 }
 
-/* 6. Replay Scrubber Timing Cards & Waveform Sub-divisions */
+/* 7. Replay Scrubber Timing Cards & Waveform Sub-divisions */
 .replay-scrubber-card .timing-pill {
-  border: 1.8px solid #fde68a !important;
+  border: 1.5px solid #fde68a !important;
   background: #ffffff !important;
   border-radius: 8px !important;
   box-shadow: 0 2px 6px rgba(245, 158, 11, 0.08) !important;
 }
 
 .scrubber-waveform-container {
-  border: 2px solid #e5e7eb !important;
+  border: 1.5px solid #e5e7eb !important;
   background: #ffffff !important;
   border-radius: 10px !important;
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.04) !important;
 }
 
 .btn-play-stream {
-  border: 2px solid #d97706 !important;
+  border: 1.5px solid #d97706 !important;
   background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
   color: #ffffff !important;
   box-shadow: 0 3px 10px rgba(217, 119, 6, 0.25) !important;
 }
 
 .btn-replay-pill {
-  border: 1.8px solid #d1d5db !important;
+  border: 1.2px solid #d1d5db !important;
   background: #ffffff !important;
   border-radius: 8px !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
@@ -4565,13 +4645,13 @@ body {
   box-shadow: 0 4px 10px rgba(245, 158, 11, 0.15) !important;
 }
 
-/* 7. Timeline Cards & Filter Sub-divisions */
+/* 8. Timeline Cards & Filter Sub-divisions */
 .timeline-card-box {
-  border: 1.8px solid #e5e7eb !important;
-  border-left: 5px solid #8b5cf6 !important;
+  border: 1.2px solid #e5e7eb !important;
+  border-left: 4.5px solid #8b5cf6 !important;
   background: #ffffff !important;
   border-radius: 10px !important;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
   transition: all 0.2s ease !important;
 }
 
@@ -4592,19 +4672,19 @@ body {
 }
 
 .timeline-card-box.highlight-root {
-  border: 2px solid #f87171 !important;
-  border-left: 6px solid #dc2626 !important;
+  border: 1.5px solid #f87171 !important;
+  border-left: 5px solid #dc2626 !important;
   background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%) !important;
-  box-shadow: 0 6px 20px rgba(220, 38, 38, 0.14) !important;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.12) !important;
 }
 
 .timeline-card-box:hover {
-  transform: translateX(4px) !important;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08) !important;
+  transform: translateX(3px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
 }
 
 .timeline-type-filters .filter-chip {
-  border: 1.8px solid #d1d5db !important;
+  border: 1.2px solid #d1d5db !important;
   background: #ffffff !important;
   border-radius: 8px !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
@@ -4624,7 +4704,7 @@ body {
 }
 
 .btn-inspect-evidence-clean {
-  border: 1.5px solid #d1d5db !important;
+  border: 1.2px solid #d1d5db !important;
   background: #ffffff !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
   border-radius: 8px !important;
@@ -4637,7 +4717,7 @@ body {
 }
 
 .evidence-ref-pill {
-  border: 1.5px solid #e5e7eb !important;
+  border: 1px solid #e5e7eb !important;
   background: #f9fafb !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
   border-radius: 6px !important;

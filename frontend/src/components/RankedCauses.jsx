@@ -237,17 +237,20 @@ export default function RankedCauses({
         </div>
       </div>
 
-      {/* Top Feature Importance Box with Distinct Sub-Division Cards */}
-      <div className="feature-importance-card">
+      {/* Top Feature Importance Box with Distinct Visible Sub-Division Container */}
+      <div className="feature-importance-card division-feature-importance">
         <div className="features-header">
-          <span className="material-symbols-outlined text-primary">monitoring</span>
-          <span className="features-title">Top ML Feature Importance (RCA Benchmark)</span>
+          <div className="features-header-left">
+            <span className="material-symbols-outlined features-header-symbol">monitoring</span>
+            <span className="features-title">Top ML Feature Importance (RCA Benchmark)</span>
+          </div>
+          <span className="features-subtitle-tag">RCAEval Model Weights</span>
         </div>
         <div className="features-row-grid">
           {featureImportances.map((f) => (
             <div
               key={f.key}
-              className={`feature-chip-card ${f.active ? 'feature-active' : ''}`}
+              className={`feature-chip-card chip-${f.key} ${f.active ? 'feature-active' : ''}`}
               title={`Technical metric: ${f.code}`}
             >
               <div className="feature-top-label">
@@ -258,7 +261,7 @@ export default function RankedCauses({
               {/* Mini visual indicator bar */}
               <div className="chip-mini-track">
                 <div
-                  className="chip-mini-fill"
+                  className={`chip-mini-fill fill-${f.key}`}
                   style={{ width: `${f.pct}%` }}
                 ></div>
               </div>
