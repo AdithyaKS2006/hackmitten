@@ -11,25 +11,38 @@ export default function RankedCauses({
     payment: '🗄️',
     checkout: '🛒',
     frontend: '💻',
-    cart: '🛒',
+    cart: '🛍️',
     user: '👤',
     db: '💾',
   };
 
-  // Static/dynamic feature importance values from real RCAEval dataset
+  const formatServiceName = (srv) => {
+    if (!srv) return 'Service';
+    const names = {
+      payment: 'Payment Service',
+      checkout: 'Checkout Service',
+      frontend: 'Frontend Gateway',
+      cart: 'Cart Service',
+      user: 'User Profile Service',
+      db: 'Database Cluster',
+    };
+    return names[srv.toLowerCase()] || `${srv.charAt(0).toUpperCase() + srv.slice(1)} Service`;
+  };
+
+  // Human-friendly feature importance labels (from RCAEval model)
   const featureImportances = [
-    { key: 'sustained_ratio', name: 'sustained_ratio', val: '62.47%', active: true, icon: '🏆' },
-    { key: 'log_max_zscore', name: 'log_max_zscore', val: '15.32%', active: false, icon: '📈' },
-    { key: 'mean_zscore', name: 'mean_zscore', val: '10.59%', active: false, icon: '📊' },
-    { key: 'metric_anomaly_ratio', name: 'metric_anomaly_ratio', val: '7.59%', active: false, icon: '📉' },
-    { key: 'onset_score', name: 'onset_score', val: '4.03%', active: false, icon: '⏱' },
+    { key: 'sustained_ratio', name: 'Sustained Duration', code: 'sustained_ratio', val: '62.47%', active: true, icon: '🏆' },
+    { key: 'log_max_zscore', name: 'Peak Log Spikes', code: 'log_max_zscore', val: '15.32%', active: false, icon: '📈' },
+    { key: 'mean_zscore', name: 'Mean Signal Drift', code: 'mean_zscore', val: '10.59%', active: false, icon: '📊' },
+    { key: 'metric_anomaly_ratio', name: 'Anomaly Ratio', code: 'metric_anomaly_ratio', val: '7.59%', active: false, icon: '📉' },
+    { key: 'onset_score', name: 'Onset Priority', code: 'onset_score', val: '4.03%', active: false, icon: '⏱' },
   ];
 
   if (unknown) {
     return (
       <div className="ranked-causes-card">
         <div className="unknown-panel">
-          <div className="unknown-tag">HONEST ATTRIBUTION GUARANTEE (RULE 5)</div>
+          <div className="unknown-tag">HONEST ATTRIBUTION GUARANTEE • RULE 5</div>
           <h3 className="unknown-title">Attribution Status: Unknown Cause</h3>
           <p className="unknown-explanation">
             {unknownReason ||
@@ -40,7 +53,7 @@ export default function RankedCauses({
     );
   }
 
-  // Fallback candidate list matching the screenshot if empty or default
+  // Fallback candidate list if empty or default
   const displayCandidates =
     candidates && candidates.length > 0
       ? candidates
@@ -50,9 +63,10 @@ export default function RankedCauses({
             service: 'payment',
             kind: 'change',
             tags: ['CONFIG UPDATE', 'HIGH IMPACT'],
-            name: 'payment config updated: db connection pool_size 50 -> 5',
+            name: 'Payment configuration updated: Connection pool reduced from 50 to 5',
             confidence: 'HIGH CONFIDENCE',
             score: 0.89,
+            evidence_ids: ['e_change_1'],
           },
           {
             rank: 2,
@@ -77,7 +91,7 @@ export default function RankedCauses({
             service: 'cart',
             kind: 'service',
             tags: ['NORMAL'],
-            name: 'No significant anomalies detected.',
+            name: 'No significant anomalies detected in telemetry metrics.',
             confidence: 'LOW CONFIDENCE',
             score: 0.18,
           },
@@ -86,7 +100,7 @@ export default function RankedCauses({
   // Primary key reasoning text
   const primaryReasoning =
     displayCandidates[0]?.explanation ||
-    'The primary cause is the payment service config update (db connection pool_size 50 -> 5), causing connection pool exhaustion and cascading latency across checkout and frontend services.';
+    'The primary cause is the payment service configuration update (connection pool reduced from 50 to 5), causing connection pool exhaustion and cascading latency across checkout and frontend services.';
 
   return (
     <div className="ranked-causes-card">
@@ -108,14 +122,14 @@ export default function RankedCauses({
           </div>
         </div>
 
-        <span className="candidates-count-pill">{displayCandidates.length} Candidates</span>
+        <span className="candidates-count-pill">{displayCandidates.length} Suspects</span>
       </div>
 
       {/* Candidates List */}
       <div className="candidates-list-container">
         {displayCandidates.map((c, idx) => {
           const scorePercent = Math.round(c.score * 100);
-          const icon = serviceIcons[c.service] || '🖥️';
+          const icon = serviceIcons[c.service?.toLowerCase()] || '🖥️';
 
           // Badges derivation
           let tags = c.tags;
@@ -133,6 +147,9 @@ export default function RankedCauses({
             ? c.confidence
             : `${(c.confidence || 'medium').toUpperCase()} CONFIDENCE`;
 
+          const hasEvidence = c.evidence_ids && c.evidence_ids.length > 0;
+          const firstEid = hasEvidence ? c.evidence_ids[0] : null;
+
           return (
             <div key={`candidate-${c.rank || idx}`} className={`candidate-row rank-${c.rank}`}>
               {/* Rank Circle */}
@@ -148,7 +165,7 @@ export default function RankedCauses({
               {/* Center Info */}
               <div className="candidate-main-info">
                 <div className="candidate-name-tags-row">
-                  <span className="candidate-service-name">{c.service}</span>
+                  <span className="candidate-service-name">{formatServiceName(c.service)}</span>
                   {tags.map((tag, tIdx) => {
                     let tagClass = 'tag-cascade';
                     if (tag === 'CONFIG UPDATE') tagClass = 'tag-config';
@@ -160,6 +177,17 @@ export default function RankedCauses({
                       </span>
                     );
                   })}
+
+                  {hasEvidence && onInspectEvidence && (
+                    <button
+                      type="button"
+                      className="btn-candidate-evidence-chip"
+                      onClick={() => onInspectEvidence(firstEid, c.service)}
+                      title="Inspect verified telemetry record"
+                    >
+                      <span>🔍 Evidence</span>
+                    </button>
+                  )}
                 </div>
                 <div className="candidate-description-text">{c.name}</div>
               </div>
@@ -186,7 +214,7 @@ export default function RankedCauses({
       <div className="key-reasoning-card">
         <div className="reasoning-header">
           <span className="lightbulb-icon">💡</span>
-          <span className="reasoning-title">Key Reasoning</span>
+          <span className="reasoning-title">Key Reasoning & Explanation</span>
         </div>
         <p className="reasoning-text">{primaryReasoning}</p>
       </div>
@@ -195,13 +223,14 @@ export default function RankedCauses({
       <div className="feature-importance-card">
         <div className="features-header">
           <span className="features-icon">📊</span>
-          <span className="features-title">Top Feature Importance</span>
+          <span className="features-title">Top ML Feature Importance (RCA Benchmark)</span>
         </div>
         <div className="features-row-grid">
           {featureImportances.map((f) => (
             <div
               key={f.key}
               className={`feature-chip-card ${f.active ? 'feature-active' : ''}`}
+              title={`Technical metric: ${f.code}`}
             >
               <div className="feature-top-label">
                 <span className="chip-icon">{f.icon}</span>
