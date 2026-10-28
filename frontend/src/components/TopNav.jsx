@@ -1,6 +1,88 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-export default function TopNav({ onSearch }) {
+export default function TopNav({
+  onSearch,
+  role = 'analyst',
+  onRoleChange,
+  onNavigate,
+}) {
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showAccountMenu, setShowAccountMenu] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(4);
+  const [notifications, setNotifications] = useState([
+    {
+      id: 1,
+      type: 'critical',
+      icon: '🚨',
+      title: 'Payment Connection Pool Starved',
+      desc: 'db connection pool_size 50 -> 5 caused thread exhaustion on payment service.',
+      time: '13:58:15 UTC',
+      unread: true,
+      service: 'payment',
+    },
+    {
+      id: 2,
+      type: 'warning',
+      icon: '⚠️',
+      title: 'Checkout Latency Cascade',
+      desc: 'Downstream HTTP transactions queued. P99 latency reached 1820ms.',
+      time: '13:58:40 UTC',
+      unread: true,
+      service: 'checkout',
+    },
+    {
+      id: 3,
+      type: 'change',
+      icon: '⚡',
+      title: 'Configuration Change Deployed',
+      desc: 'Database connection parameters modified on payment cluster.',
+      time: '13:55:00 UTC',
+      unread: true,
+      service: 'payment',
+    },
+    {
+      id: 4,
+      type: 'security',
+      icon: '🛡️',
+      title: 'PII Sanitization Verified',
+      desc: 'All customer credentials and IP addresses sanitized before model inference.',
+      time: '13:50:00 UTC',
+      unread: true,
+      service: 'ingest',
+    },
+  ]);
+
+  const notifRef = useRef(null);
+  const accountRef = useRef(null);
+
+  // Close menus when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setShowNotifications(false);
+      }
+      if (accountRef.current && !accountRef.current.contains(e.target)) {
+        setShowAccountMenu(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const markAllRead = () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
+    setUnreadCount(0);
+  };
+
+  const handleNotificationClick = (n) => {
+    setNotifications((prev) =>
+      prev.map((item) => (item.id === n.id ? { ...item, unread: false } : item))
+    );
+    setUnreadCount((prev) => Math.max(0, prev - 1));
+    setShowNotifications(false);
+    if (onNavigate) onNavigate('dashboard');
+  };
+
   return (
     <header className="top-navbar">
       {/* Search Input Bar */}
@@ -14,27 +96,215 @@ export default function TopNav({ onSearch }) {
         <input
           type="text"
           className="search-input"
-          placeholder="Search service, incident or keyword..."
+          placeholder="Search service, incident scenario or telemetry keyword..."
           onChange={(e) => onSearch && onSearch(e.target.value)}
         />
       </div>
 
       {/* Right Controls: Notifications & User Profile */}
       <div className="top-nav-right">
-        {/* Notification Bell */}
-        <button className="icon-btn-round" title="Notifications">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5a5247" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-          </svg>
-          <span className="notification-dot-red"></span>
-        </button>
+        {/* Notification Bell with Badge & Dropdown */}
+        <div className="top-nav-dropdown-wrapper" ref={notifRef}>
+          <button
+            type="button"
+            className={`icon-btn-round ${showNotifications ? 'active' : ''}`}
+            title="Notifications & Incident Alerts"
+            onClick={() => {
+              setShowNotifications(!showNotifications);
+              setShowAccountMenu(false);
+            }}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5a5247" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            {unreadCount > 0 && (
+              <span className="notification-badge-number">{unreadCount}</span>
+            )}
+          </button>
 
-        {/* User Profile Avatar */}
-        <div className="user-profile-badge">
-          <div className="user-avatar-circle">A</div>
-          <span className="user-name">Amrutha</span>
-          <span className="dropdown-caret">▾</span>
+          {/* Interactive Notifications Panel */}
+          {showNotifications && (
+            <div className="dropdown-panel-menu notifications-dropdown-panel">
+              <div className="dropdown-panel-header">
+                <div className="d-flex align-center gap-6">
+                  <span className="panel-title">System Alerts & Notifications</span>
+                  {unreadCount > 0 && (
+                    <span className="panel-count-tag">{unreadCount} new</span>
+                  )}
+                </div>
+                {unreadCount > 0 && (
+                  <button className="btn-text-action" onClick={markAllRead}>
+                    Mark all read
+                  </button>
+                )}
+              </div>
+
+              <div className="notifications-list-scroll">
+                {notifications.map((n) => (
+                  <div
+                    key={n.id}
+                    className={`notification-item-card ${n.unread ? 'unread' : ''}`}
+                    onClick={() => handleNotificationClick(n)}
+                  >
+                    <span className="notif-icon">{n.icon}</span>
+                    <div className="notif-body">
+                      <div className="notif-title-row">
+                        <strong className="notif-title">{n.title}</strong>
+                        <span className="notif-time">{n.time}</span>
+                      </div>
+                      <p className="notif-desc">{n.desc}</p>
+                      <div className="notif-meta-tags">
+                        <span className="notif-service-pill">{n.service}</span>
+                        {n.unread && <span className="notif-unread-dot"></span>}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="dropdown-panel-footer">
+                <button
+                  className="btn-footer-link"
+                  onClick={() => {
+                    setShowNotifications(false);
+                    if (onNavigate) onNavigate('dashboard');
+                  }}
+                >
+                  View Incident Investigation Timeline →
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* User Profile / Account Menu */}
+        <div className="top-nav-dropdown-wrapper" ref={accountRef}>
+          <div
+            className={`user-profile-badge ${showAccountMenu ? 'active' : ''}`}
+            onClick={() => {
+              setShowAccountMenu(!showAccountMenu);
+              setShowNotifications(false);
+            }}
+          >
+            <div className="user-avatar-circle">A</div>
+            <div className="user-meta-name-col">
+              <span className="user-name">Amrutha</span>
+              <span className="user-role-label">{role === 'analyst' ? 'Analyst' : 'Auditor'}</span>
+            </div>
+            <span className="dropdown-caret">▾</span>
+          </div>
+
+          {/* Interactive Account Dropdown Panel */}
+          {showAccountMenu && (
+            <div className="dropdown-panel-menu account-dropdown-panel">
+              {/* User Header */}
+              <div className="account-panel-user-header">
+                <div className="large-avatar-circle">A</div>
+                <div className="user-full-details">
+                  <h4 className="account-user-name">Amrutha</h4>
+                  <span className="account-user-email">Lead SRE & Incident Commander</span>
+                  <span className="account-team-badge">AO-03 SRE Response Team</span>
+                </div>
+              </div>
+
+              {/* Role Switcher Section */}
+              <div className="account-section">
+                <span className="account-section-label">Switch Active Permission Role:</span>
+                <div className="role-options-list">
+                  <div
+                    className={`role-option-item ${role === 'analyst' ? 'active-role' : ''}`}
+                    onClick={() => {
+                      if (onRoleChange) onRoleChange('analyst');
+                    }}
+                  >
+                    <div>
+                      <strong className="role-opt-name">Analyst (Full Access)</strong>
+                      <span className="role-opt-desc">Full telemetry analysis, replay & evidence inspector</span>
+                    </div>
+                    {role === 'analyst' && <span className="role-check">✓</span>}
+                  </div>
+
+                  <div
+                    className={`role-option-item ${role === 'viewer' ? 'active-role' : ''}`}
+                    onClick={() => {
+                      if (onRoleChange) onRoleChange('viewer');
+                    }}
+                  >
+                    <div>
+                      <strong className="role-opt-name">Auditor (Read-Only)</strong>
+                      <span className="role-opt-desc">Inspect post-mortem dossiers and governance audit</span>
+                    </div>
+                    {role === 'viewer' && <span className="role-check">✓</span>}
+                  </div>
+                </div>
+              </div>
+
+              {/* Navigation Options */}
+              <div className="account-section">
+                <span className="account-section-label">Quick Links:</span>
+                <div className="account-links-list">
+                  <button
+                    className="account-link-btn"
+                    onClick={() => {
+                      setShowAccountMenu(false);
+                      if (onNavigate) onNavigate('dashboard');
+                    }}
+                  >
+                    <span>🏠</span>
+                    <span>Investigation Dashboard</span>
+                  </button>
+                  <button
+                    className="account-link-btn"
+                    onClick={() => {
+                      setShowAccountMenu(false);
+                      if (onNavigate) onNavigate('incidents');
+                    }}
+                  >
+                    <span>⚠️</span>
+                    <span>Incident Catalog</span>
+                  </button>
+                  <button
+                    className="account-link-btn"
+                    onClick={() => {
+                      setShowAccountMenu(false);
+                      if (onNavigate) onNavigate('reports');
+                    }}
+                  >
+                    <span>📄</span>
+                    <span>Post-Incident Reports</span>
+                  </button>
+                  <button
+                    className="account-link-btn"
+                    onClick={() => {
+                      setShowAccountMenu(false);
+                      if (onNavigate) onNavigate('settings');
+                    }}
+                  >
+                    <span>⚙️</span>
+                    <span>System Settings</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Session Status & Logout */}
+              <div className="account-panel-footer">
+                <div className="session-status-text">
+                  <span className="dot-green"></span>
+                  <span>Session: Active (Local API 8000)</span>
+                </div>
+                <button
+                  className="btn-account-logout"
+                  onClick={() => {
+                    alert('Session reset for operator Amrutha.');
+                    setShowAccountMenu(false);
+                  }}
+                >
+                  Reset Session
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </header>

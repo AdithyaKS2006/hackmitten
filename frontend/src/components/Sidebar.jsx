@@ -2,11 +2,11 @@ import React from 'react';
 
 export default function Sidebar({ currentNav = 'dashboard', onNavChange }) {
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: '🏠' },
-    { id: 'incidents', label: 'Incidents', icon: '⚠️' },
-    { id: 'servicemap', label: 'Service Map', icon: '🔗' },
-    { id: 'reports', label: 'Reports', icon: '📄' },
-    { id: 'settings', label: 'Settings', icon: '⚙️' },
+    { id: 'dashboard', label: 'Dashboard', icon: '🏠', tag: 'Core' },
+    { id: 'incidents', label: 'Incidents', icon: '⚠️', tag: '6' },
+    { id: 'servicemap', label: 'Service Map', icon: '🔗', tag: 'Topo' },
+    { id: 'reports', label: 'Reports', icon: '📄', tag: 'Audit' },
+    { id: 'settings', label: 'Settings', icon: '⚙️', tag: 'Config' },
   ];
 
   return (
@@ -26,18 +26,29 @@ export default function Sidebar({ currentNav = 'dashboard', onNavChange }) {
         </div>
       </div>
 
-      {/* Nav Menu */}
+      {/* Nav Menu with Light Borders and Distinct Action Buttons */}
       <nav className="sidebar-nav">
-        {navItems.map((item) => (
-          <button
-            key={item.id}
-            className={`nav-item-btn ${currentNav === item.id ? 'active' : ''}`}
-            onClick={() => onNavChange && onNavChange(item.id)}
-          >
-            <span className="nav-item-icon">{item.icon}</span>
-            <span className="nav-item-label">{item.label}</span>
-          </button>
-        ))}
+        <span className="sidebar-section-label">MAIN NAVIGATION</span>
+        {navItems.map((item) => {
+          const isActive = currentNav === item.id;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              className={`nav-item-btn ${isActive ? 'active' : ''}`}
+              onClick={() => onNavChange && onNavChange(item.id)}
+              title={`Switch to ${item.label}`}
+            >
+              <div className="nav-item-left">
+                <span className="nav-item-icon">{item.icon}</span>
+                <span className="nav-item-label">{item.label}</span>
+              </div>
+              <span className={`nav-item-pill ${isActive ? 'active-pill' : ''}`}>
+                {item.tag}
+              </span>
+            </button>
+          );
+        })}
       </nav>
 
       {/* Bottom Online Status Badge */}
@@ -46,7 +57,7 @@ export default function Sidebar({ currentNav = 'dashboard', onNavChange }) {
           <span className="status-dot-green"></span>
           <span className="status-text-bold">System Online</span>
         </div>
-        <div className="status-timestamp">Last updated: 28 Oct 2026, 20:43</div>
+        <div className="status-timestamp">API: http://localhost:8000</div>
       </div>
     </aside>
   );

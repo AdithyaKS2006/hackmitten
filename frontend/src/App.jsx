@@ -11,6 +11,9 @@ import EvidenceDrawer from './components/EvidenceDrawer';
 import EvaluationView from './components/EvaluationView';
 import SafetyPanel from './components/SafetyPanel';
 import PostIncidentReport from './components/PostIncidentReport';
+import IncidentsView from './components/IncidentsView';
+import ServiceMapView from './components/ServiceMapView';
+import SettingsView from './components/SettingsView';
 import { fetchHealth, fetchScenarios, analyzeScenario, fetchEvidence } from './api';
 
 export default function App() {
@@ -27,7 +30,6 @@ export default function App() {
   const [isMockMode, setIsMockMode] = useState(false);
   const [selectedService, setSelectedService] = useState(null);
   const [evidenceData, setEvidenceData] = useState(null);
-  const [showReport, setShowReport] = useState(false);
   const [asOf, setAsOf] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -92,121 +94,183 @@ export default function App() {
 
   return (
     <div className="hackmitten-layout-root">
-      {/* 1. Left Sidebar */}
+      {/* 1. Left Sidebar with Visible Light Borders */}
       <Sidebar
         currentNav={currentNav}
-        onNavChange={(nav) => {
-          setCurrentNav(nav);
-          if (nav === 'reports') setShowReport(true);
-        }}
+        onNavChange={(nav) => setCurrentNav(nav)}
       />
 
       {/* 2. Main Right Container */}
       <div className="app-main-viewport">
-        {/* Top Navbar */}
-        <TopNav onSearch={setSearchQuery} />
-
-        {/* Sub-Header with Engine Info & Actions */}
-        <SubHeader
+        {/* Top Navbar with Notifications & Account Menus */}
+        <TopNav
+          onSearch={setSearchQuery}
           role={role}
           onRoleChange={setRole}
-          health={health}
-          isMockMode={isMockMode}
-          onOpenReport={() => setShowReport(true)}
-          analysisReady={Boolean(analysis)}
+          onNavigate={setCurrentNav}
         />
 
-        {/* Action Bar (Scenario Dropdown + Tabs) */}
-        <ActionBar
-          scenarios={scenarios}
-          selectedScenario={selectedScenario}
-          onSelectScenario={(newId) => {
-            setSelectedScenario(newId);
-            setSelectedService(null);
-            setAsOf(null);
-          }}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-        />
-
-        {/* Tab 1: Investigation Console */}
-        {activeTab === 'investigation' && (
-          <div className="tab-investigation-body">
-            {/* Incident Replay Scrubber */}
-            <ReplaySlider
-              meta={scenarioMeta}
-              currentAsOf={asOf}
-              onAsOfChange={setAsOf}
-              loading={loading}
+        {/* View 1: Main Investigation Dashboard */}
+        {currentNav === 'dashboard' && (
+          <>
+            {/* Sub-Header with Engine Info & Actions */}
+            <SubHeader
+              role={role}
+              onRoleChange={setRole}
+              health={health}
+              isMockMode={isMockMode}
+              onOpenReport={() => setCurrentNav('reports')}
+              analysisReady={Boolean(analysis)}
             />
 
-            {/* Split 2-Column Grid: Topology on Left, Ranked Hypotheses on Right */}
-            <div className="investigation-split-row">
-              <div className="split-column-left">
-                <DependencyGraph
-                  graph={analysis?.graph}
-                  anomalousServices={analysis?.anomalous_services}
-                  selectedService={selectedService}
-                  onSelectService={setSelectedService}
-                />
-              </div>
+            {/* Action Bar (Scenario Dropdown + Tabs) */}
+            <ActionBar
+              scenarios={scenarios}
+              selectedScenario={selectedScenario}
+              onSelectScenario={(newId) => {
+                setSelectedScenario(newId);
+                setSelectedService(null);
+                setAsOf(null);
+              }}
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+            />
 
-              <div className="split-column-right">
-                <RankedCauses
-                  candidates={analysis?.candidates}
-                  unknown={analysis?.unknown}
-                  unknownReason={analysis?.unknown_reason}
-                  onInspectEvidence={handleInspectEvidence}
+            {/* Tab 1: Investigation Console */}
+            {activeTab === 'investigation' && (
+              <div className="tab-investigation-body">
+                {/* Incident Replay Scrubber */}
+                <ReplaySlider
+                  meta={scenarioMeta}
+                  currentAsOf={asOf}
+                  onAsOfChange={setAsOf}
+                  loading={loading}
                 />
-              </div>
-            </div>
 
-            {/* Timeline Section (Collapsible / Bottom) */}
-            {analysis?.timeline && analysis.timeline.length > 0 && (
-              <div className="timeline-section-card">
-                <Timeline
-                  timeline={analysis.timeline}
-                  selectedService={selectedService}
-                  onInspectEvidence={handleInspectEvidence}
-                  topCandidateEvidenceIds={analysis?.candidates?.[0]?.evidence_ids || []}
+                {/* Split 2-Column Grid: Topology on Left, Ranked Hypotheses on Right */}
+                <div className="investigation-split-row">
+                  <div className="split-column-left">
+                    <DependencyGraph
+                      graph={analysis?.graph}
+                      anomalousServices={analysis?.anomalous_services}
+                      selectedService={selectedService}
+                      onSelectService={setSelectedService}
+                    />
+                  </div>
+
+                  <div className="split-column-right">
+                    <RankedCauses
+                      candidates={analysis?.candidates}
+                      unknown={analysis?.unknown}
+                      unknownReason={analysis?.unknown_reason}
+                      onInspectEvidence={handleInspectEvidence}
+                    />
+                  </div>
+                </div>
+
+                {/* Timeline Section */}
+                {analysis?.timeline && analysis.timeline.length > 0 && (
+                  <div className="timeline-section-card">
+                    <Timeline
+                      timeline={analysis.timeline}
+                      selectedService={selectedService}
+                      onInspectEvidence={handleInspectEvidence}
+                      topCandidateEvidenceIds={analysis?.candidates?.[0]?.evidence_ids || []}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Tab 2: Benchmark Evaluation */}
+            {activeTab === 'evaluation' && (
+              <div className="tab-evaluation-body">
+                <EvaluationView role={role} />
+              </div>
+            )}
+
+            {/* Tab 3: Safety & Governance */}
+            {activeTab === 'safety' && (
+              <div className="tab-safety-body">
+                <SafetyPanel
+                  redactionSample={analysis?.redaction_sample}
+                  role={role}
+                  onRoleChange={setRole}
                 />
               </div>
             )}
+          </>
+        )}
+
+        {/* View 2: Incidents Catalog */}
+        {currentNav === 'incidents' && (
+          <div className="tab-page-wrapper">
+            <IncidentsView
+              scenarios={scenarios}
+              selectedScenario={selectedScenario}
+              onSelectScenario={setSelectedScenario}
+              onNavigateToConsole={() => {
+                setCurrentNav('dashboard');
+                setActiveTab('investigation');
+              }}
+            />
           </div>
         )}
 
-        {/* Tab 2: Benchmark Evaluation */}
-        {activeTab === 'evaluation' && (
-          <div className="tab-evaluation-body">
-            <EvaluationView role={role} />
+        {/* View 3: Service Dependency Map */}
+        {currentNav === 'servicemap' && (
+          <div className="tab-page-wrapper">
+            <ServiceMapView
+              graph={analysis?.graph}
+              anomalousServices={analysis?.anomalous_services}
+              selectedService={selectedService}
+              onSelectService={setSelectedService}
+              onNavigateToConsole={() => {
+                setCurrentNav('dashboard');
+                setActiveTab('investigation');
+              }}
+            />
           </div>
         )}
 
-        {/* Tab 3: Safety & Governance */}
-        {activeTab === 'safety' && (
-          <div className="tab-safety-body">
-            <SafetyPanel
-              redactionSample={analysis?.redaction_sample}
+        {/* View 4: Embedded Post-Incident Report */}
+        {currentNav === 'reports' && (
+          <div className="tab-page-wrapper report-view-embedded">
+            <div className="report-embedded-header-bar">
+              <button
+                className="btn-back-to-dash"
+                onClick={() => setCurrentNav('dashboard')}
+              >
+                ← Return to Dashboard
+              </button>
+              <div className="report-nav-tag">Audited Incident Dossier</div>
+            </div>
+
+            <PostIncidentReport
+              analysis={analysis}
+              onClose={() => setCurrentNav('dashboard')}
+              isEmbedded={true}
+            />
+          </div>
+        )}
+
+        {/* View 5: System Settings */}
+        {currentNav === 'settings' && (
+          <div className="tab-page-wrapper">
+            <SettingsView
               role={role}
               onRoleChange={setRole}
+              health={health}
             />
           </div>
         )}
       </div>
 
-      {/* Evidence Drawer Modal */}
+      {/* Evidence Drawer Slide-over */}
       {evidenceData && (
         <EvidenceDrawer
           evidenceData={evidenceData}
           onClose={() => setEvidenceData(null)}
-        />
-      )}
-
-      {/* Printable Post-Incident Report */}
-      {showReport && (
-        <PostIncidentReport
-          analysis={analysis}
-          onClose={() => setShowReport(false)}
         />
       )}
     </div>
