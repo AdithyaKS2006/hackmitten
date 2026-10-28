@@ -5274,3 +5274,440 @@ code, pre, .font-mono, .s-metric-val, .scenario-id-badge, .code-ref-pill, .incid
     padding: 0 10px 16px 10px !important;
   }
 }
+
+
+/* ==========================================================================
+   EXTENDED MICROSERVICE DIAGNOSTICS & CAUSAL BLAST RADIUS CONSOLE
+   Eliminates empty gaps in investigation split row and provides live telemetry.
+   ========================================================================== */
+
+.investigation-split-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  align-items: stretch !important;
+}
+
+.split-column-left,
+.split-column-right {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+}
+
+.topology-graph-card,
+.ranked-causes-card {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+}
+
+.topology-canvas-container {
+  flex: none !important;
+  height: 350px !important;
+  background: #fbfaf8 !important;
+  border: 1.2px solid #ebd9c8 !important;
+  border-radius: 12px !important;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.02) !important;
+  margin-bottom: 12px !important;
+}
+
+.topo-inspector-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+/* Quick Service Switcher Pills Row */
+.topo-services-pills-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.topo-inspect-label {
+  font-size: 9px;
+  font-weight: 800;
+  color: #b47836;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-right: 2px;
+}
+
+.topo-service-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 7px;
+  border: 1.2px solid #ebd9c8;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 11px;
+  font-weight: 600;
+  color: #4b3e32;
+  box-shadow: 0 1px 3px rgba(45, 35, 25, 0.03);
+}
+
+.topo-service-chip:hover {
+  border-color: #b47836;
+  background: #faf5ee;
+  transform: translateY(-1px);
+}
+
+.topo-service-chip.active {
+  border-color: #b47836;
+  background: #f7ece0;
+  color: #3b2817;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(180, 120, 54, 0.15);
+}
+
+.chip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.chip-dot.dot-red { background: #ef4444; }
+.chip-dot.dot-amber { background: #f59e0b; }
+.chip-dot.dot-green { background: #10b981; }
+
+/* Selected Service Diagnostics Card */
+.service-diagnostics-card {
+  background: linear-gradient(135deg, #ffffff 0%, #fefcf9 60%, #faf3ea 100%);
+  border: 1.2px solid rgba(180, 120, 54, 0.28);
+  border-radius: 12px;
+  padding: 13px 15px;
+  box-shadow: 0 2px 8px rgba(45, 35, 25, 0.04), inset 0 1px 0 rgba(255, 255, 255, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  flex: 1;
+}
+
+.diag-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.diag-header-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.diag-service-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1.2px solid transparent;
+}
+
+.diag-service-icon-box.status-crit {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+.diag-service-icon-box.status-warn {
+  background: #fef3c7;
+  color: #d97706;
+  border-color: #fde68a;
+}
+
+.diag-service-icon-box.status-ok {
+  background: #dcfce7;
+  color: #16a34a;
+  border-color: #bbf7d0;
+}
+
+.diag-service-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.diag-service-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1a140e;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.diag-role-badge {
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 5px;
+  letter-spacing: 0.3px;
+}
+
+.diag-role-badge.status-crit {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+
+.diag-role-badge.status-warn {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.diag-role-badge.status-ok {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.diag-finding-text {
+  font-size: 11.5px;
+  color: #5d5144;
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+.anomaly-score-box {
+  background: #ffffff;
+  border: 1.2px solid #ebd9c8;
+  border-radius: 8px;
+  padding: 4px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  box-shadow: 0 1px 3px rgba(45, 35, 25, 0.03);
+}
+
+.score-label {
+  font-size: 8.5px;
+  font-weight: 800;
+  color: #9c8c7d;
+  letter-spacing: 0.6px;
+}
+
+.score-value {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.score-value.status-crit { color: #dc2626; }
+.score-value.status-warn { color: #d97706; }
+.score-value.status-ok { color: #16a34a; }
+
+/* 4-Metric Live Telemetry HUD */
+.diag-metrics-hud {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  background: #ffffff;
+  border: 1.2px solid #ebd9c8;
+  border-radius: 9px;
+  padding: 9px 12px;
+  box-shadow: 0 1px 3px rgba(45, 35, 25, 0.02);
+}
+
+.hud-metric-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hud-label {
+  font-size: 8.5px;
+  font-weight: 800;
+  color: #9c8c7d;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.hud-value {
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #1a140e;
+}
+
+.hud-value.status-crit { color: #dc2626; }
+.hud-value.status-warn { color: #d97706; }
+.hud-value.status-ok { color: #16a34a; }
+
+.hud-subtag {
+  font-size: 9.5px;
+  color: #786b5e;
+}
+
+/* Causal Blast Radius Breadcrumb Row */
+.diag-blast-radius-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  background: #ffffff;
+  border: 1.2px solid #ebd9c8;
+  border-radius: 8px;
+  padding: 6px 10px;
+  box-shadow: 0 1px 3px rgba(45, 35, 25, 0.02);
+}
+
+.blast-label-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.blast-title {
+  font-size: 9px;
+  font-weight: 800;
+  color: #b47836;
+  letter-spacing: 0.6px;
+}
+
+.blast-flow-pills {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.blast-step-pill {
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-size: 10.5px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+
+.blast-step-pill.step-origin {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+
+.blast-step-pill.step-cascade {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.blast-arrow {
+  color: #9c8c7d;
+  font-size: 10px;
+}
+
+/* Automated Recommended SRE Remediation Action */
+.diag-remediation-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border: 1.2px solid #fde68a;
+  border-radius: 9px;
+  padding: 9px 12px;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.08);
+}
+
+.remediation-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  flex: 1;
+}
+
+.remediation-pretitle {
+  font-size: 8.5px;
+  font-weight: 800;
+  color: #b45309;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  display: block;
+}
+
+.remediation-text {
+  font-size: 11px;
+  font-weight: 600;
+  color: #451a03;
+  margin: 1px 0 0 0;
+  line-height: 1.35;
+}
+
+.remediation-actions-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.btn-simulate-fix {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 9px;
+  background: #ffffff;
+  border: 1.2px solid #d97706;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #b45309;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 3px rgba(217, 119, 6, 0.1);
+}
+
+.btn-simulate-fix:hover {
+  background: #f59e0b;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(217, 119, 6, 0.25);
+  transform: translateY(-1px);
+}
+
+.btn-copy-runbook {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 9px;
+  background: #ffffff;
+  border: 1.2px solid #ebd9c8;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #5d5144;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 3px rgba(45, 35, 25, 0.03);
+}
+
+.btn-copy-runbook:hover {
+  border-color: #b47836;
+  color: #1a140e;
+  transform: translateY(-1px);
+}
+
+/* Simulation Verified Toast Banner */
+.simulation-toast-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #f0fdf4;
+  border: 1.2px solid #bbf7d0;
+  border-radius: 8px;
+  font-size: 11.5px;
+  color: #166534;
+  animation: fadeIn 0.2s ease;
+}
