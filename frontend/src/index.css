@@ -189,12 +189,91 @@ body {
   color: #ffffff;
 }
 
+.enterprise-health-card,
 .sidebar-footer-card {
-  padding: 12px;
+  padding: 13px 12px;
   background-color: #ffffff;
-  border: 1px solid var(--border-light);
+  border: 1px solid #ebd9c8;
   border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  box-shadow: 0 1px 3px rgba(45, 35, 25, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.system-status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f2e7dc;
+}
+
+.status-badge-live {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pulse-dot-beacon {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+  animation: pulseBeacon 2s infinite;
+}
+
+@keyframes pulseBeacon {
+  0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.5); }
+  70% { box-shadow: 0 0 0 6px rgba(22, 163, 74, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+}
+
+.status-state-text {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #166534;
+}
+
+.system-version-pill {
+  font-size: 9.5px;
+  font-weight: 700;
+  background-color: #f6efe8;
+  color: #8c5221;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.system-metrics-mini-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.system-metric-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+}
+
+.s-metric-label {
+  color: #796d60;
+  font-weight: 500;
+}
+
+.s-metric-val {
+  color: #27201a;
+  font-weight: 700;
+}
+
+.s-metric-val.badge-ml {
+  background-color: #f7ede2;
+  color: #8c5221;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 10px;
 }
 
 .status-indicator-row {
@@ -217,6 +296,7 @@ body {
   color: var(--text-main);
 }
 
+.status-subtext,
 .status-timestamp {
   font-size: 10.5px;
   color: var(--text-subtle);
@@ -3868,6 +3948,92 @@ body {
   background: linear-gradient(90deg, #b47836, #e08363);
   border-radius: 2px;
 }
+
+/* ==========================================================================
+   SUPER CREATIVE NETWORK & SERVER TELEMETRY BACKGROUND CANVAS
+   ========================================================================== */
+
+.network-background-viewport-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.network-interactive-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.88;
+}
+
+.network-ambient-radial-glow {
+  position: absolute;
+  width: 650px;
+  height: 650px;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+}
+
+.glow-top-left {
+  top: -160px;
+  left: 80px;
+  background: radial-gradient(circle, rgba(180, 120, 54, 0.12) 0%, transparent 70%);
+}
+
+.glow-bottom-right {
+  bottom: -160px;
+  right: -60px;
+  background: radial-gradient(circle, rgba(34, 160, 107, 0.09) 0%, transparent 70%);
+}
+
+/* ==========================================================================
+   SUPER SIMPLE, CLEAN & REFINED DASHBOARD DIVISIONS (FROSTED GLASS)
+   ========================================================================== */
+
+.techinova-layout-root {
+  position: relative;
+  z-index: 1;
+}
+
+.app-main-viewport {
+  position: relative;
+  z-index: 1;
+  background-color: transparent !important;
+}
+
+.tab-investigation-body {
+  position: relative;
+  z-index: 2;
+  gap: 16px;
+}
+
+/* Elegant frosted glass cards allowing animated network mesh to shine through */
+.replay-scrubber-card,
+.topology-graph-card,
+.ranked-causes-card,
+.timeline-section-card {
+  background: rgba(255, 255, 255, 0.94) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  border: 1px solid rgba(230, 215, 200, 0.88) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 4px 20px rgba(45, 35, 25, 0.04) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.replay-scrubber-card:hover,
+.topology-graph-card:hover,
+.ranked-causes-card:hover,
+.timeline-section-card:hover {
+  border-color: rgba(180, 120, 54, 0.4) !important;
+  box-shadow: 0 10px 32px rgba(180, 120, 54, 0.1) !important;
+  transform: translateY(-1px);
+}
+
 
 
 

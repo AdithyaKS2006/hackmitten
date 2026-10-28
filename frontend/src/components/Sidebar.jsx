@@ -67,13 +67,30 @@ export default function Sidebar({ currentNav = 'dashboard', onNavChange }) {
         })}
       </nav>
 
-      {/* Bottom Health Badge - Replaced technical raw API URL with user-friendly cluster health */}
-      <div className="sidebar-footer-card">
-        <div className="status-indicator-row">
-          <span className="status-dot-green"></span>
-          <span className="status-text-bold">Cluster Health: Healthy</span>
+      {/* Standard Enterprise Cluster Health Indicator (UI-Industry Standard) */}
+      <div className="sidebar-footer-card enterprise-health-card">
+        <div className="system-status-header">
+          <div className="status-badge-live">
+            <span className="pulse-dot-beacon"></span>
+            <span className="status-state-text">Cluster Operational</span>
+          </div>
+          <span className="system-version-pill">v2.4 Live</span>
         </div>
-        <div className="status-subtext">6 Services Monitored • Live ML Inference</div>
+
+        <div className="system-metrics-mini-list">
+          <div className="system-metric-line">
+            <span className="s-metric-label">Monitored Services</span>
+            <span className="s-metric-val">6 of 6 Active</span>
+          </div>
+          <div className="system-metric-line">
+            <span className="s-metric-label">AI Engine</span>
+            <span className="s-metric-val badge-ml">RCA ML Ready</span>
+          </div>
+          <div className="system-metric-line">
+            <span className="s-metric-label">Telemetry Latency</span>
+            <span className="s-metric-val">12ms • P99 Normal</span>
+          </div>
+        </div>
       </div>
     </aside>
   );

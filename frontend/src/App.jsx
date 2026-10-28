@@ -14,6 +14,7 @@ import PostIncidentReport from './components/PostIncidentReport';
 import IncidentsView from './components/IncidentsView';
 import ServiceMapView from './components/ServiceMapView';
 import SettingsView from './components/SettingsView';
+import NetworkBackground from './components/NetworkBackground';
 import { fetchHealth, fetchScenarios, analyzeScenario, fetchEvidence } from './api';
 
 export default function App() {
@@ -94,6 +95,9 @@ export default function App() {
 
   return (
     <div className="techinova-layout-root">
+      {/* Super Creative Interactive Network & Server Telemetry Canvas */}
+      <NetworkBackground />
+
       {/* 1. Left Sidebar with Visible Light Borders */}
       <Sidebar
         currentNav={currentNav}
