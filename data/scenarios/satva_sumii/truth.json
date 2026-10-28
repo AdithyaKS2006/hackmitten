@@ -1,0 +1,6 @@
+{
+  "cause_kind": "change",
+  "cause_name": "payments config razorpay webhook secret update",
+  "cause_service": "payments",
+  "notes": "Render envVar RAZORPAY_WEBHOOK_SECRET updated at 14:29. Webhook signature verification broke, triggering retry storms, payment timeouts, and cascading checkout failure across orders and frontend."
+}

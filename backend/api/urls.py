@@ -7,4 +7,5 @@ urlpatterns = [
     re_path(r"^analyze/(?P<id>[a-zA-Z0-9_\-]+)/?$", views.analyze_view, name="analyze"),
     re_path(r"^evidence/(?P<id>[a-zA-Z0-9_\-]+)/?$", views.evidence_view, name="evidence"),
     re_path(r"^evaluate/?$", views.evaluate_view, name="evaluate"),
+    re_path(r"^ingest/?$", views.ingest_view, name="ingest"),
 ]

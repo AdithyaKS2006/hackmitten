@@ -1,0 +1,10 @@
+{
+  "id": "satva_sumii",
+  "name": "SATVA Life: Razorpay Payment Gateway & Checkout Cascade",
+  "incident_start": "2026-10-28T14:30:00Z",
+  "baseline_end": "2026-10-28T14:25:00Z",
+  "time_range": [
+    "2026-10-28T14:00:00Z",
+    "2026-10-28T15:00:00Z"
+  ]
+}

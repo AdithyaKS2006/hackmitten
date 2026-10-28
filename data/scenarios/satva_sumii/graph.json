@@ -1,0 +1,45 @@
+{
+  "nodes": [
+    "frontend",
+    "accounts",
+    "products",
+    "orders",
+    "payments",
+    "shipping",
+    "supabase"
+  ],
+  "edges": [
+    [
+      "frontend",
+      "accounts"
+    ],
+    [
+      "frontend",
+      "products"
+    ],
+    [
+      "frontend",
+      "orders"
+    ],
+    [
+      "orders",
+      "payments"
+    ],
+    [
+      "orders",
+      "shipping"
+    ],
+    [
+      "orders",
+      "supabase"
+    ],
+    [
+      "products",
+      "supabase"
+    ],
+    [
+      "accounts",
+      "supabase"
+    ]
+  ]
+}

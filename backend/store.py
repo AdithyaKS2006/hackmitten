@@ -293,3 +293,35 @@ def get_truth(id: str) -> Optional[dict[str, Any]]:
         with open(truth_file, "r", encoding="utf-8") as f:
             return json.load(f)
     return None
+
+
+def ingest_events(scenario_id: str, events: list[dict[str, Any]]) -> int:
+    """Ingest live telemetry events into scenario store and invalidate cache."""
+    if not events:
+        return 0
+
+    mode = get_storage_mode()
+    if mode == "mongo":
+        try:
+            client = get_mongo_client()
+            db = client[DB_NAME]
+            docs = []
+            for ev in events:
+                doc = ev.copy()
+                doc["scenario_id"] = scenario_id
+                docs.append(doc)
+            db.events.insert_many(docs)
+        except Exception:
+            pass
+
+    # Append to scenario events.jsonl
+    sc_dir = Path("data/scenarios") / scenario_id
+    sc_dir.mkdir(parents=True, exist_ok=True)
+    events_file = sc_dir / "events.jsonl"
+    with open(events_file, "a", encoding="utf-8") as f:
+        for ev in events:
+            f.write(json.dumps(ev) + "\n")
+
+    # Invalidate in-memory cache for this scenario
+    _events_cache.pop(scenario_id, None)
+    return len(events)

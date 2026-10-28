@@ -223,3 +223,32 @@ def evaluate_view(request):
         )
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(["POST"])
+def ingest_view(request):
+    """POST /ingest -> Receive live telemetry events from Satva-Sumii or external services."""
+    authorized, role, err_response = check_auth_and_audit(request)
+    if not authorized:
+        return err_response
+
+    try:
+        data = request.data if hasattr(request, "data") else json.loads(request.body)
+        scenario_id = data.get("scenario_id", "satva_sumii")
+        events = data.get("events", [])
+        if not events and isinstance(data, list):
+            events = data
+        elif not events and "id" in data:
+            events = [data]
+
+        count = store.ingest_events(scenario_id, events)
+        return JsonResponse(
+            {
+                "status": "ok",
+                "scenario_id": scenario_id,
+                "ingested_count": count,
+            },
+            status=status.HTTP_200_OK,
+        )
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

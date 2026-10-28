@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-10-28T22:10:29.773505+00:00",
-  "scenarios_evaluated": 6,
+  "timestamp": "2026-10-28T22:28:23.861877+00:00",
+  "scenarios_evaluated": 7,
   "top1_accuracy": 1.0,
   "top3_accuracy": 1.0,
-  "mean_time_to_candidate_sec": 66.0,
+  "mean_time_to_candidate_sec": 65.0,
   "results": [
     {
       "scenario": "mock",
@@ -16,6 +16,20 @@
       "matched": true,
       "is_unknown": false,
       "time_to_candidate_sec": 210,
+      "anomalies_count": 4,
+      "candidates_count": 4
+    },
+    {
+      "scenario": "satva_sumii",
+      "cause_kind": "change",
+      "ground_truth": "payments config razorpay webhook secret update",
+      "predicted_top1": "Render envVar RAZORPAY_WEBHOOK_SECRET updated by deploy admin; reloaded gunic...",
+      "rank": 1,
+      "top1_hit": true,
+      "top3_hit": true,
+      "matched": true,
+      "is_unknown": false,
+      "time_to_candidate_sec": 60,
       "anomalies_count": 4,
       "candidates_count": 4
     },
