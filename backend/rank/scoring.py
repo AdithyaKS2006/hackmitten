@@ -280,19 +280,20 @@ def rank_candidates(
             else:
                 confidence = "low"
 
-        final_candidates.append(
-            Candidate(
-                rank=idx,
-                kind=c["kind"],
-                name=c["name"],
-                service=c["service"],
-                score=round(c_score, 2),
-                confidence=confidence,
-                reasons=c["reasons"],
-                evidence_ids=c["evidence_ids"],
-                label="hypothesis",
-            )
+        from backend.rank.explain import explain_candidate
+        cand_obj = Candidate(
+            rank=idx,
+            kind=c["kind"],
+            name=c["name"],
+            service=c["service"],
+            score=round(c_score, 2),
+            confidence=confidence,
+            reasons=c["reasons"],
+            evidence_ids=c["evidence_ids"],
+            label="hypothesis",
         )
+        cand_obj.explanation = explain_candidate(cand_obj, anomalies, [])
+        final_candidates.append(cand_obj)
 
     return final_candidates, False, None
 

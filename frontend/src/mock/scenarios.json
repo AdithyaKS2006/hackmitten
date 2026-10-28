@@ -1,0 +1,32 @@
+[
+  {
+    "id": "mock",
+    "name": "Payment DB Pool Exhaustion Cascade",
+    "time_range": ["2026-10-28T13:30:00Z", "2026-10-28T14:30:00Z"]
+  },
+  {
+    "id": "syn_1",
+    "name": "Payment DB Connection Pool Starvation",
+    "time_range": ["2026-10-28T13:00:00Z", "2026-10-28T14:00:00Z"]
+  },
+  {
+    "id": "syn_2",
+    "name": "Cart Service NullPointer Release Regression",
+    "time_range": ["2026-10-28T14:00:00Z", "2026-10-28T15:00:00Z"]
+  },
+  {
+    "id": "syn_3",
+    "name": "Database Lock Saturation (No Change)",
+    "time_range": ["2026-10-28T15:00:00Z", "2026-10-28T16:00:00Z"]
+  },
+  {
+    "id": "syn_4",
+    "name": "Checkout Memory Leak with Red Herring Deploy",
+    "time_range": ["2026-10-28T16:00:00Z", "2026-10-28T17:00:00Z"]
+  },
+  {
+    "id": "syn_5",
+    "name": "External Payment Provider Outage (Unknown Case)",
+    "time_range": ["2026-10-28T17:00:00Z", "2026-10-28T18:00:00Z"]
+  }
+]

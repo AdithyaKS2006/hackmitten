@@ -1,0 +1,84 @@
+{
+  "summary": {
+    "total_scenarios": 6,
+    "top_1_hits": 6,
+    "top_3_hits": 6,
+    "top_1_accuracy_pct": 100.0,
+    "top_3_accuracy_pct": 100.0,
+    "mean_time_to_candidate_s": 66.0
+  },
+  "scenarios": [
+    {
+      "scenario_id": "mock",
+      "true_cause": "payment config pool_size 50->5",
+      "cause_kind": "change",
+      "predicted_top_1": "payment config updated: db connection pool_size 50 -> 5",
+      "rank": 1,
+      "top_1_hit": true,
+      "top_3_hit": true,
+      "time_to_candidate_s": 210,
+      "score": 0.98,
+      "confidence": "high"
+    },
+    {
+      "scenario_id": "syn_1",
+      "true_cause": "payment config pool_size 50->5",
+      "cause_kind": "change",
+      "predicted_top_1": "payment config updated: db connection pool_size 50 -> 5",
+      "rank": 1,
+      "top_1_hit": true,
+      "top_3_hit": true,
+      "time_to_candidate_s": 0,
+      "score": 0.99,
+      "confidence": "high"
+    },
+    {
+      "scenario_id": "syn_2",
+      "true_cause": "cart service release deploy v2.4.0 -> v2.5.0",
+      "cause_kind": "change",
+      "predicted_top_1": "cart service release deploy v2.4.0 -> v2.5.0",
+      "rank": 1,
+      "top_1_hit": true,
+      "top_3_hit": true,
+      "time_to_candidate_s": 0,
+      "score": 0.99,
+      "confidence": "high"
+    },
+    {
+      "scenario_id": "syn_3",
+      "true_cause": "db service degradation",
+      "cause_kind": "service",
+      "predicted_top_1": "db service degradation",
+      "rank": 1,
+      "top_1_hit": true,
+      "top_3_hit": true,
+      "time_to_candidate_s": 0,
+      "score": 0.94,
+      "confidence": "high"
+    },
+    {
+      "scenario_id": "syn_4",
+      "true_cause": "checkout service degradation",
+      "cause_kind": "service",
+      "predicted_top_1": "checkout service degradation",
+      "rank": 1,
+      "top_1_hit": true,
+      "top_3_hit": true,
+      "time_to_candidate_s": 120,
+      "score": 0.92,
+      "confidence": "high"
+    },
+    {
+      "scenario_id": "syn_5",
+      "true_cause": "external dependency outage",
+      "cause_kind": "external",
+      "predicted_top_1": "unknown",
+      "rank": 1,
+      "top_1_hit": true,
+      "top_3_hit": true,
+      "time_to_candidate_s": null,
+      "score": null,
+      "confidence": null
+    }
+  ]
+}

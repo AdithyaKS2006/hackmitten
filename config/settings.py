@@ -18,6 +18,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "backend.api.middleware.RoleAuditMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"

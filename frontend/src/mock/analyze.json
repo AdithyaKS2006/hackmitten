@@ -1,0 +1,114 @@
+{
+  "scenario_id": "mock",
+  "as_of": null,
+  "timeline": [
+    {
+      "ts": "2026-10-28T13:55:00Z",
+      "service": "payment",
+      "kind": "change",
+      "summary": "Config updated: db connection pool_size 50 -> 5",
+      "evidence_ids": ["e_change_01"]
+    },
+    {
+      "ts": "2026-10-28T13:58:15Z",
+      "service": "payment",
+      "kind": "log",
+      "summary": "New log template: connection pool exhausted: failed to obtain db connection",
+      "evidence_ids": ["e_mock_142"]
+    },
+    {
+      "ts": "2026-10-28T14:00:00Z",
+      "service": "payment",
+      "kind": "metric",
+      "summary": "latency_p95 rose from ~115.0 ms to ~2240.0 ms (peak z=212.5)",
+      "evidence_ids": ["e_mock_168"]
+    },
+    {
+      "ts": "2026-10-28T14:03:00Z",
+      "service": "checkout",
+      "kind": "log",
+      "summary": "Request to payment service failed with 504 Gateway Timeout",
+      "evidence_ids": ["e_mock_190"]
+    },
+    {
+      "ts": "2026-10-28T14:03:00Z",
+      "service": "frontend",
+      "kind": "metric",
+      "summary": "latency_p95 rose from ~45.0 ms to ~2100.0 ms",
+      "evidence_ids": ["e_mock_202"]
+    }
+  ],
+  "candidates": [
+    {
+      "rank": 1,
+      "kind": "change",
+      "name": "payment config updated: db connection pool_size 50 -> 5",
+      "service": "payment",
+      "score": 0.98,
+      "confidence": "high",
+      "reasons": [
+        "Change 'db connection pool_size 50 -> 5' occurred on payment at 2026-10-28T13:55:00Z, preceding first anomaly onset.",
+        "payment exhibits earliest anomaly onset (13:58:15Z) across all services.",
+        "Downstream services checkout and frontend depend on payment.",
+        "Multi-signal agreement across: log, metric."
+      ],
+      "evidence_ids": ["e_change_01", "a1", "e_mock_142", "e_mock_168"],
+      "label": "hypothesis",
+      "explanation": "Hypothesis: The primary root cause is the recent change event 'payment config updated: db connection pool_size 50 -> 5' on payment. Preceded by change at 13:55:00Z, causing connection pool exhaustion and downstream cascades. Check whether payment error rates subside and downstream latency recovers after reverting 'db connection pool_size 50 -> 5'."
+    },
+    {
+      "rank": 2,
+      "kind": "service",
+      "name": "payment service degradation",
+      "service": "payment",
+      "score": 0.91,
+      "confidence": "high",
+      "reasons": [
+        "payment is the earliest anomalous service in the cluster.",
+        "2 downstream services (checkout, frontend) directly or transitively depend on payment.",
+        "Multi-signal agreement across: log, metric."
+      ],
+      "evidence_ids": ["a1", "e_mock_142", "e_mock_168"],
+      "label": "hypothesis",
+      "explanation": "Hypothesis: The primary root cause is an internal service degradation originating on payment. Inspect payment resource saturation and thread/connection pools during the incident window to verify root-level exhaustion."
+    },
+    {
+      "rank": 3,
+      "kind": "service",
+      "name": "checkout service degradation",
+      "service": "checkout",
+      "score": 0.62,
+      "confidence": "medium",
+      "reasons": [
+        "checkout experienced anomaly onset at 14:03:00Z.",
+        "checkout depends on payment; onset occurred after payment failure."
+      ],
+      "evidence_ids": ["a2", "e_mock_190"],
+      "label": "hypothesis",
+      "explanation": "Hypothesis: Secondary cascade victim degradation on checkout caused by upstream payment service timeouts."
+    }
+  ],
+  "unknown": false,
+  "unknown_reason": null,
+  "graph": {
+    "nodes": ["frontend", "checkout", "payment", "cart", "db"],
+    "edges": [
+      ["frontend", "checkout"],
+      ["checkout", "payment"],
+      ["checkout", "cart"],
+      ["payment", "db"],
+      ["cart", "db"]
+    ]
+  },
+  "anomalous_services": {
+    "payment": "cause",
+    "checkout": "victim",
+    "frontend": "victim",
+    "cart": "healthy",
+    "db": "healthy"
+  },
+  "redaction_sample": {
+    "before": "User session opened: support-admin@company.com, callback phone +1-555-019-2834 verified, auth_token=eyJhbGciOiJIUzI1NiJ9",
+    "after": "User session opened: [EMAIL], callback phone [PHONE] verified, auth_token=[SECRET]"
+  }
+}
