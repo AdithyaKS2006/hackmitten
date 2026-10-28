@@ -6,7 +6,7 @@ from rest_framework import status
 
 from backend import store
 from backend.detect import fit_baselines, find_anomalies
-from backend.rank import rank_candidates, build_timeline
+from backend.rank import rank_candidates, build_timeline, identify_anomalous_services
 from backend.ingest import redact_text
 from backend.models import AnalyzeResponse, TimelineItem, Candidate
 
@@ -132,15 +132,8 @@ def analyze_view(request, id: str):
             elif isinstance(item, TimelineItem):
                 timeline_items.append(item)
 
-        # Map anomalous services
-        anomalous_services = {}
-        for a in anomalies:
-            if a.service == "payment":
-                anomalous_services[a.service] = "cause"
-            elif a.service == "checkout":
-                anomalous_services[a.service] = "victim"
-            else:
-                anomalous_services[a.service] = "affected"
+        # Map anomalous services (cause, victim, affected)
+        anomalous_services = identify_anomalous_services(candidates, anomalies, graph)
 
         # Redaction demonstration sample
         raw_sample = "User session opened: support-admin@company.com, callback phone +1-555-019-2834 verified"

@@ -1,0 +1,23 @@
+{
+  "timestamp": "2026-10-28T11:43:17.431738+00:00",
+  "scenarios_evaluated": 1,
+  "top1_accuracy": 1.0,
+  "top3_accuracy": 1.0,
+  "mean_time_to_candidate_sec": 210.0,
+  "results": [
+    {
+      "scenario": "mock",
+      "cause_kind": "change",
+      "ground_truth": "payment config pool_size 50->5",
+      "predicted_top1": "payment config updated: db connection pool_size 50 -> 5",
+      "rank": 1,
+      "top1_hit": true,
+      "top3_hit": true,
+      "matched": true,
+      "is_unknown": false,
+      "time_to_candidate_sec": 210,
+      "anomalies_count": 4,
+      "candidates_count": 4
+    }
+  ]
+}
