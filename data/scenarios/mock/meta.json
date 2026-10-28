@@ -1,0 +1,10 @@
+{
+  "id": "mock",
+  "name": "Payment DB Pool Exhaustion Cascade",
+  "incident_start": "2026-10-28T13:55:00Z",
+  "baseline_end": "2026-10-28T13:54:00Z",
+  "time_range": [
+    "2026-10-28T13:30:00Z",
+    "2026-10-28T14:30:00Z"
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "cause_kind": "change",
+  "cause_name": "payment config pool_size 50->5",
+  "notes": "Payment DB connection pool size reduced from 50 to 5 at 13:55, leading to pool exhaustion at 13:58, latency spike at 14:00, and checkout cascading failure at 14:02."
+}

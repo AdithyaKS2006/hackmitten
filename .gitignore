@@ -1,0 +1,11 @@
+node_modules/
+__pycache__/
+.venv/
+logs/
+*.zip
+.env
+dist/
+
+# data/raw
+data/raw/*
+!data/raw/.gitkeep
