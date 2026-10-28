@@ -29,17 +29,16 @@ class RoleAuditMiddleware:
         # Allow swagger/schema or root if any, but all API endpoints require X-Role
         role = request.headers.get("X-Role", "").strip()
 
-        # Audit entry
-        audit_entry = {
-            "ts": datetime.now(timezone.utc).isoformat(),
-            "role": role if role else "unauthenticated",
-            "path": path,
-            "method": request.method,
-            "remote_addr": request.META.get("REMOTE_ADDR", ""),
-        }
-        store.audit(audit_entry)
-
         if role not in ("analyst", "viewer"):
+            # Audit unauthorized intrusion attempts
+            audit_entry = {
+                "ts": datetime.now(timezone.utc).isoformat(),
+                "role": role if role else "unauthenticated",
+                "path": path,
+                "method": request.method,
+                "remote_addr": request.META.get("REMOTE_ADDR", ""),
+            }
+            store.audit(audit_entry)
             return JsonResponse(
                 {
                     "detail": "Unauthorized: X-Role header is required and must be 'analyst' or 'viewer'",

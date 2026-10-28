@@ -1,8 +1,11 @@
 from datetime import datetime
 from typing import Any
+import numpy as np
 from backend.models import Anomaly, Candidate, Event
 from backend.rank import config
 from backend.rank.graph import build_graph, upstream_dependents, downstream_dependencies
+from backend.rank.explain import explain_candidate
+from backend.rank.ml_scorer import score_candidate_ml
 
 
 def parse_iso_ts(ts_str: str) -> float:
@@ -86,6 +89,7 @@ def rank_candidates(
     service_reasons: dict[str, list[str]] = {}
     service_evidence: dict[str, list[str]] = {}
     service_changes: dict[str, list[tuple[Event, float]]] = {}
+    service_ml: dict[str, float | None] = {}
 
     for s in anomalous_services:
         s_onset = svc_onsets[s]
@@ -175,6 +179,33 @@ def rank_candidates(
         signal_str = ", ".join(sorted(signal_types))
         reasons.append(f"Multi-signal agreement across: {signal_str}.")
 
+        # Evaluate Machine Learning Scorer (Gradient Boosted RCA model)
+        svc_anoms = anomalies_by_svc[s]
+        max_score = max([a.score for a in svc_anoms] or [0.5])
+        avg_score = sum(a.score for a in svc_anoms) / max(1, len(svc_anoms))
+        metric_anoms = [a for a in svc_anoms if "metric" in a.signal.lower()]
+        lat_err = [
+            a for a in svc_anoms
+            if any(k in a.signal.lower() or k in a.reason.lower() for k in ["latency", "error", "trace", "timeout", "fail"])
+        ]
+
+        ml_features = {
+            "log_max_zscore": float(np.log1p(max_score * 15.0)),
+            "onset_score": float(early),
+            "sustained_ratio": float(min(1.0, len(svc_anoms) / 4.0)),
+            "mean_zscore": float(np.log1p(avg_score * 8.0)),
+            "metric_anomaly_ratio": float(len(metric_anoms) / max(1, len(svc_anoms))),
+            "lat_err_count": float(len(lat_err)),
+            "rel_sustained": float(1.0 if len(svc_anoms) >= 2 else 0.5),
+            "rel_max_z": float(max_score),
+            "causal_strength": float(total_score),
+            "total_metrics": float(len(svc_anoms)),
+        }
+        ml_prob = score_candidate_ml(ml_features)
+        service_ml[s] = ml_prob
+        if ml_prob is not None and ml_prob >= 0.60:
+            reasons.append(f"Trained Gradient-Boosted RCA classifier confidence: {ml_prob * 100:.1f}%.")
+
         service_reasons[s] = reasons
 
         # Aggregate evidence IDs
@@ -199,6 +230,7 @@ def rank_candidates(
             "score": service_scores[s],
             "reasons": service_reasons[s],
             "evidence_ids": service_evidence[s],
+            "ml_confidence": service_ml.get(s),
         })
 
     # Change candidates: inherit score of service they touched, adjusted by proximity
@@ -232,6 +264,7 @@ def rank_candidates(
                 "score": change_cand_score,
                 "reasons": change_reasons,
                 "evidence_ids": change_evidence_ids,
+                "ml_confidence": service_ml.get(s),
             })
 
     # Sort descending by score
@@ -280,7 +313,6 @@ def rank_candidates(
             else:
                 confidence = "low"
 
-        from backend.rank.explain import explain_candidate
         cand_obj = Candidate(
             rank=idx,
             kind=c["kind"],
@@ -291,6 +323,7 @@ def rank_candidates(
             reasons=c["reasons"],
             evidence_ids=c["evidence_ids"],
             label="hypothesis",
+            ml_confidence=c.get("ml_confidence"),
         )
         cand_obj.explanation = explain_candidate(cand_obj, anomalies, [])
         final_candidates.append(cand_obj)

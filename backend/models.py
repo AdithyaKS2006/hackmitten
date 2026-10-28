@@ -43,6 +43,7 @@ class Candidate(BaseModel):
     evidence_ids: list[str] = Field(default_factory=list)
     label: str = "hypothesis"
     explanation: Optional[str] = None
+    ml_confidence: Optional[float] = None
 
 
 class TimelineItem(BaseModel):

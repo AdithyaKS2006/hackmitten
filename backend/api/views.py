@@ -9,6 +9,8 @@ from backend.detect import fit_baselines, find_anomalies
 from backend.rank import rank_candidates, build_timeline, identify_anomalous_services
 from backend.ingest import redact_text
 from backend.models import AnalyzeResponse, TimelineItem, Candidate
+ 
+_BASELINE_CACHE: dict[tuple[str, str, int], Any] = {}
 
 
 def check_auth_and_audit(request, scenario: str = "") -> tuple[bool, str, JsonResponse | None]:
@@ -110,8 +112,14 @@ def analyze_view(request, id: str):
         if not baseline_events:
             baseline_events = events[: max(1, int(len(events) * 0.4))]
 
-        # Run pipeline stubs/modules
-        baselines = fit_baselines(baseline_events)
+        # Run pipeline stubs/modules with baseline cache
+        baseline_cache_key = (id, baseline_end, len(baseline_events))
+        if baseline_cache_key in _BASELINE_CACHE:
+            baselines = _BASELINE_CACHE[baseline_cache_key]
+        else:
+            baselines = fit_baselines(baseline_events)
+            _BASELINE_CACHE[baseline_cache_key] = baselines
+
         anomalies = find_anomalies(events, baselines)
         candidates, unknown, unknown_reason = rank_candidates(anomalies, events, graph)
         raw_timeline = build_timeline(anomalies, events, candidates)

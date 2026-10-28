@@ -1,5 +1,7 @@
 import json
 import os
+import threading
+import time
 from pathlib import Path
 from typing import Any, Optional
 from backend.models import Event
@@ -9,14 +11,29 @@ DB_NAME = "ao03"
 
 _mongo_client = None
 _mongo_available: Optional[bool] = None
+_last_mongo_check: float = 0.0
+MONGO_RETRY_INTERVAL = 5.0  # Retry connection every 5s if failed
+_audit_lock = threading.Lock()
+_events_cache: dict[str, list[dict[str, Any]]] = {}
 
 
 def get_mongo_client():
-    global _mongo_client, _mongo_available
-    if _mongo_available is False:
+    global _mongo_client, _mongo_available, _last_mongo_check
+    now = time.time()
+    # If connection was previously marked unavailable, retry after MONGO_RETRY_INTERVAL
+    if _mongo_available is False and (now - _last_mongo_check) < MONGO_RETRY_INTERVAL:
         return None
+
     if _mongo_client is not None:
-        return _mongo_client
+        try:
+            _mongo_client.admin.command("ping")
+            return _mongo_client
+        except Exception:
+            _mongo_client = None
+            _mongo_available = False
+            _last_mongo_check = now
+            return None
+
     try:
         from pymongo import MongoClient
         client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=1000)
@@ -27,6 +44,7 @@ def get_mongo_client():
     except Exception:
         _mongo_available = False
         _mongo_client = None
+        _last_mongo_check = now
         return None
 
 
@@ -132,18 +150,30 @@ def get_events(id: str, as_of: Optional[str] = None) -> list[Event]:
     if not raw_events:
         events_file = Path("data/scenarios") / id / "events.jsonl"
         if events_file.exists():
-            with open(events_file, "r", encoding="utf-8") as f:
-                for line in f:
-                    line = line.strip()
-                    if line:
-                        ev = json.loads(line)
-                        if as_of and ev.get("ts", "") > as_of:
-                            continue
-                        raw_events.append(ev)
+            mtime = events_file.stat().st_mtime
+            cached = _events_cache.get(id)
+            if cached and cached.get("mtime") == mtime:
+                all_parsed: list[Event] = cached.get("events", [])
+            else:
+                all_parsed = []
+                with open(events_file, "r", encoding="utf-8") as f:
+                    for line in f:
+                        line = line.strip()
+                        if line:
+                            try:
+                                ev_dict = json.loads(line)
+                                clean_ev = {k: v for k, v in ev_dict.items() if k != "scenario_id"}
+                                all_parsed.append(Event(**clean_ev))
+                            except Exception:
+                                pass
+                _events_cache[id] = {"mtime": mtime, "events": all_parsed}
+
+            if as_of:
+                return [e for e in all_parsed if e.ts <= as_of]
+            return all_parsed
 
     parsed: list[Event] = []
     for ev in raw_events:
-        # strip scenario_id if added for mongo
         clean_ev = {k: v for k, v in ev.items() if k != "scenario_id"}
         try:
             parsed.append(Event(**clean_ev))
@@ -228,11 +258,12 @@ def get_evaluation() -> Optional[dict[str, Any]]:
 
 def audit(entry: dict[str, Any]) -> None:
     """Audit log entry to MongoDB and logs/audit.jsonl."""
-    # Append to logs/audit.jsonl
+    # Thread-safe append to logs/audit.jsonl
     log_dir = Path("logs")
     log_dir.mkdir(parents=True, exist_ok=True)
-    with open(log_dir / "audit.jsonl", "a", encoding="utf-8") as f:
-        f.write(json.dumps(entry) + "\n")
+    with _audit_lock:
+        with open(log_dir / "audit.jsonl", "a", encoding="utf-8") as f:
+            f.write(json.dumps(entry) + "\n")
 
     mode = get_storage_mode()
     if mode == "mongo":
