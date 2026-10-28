@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 /**
  * Slide-over Drawer / Modal for Verifiable Telemetry Evidence (Rule 3)
  * Displays verified, redacted telemetry records in a clean, user-friendly inspector.
+ * Features universal clipboard copying that works across HTTPS, HTTP, and LAN IP addresses.
  */
 export default function EvidenceDrawer({ evidenceData, onClose }) {
   const [copied, setCopied] = useState(false);
@@ -20,10 +21,45 @@ export default function EvidenceDrawer({ evidenceData, onClose }) {
   const service = primaryRecord?.service || 'Microservice';
   const eventType = primaryRecord?.type || primaryRecord?.kind || 'Telemetry Event';
 
+  // Bulletproof copy that works on HTTP (like 10.10.113.157) and HTTPS alike
   const handleCopy = () => {
-    navigator.clipboard.writeText(jsonString);
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(jsonString)
+          .then(() => triggerCopiedFeedback())
+          .catch(() => fallbackCopy(jsonString));
+      } else {
+        fallbackCopy(jsonString);
+      }
+    } catch (err) {
+      fallbackCopy(jsonString);
+    }
+  };
+
+  const fallbackCopy = (text) => {
+    try {
+      const el = document.createElement('textarea');
+      el.value = text;
+      el.setAttribute('readonly', '');
+      el.style.position = 'fixed';
+      el.style.left = '-9999px';
+      el.style.top = '-9999px';
+      document.body.appendChild(el);
+      el.focus();
+      el.select();
+      const success = document.execCommand('copy');
+      document.body.removeChild(el);
+      if (success) {
+        triggerCopiedFeedback();
+      }
+    } catch (err) {
+      console.warn('Fallback copy failed:', err);
+    }
+  };
+
+  const triggerCopiedFeedback = () => {
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => setCopied(false), 2200);
   };
 
   return (
@@ -106,8 +142,12 @@ export default function EvidenceDrawer({ evidenceData, onClose }) {
             <div className="code-viewer-container">
               <div className="code-viewer-bar">
                 <span className="code-filename">evidence_record_{id}.json</span>
-                <button className="btn-copy-code" onClick={handleCopy}>
-                  {copied ? '✓ Copied' : '📋 Copy JSON'}
+                <button
+                  type="button"
+                  className={`btn-copy-code ${copied ? 'copied-active' : ''}`}
+                  onClick={handleCopy}
+                >
+                  {copied ? '✓ Copied to Clipboard!' : '📋 Copy JSON'}
                 </button>
               </div>
               <pre className="code-viewer-content">
@@ -122,8 +162,12 @@ export default function EvidenceDrawer({ evidenceData, onClose }) {
           <button className="btn-secondary-clean" onClick={onClose}>
             Close Inspector
           </button>
-          <button className="btn-primary-clean" onClick={handleCopy}>
-            {copied ? '✓ Copied JSON' : '📋 Copy Telemetry'}
+          <button
+            type="button"
+            className={`btn-primary-clean ${copied ? 'btn-copied-glow' : ''}`}
+            onClick={handleCopy}
+          >
+            {copied ? '✓ Copied to Clipboard!' : '📋 Copy Telemetry'}
           </button>
         </div>
       </div>

@@ -3641,4 +3641,233 @@ body {
   margin-bottom: 12px;
 }
 
+/* ==========================================================================
+   CLIPBOARD COPY SUCCESS FEEDBACK
+   ========================================================================== */
+
+.copied-active,
+.btn-copied-glow {
+  background-color: #059669 !important;
+  color: #ffffff !important;
+  border-color: #047857 !important;
+  box-shadow: 0 0 12px rgba(5, 150, 105, 0.4) !important;
+  transition: all 0.2s ease !important;
+}
+
+/* ==========================================================================
+   CLEAN & INTUITIVE SAFETY PANEL (NO CODE JARGON)
+   ========================================================================== */
+
+.safety-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.safety-kpi-card {
+  background-color: #ffffff;
+  border: 1px solid #ebd9c8;
+  border-radius: 10px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.safety-kpi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.safety-kpi-icon {
+  font-size: 20px;
+}
+
+.safety-kpi-pill {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.safety-kpi-pill.green { background: #def7ec; color: #03543f; }
+.safety-kpi-pill.blue { background: #e0f2fe; color: #0369a1; }
+.safety-kpi-pill.amber { background: #fef3c7; color: #92400e; }
+.safety-kpi-pill.purple { background: #f3e8ff; color: #6b21a8; }
+
+.safety-kpi-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #27201a;
+}
+
+.safety-kpi-desc {
+  font-size: 11.5px;
+  color: #796d60;
+  line-height: 1.4;
+}
+
+.safety-table-clean {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 12.5px;
+}
+
+.safety-table-clean th {
+  padding: 12px 14px;
+  background-color: #f7efe8;
+  color: #635648;
+  font-weight: 700;
+  border-bottom: 1.5px solid #e7dcce;
+  font-size: 11.5px;
+}
+
+.safety-table-clean td {
+  padding: 13px 14px;
+  border-bottom: 1px solid #f2e7db;
+  color: #3b322a;
+}
+
+.rule-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rule-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.rule-title-clean {
+  font-size: 13px;
+  color: #27201a;
+}
+
+.guard-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.guard-name-clean {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.guard-pill-verified {
+  font-size: 10.5px;
+  font-weight: 700;
+  background-color: #def7ec;
+  color: #047857;
+  padding: 2px 7px;
+  border-radius: 4px;
+  align-self: flex-start;
+}
+
+/* ==========================================================================
+   TECHINOVA CREATIVE HERO COMMAND BANNER & RADAR
+   ========================================================================== */
+
+.techinova-hero-banner {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ffffff 0%, #fdfbf7 60%, #faf3ea 100%) !important;
+  border: 1px solid #ecdcd0 !important;
+  box-shadow: 0 4px 16px rgba(180, 120, 54, 0.06) !important;
+}
+
+.techinova-radar-badge {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  background: #f7ede2;
+  border: 1.5px solid #e2cbba;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radar-pulse-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 12px;
+  border: 1.5px solid #b47836;
+  opacity: 0.6;
+  animation: radarPing 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes radarPing {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  75%, 100% { transform: scale(1.35); opacity: 0; }
+}
+
+.engine-pretitle {
+  font-size: 10px;
+  font-weight: 800;
+  color: #b47836;
+  letter-spacing: 0.6px;
+  margin-bottom: 2px;
+}
+
+/* ==========================================================================
+   CREATIVE REASONING & FEATURE IMPORTANCE MINI BARS
+   ========================================================================== */
+
+.creative-reasoning {
+  border-left: 4px solid #b47836 !important;
+  background: linear-gradient(135deg, #fffbf5 0%, #faf3eb 100%) !important;
+}
+
+.pulse-lightbulb {
+  font-size: 18px;
+  animation: bulbGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes bulbGlow {
+  from { filter: drop-shadow(0 0 2px rgba(234, 179, 8, 0.2)); }
+  to { filter: drop-shadow(0 0 6px rgba(234, 179, 8, 0.8)); }
+}
+
+.reasoning-verdict-row {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed #e8d7c7;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+}
+
+.verdict-tag {
+  font-weight: 800;
+  color: #8c5221;
+}
+
+.verdict-service {
+  color: #27201a;
+  font-weight: 600;
+}
+
+.chip-mini-track {
+  width: 100%;
+  height: 4px;
+  background-color: #e8dcd0;
+  border-radius: 2px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.chip-mini-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #b47836, #e08363);
+  border-radius: 2px;
+}
+
+
 

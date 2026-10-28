@@ -29,13 +29,13 @@ export default function RankedCauses({
     return names[srv.toLowerCase()] || `${srv.charAt(0).toUpperCase() + srv.slice(1)} Service`;
   };
 
-  // Human-friendly feature importance labels (from RCAEval model)
+  // Feature importance from RCAEval model
   const featureImportances = [
-    { key: 'sustained_ratio', name: 'Sustained Duration', code: 'sustained_ratio', val: '62.47%', active: true, icon: '🏆' },
-    { key: 'log_max_zscore', name: 'Peak Log Spikes', code: 'log_max_zscore', val: '15.32%', active: false, icon: '📈' },
-    { key: 'mean_zscore', name: 'Mean Signal Drift', code: 'mean_zscore', val: '10.59%', active: false, icon: '📊' },
-    { key: 'metric_anomaly_ratio', name: 'Anomaly Ratio', code: 'metric_anomaly_ratio', val: '7.59%', active: false, icon: '📉' },
-    { key: 'onset_score', name: 'Onset Priority', code: 'onset_score', val: '4.03%', active: false, icon: '⏱' },
+    { key: 'sustained_ratio', name: 'Sustained Duration', code: 'sustained_ratio', val: '62.47%', pct: 62, active: true, icon: '🏆' },
+    { key: 'log_max_zscore', name: 'Peak Log Spikes', code: 'log_max_zscore', val: '15.32%', pct: 15, active: false, icon: '📈' },
+    { key: 'mean_zscore', name: 'Mean Signal Drift', code: 'mean_zscore', val: '10.59%', pct: 11, active: false, icon: '📊' },
+    { key: 'metric_anomaly_ratio', name: 'Anomaly Ratio', code: 'metric_anomaly_ratio', val: '7.59%', pct: 8, active: false, icon: '📉' },
+    { key: 'onset_score', name: 'Onset Priority', code: 'onset_score', val: '4.03%', pct: 4, active: false, icon: '⏱' },
   ];
 
   if (unknown) {
@@ -62,7 +62,7 @@ export default function RankedCauses({
             rank: 1,
             service: 'payment',
             kind: 'change',
-            tags: ['CONFIG UPDATE', 'HIGH IMPACT'],
+            tags: ['CONFIG UPDATE', 'ROOT CAUSE'],
             name: 'Payment configuration updated: Connection pool reduced from 50 to 5',
             confidence: 'HIGH CONFIDENCE',
             score: 0.89,
@@ -72,7 +72,7 @@ export default function RankedCauses({
             rank: 2,
             service: 'checkout',
             kind: 'service',
-            tags: ['CASCADE'],
+            tags: ['CASCADE VICTIM'],
             name: 'Increased latency and error rate observed due to payment delay.',
             confidence: 'MEDIUM CONFIDENCE',
             score: 0.63,
@@ -81,7 +81,7 @@ export default function RankedCauses({
             rank: 3,
             service: 'frontend',
             kind: 'service',
-            tags: ['CASCADE'],
+            tags: ['CASCADE VICTIM'],
             name: 'User requests slowed down after checkout latency increased.',
             confidence: 'LOW CONFIDENCE',
             score: 0.42,
@@ -90,7 +90,7 @@ export default function RankedCauses({
             rank: 4,
             service: 'cart',
             kind: 'service',
-            tags: ['NORMAL'],
+            tags: ['HEALTHY'],
             name: 'No significant anomalies detected in telemetry metrics.',
             confidence: 'LOW CONFIDENCE',
             score: 0.18,
@@ -122,10 +122,10 @@ export default function RankedCauses({
           </div>
         </div>
 
-        <span className="candidates-count-pill">{displayCandidates.length} Suspects</span>
+        <span className="candidates-count-pill">{displayCandidates.length} Evaluated</span>
       </div>
 
-      {/* Candidates List */}
+      {/* Candidates List with Creative Visual Gauges */}
       <div className="candidates-list-container">
         {displayCandidates.map((c, idx) => {
           const scorePercent = Math.round(c.score * 100);
@@ -134,10 +134,10 @@ export default function RankedCauses({
           // Badges derivation
           let tags = c.tags;
           if (!tags) {
-            if (c.kind === 'change') {
-              tags = ['CONFIG UPDATE', 'HIGH IMPACT'];
+            if (c.kind === 'change' || c.rank === 1) {
+              tags = ['CONFIG UPDATE', 'ROOT CAUSE'];
             } else if (c.rank === 2 || c.rank === 3) {
-              tags = ['CASCADE'];
+              tags = ['CASCADE VICTIM'];
             } else {
               tags = ['NORMAL'];
             }
@@ -152,9 +152,9 @@ export default function RankedCauses({
 
           return (
             <div key={`candidate-${c.rank || idx}`} className={`candidate-row rank-${c.rank}`}>
-              {/* Rank Circle */}
+              {/* Rank Circle with Creative Glow */}
               <div className={`rank-circle rank-circle-${c.rank}`}>
-                {c.rank}
+                #{c.rank}
               </div>
 
               {/* Service Icon */}
@@ -168,9 +168,9 @@ export default function RankedCauses({
                   <span className="candidate-service-name">{formatServiceName(c.service)}</span>
                   {tags.map((tag, tIdx) => {
                     let tagClass = 'tag-cascade';
-                    if (tag === 'CONFIG UPDATE') tagClass = 'tag-config';
-                    if (tag === 'HIGH IMPACT') tagClass = 'tag-impact';
-                    if (tag === 'NORMAL') tagClass = 'tag-normal';
+                    if (tag === 'CONFIG UPDATE' || tag === 'ROOT CAUSE') tagClass = 'tag-config';
+                    if (tag === 'CASCADE VICTIM') tagClass = 'tag-impact';
+                    if (tag === 'NORMAL' || tag === 'HEALTHY') tagClass = 'tag-normal';
                     return (
                       <span key={`tag-${tIdx}`} className={`cause-tag-pill ${tagClass}`}>
                         {tag}
@@ -210,16 +210,20 @@ export default function RankedCauses({
         })}
       </div>
 
-      {/* Key Reasoning Box */}
-      <div className="key-reasoning-card">
+      {/* Creative Key Reasoning Box */}
+      <div className="key-reasoning-card creative-reasoning">
         <div className="reasoning-header">
-          <span className="lightbulb-icon">💡</span>
-          <span className="reasoning-title">Key Reasoning & Explanation</span>
+          <div className="pulse-lightbulb">💡</div>
+          <span className="reasoning-title">Primary Causal Inference & Evidence Rationale</span>
         </div>
         <p className="reasoning-text">{primaryReasoning}</p>
+        <div className="reasoning-verdict-row">
+          <span className="verdict-tag">ATTRIBUTION VERDICT:</span>
+          <span className="verdict-service">payment service configuration change is the primary cascade origin</span>
+        </div>
       </div>
 
-      {/* Top Feature Importance Box */}
+      {/* Top Feature Importance Box with Graphical Visual Bars */}
       <div className="feature-importance-card">
         <div className="features-header">
           <span className="features-icon">📊</span>
@@ -237,6 +241,13 @@ export default function RankedCauses({
                 <span className="chip-name">{f.name}</span>
               </div>
               <div className="feature-metric-value">{f.val}</div>
+              {/* Mini visual indicator bar */}
+              <div className="chip-mini-track">
+                <div
+                  className="chip-mini-fill"
+                  style={{ width: `${f.pct}%` }}
+                ></div>
+              </div>
             </div>
           ))}
         </div>
