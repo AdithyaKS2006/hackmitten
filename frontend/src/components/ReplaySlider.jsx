@@ -94,29 +94,27 @@ export default function ReplaySlider({ meta, currentAsOf, onAsOfChange, loading 
     if (barPercent < incidentPercent - 5) {
       // Baseline normal traffic
       height = 5 + (i % 3) * 3;
-      color = '#b7cfbd';
+      color = '#10b981';
     } else if (barPercent >= incidentPercent - 5 && barPercent <= incidentPercent + 15) {
       // Anomaly onset spike
       height = 20 + ((i * 7) % 14);
-      color = '#e05252';
+      color = '#ef4444';
     } else {
       // Cascade elevated state
       height = 12 + ((i * 5) % 10);
-      color = '#e2993a';
+      color = '#f59e0b';
     }
 
     return { height, color, isPassed: barPercent <= sliderVal };
   });
 
   return (
-    <div className="replay-scrubber-card">
+    <div className="replay-scrubber-card division-replay-card">
       {/* Card Header */}
       <div className="scrubber-header-row">
         <div className="scrubber-title-group">
           <div className="waveform-icon-badge division-header-icon-box">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b47836" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M2 12h3l2-6 4 12 3-9 2 5 2-2h4"></path>
-            </svg>
+            <span className="material-symbols-outlined header-symbol-gold">history</span>
           </div>
           <div>
             <div className="division-pretitle-tag">LIVE INCIDENT REPLAY</div>
@@ -131,7 +129,7 @@ export default function ReplaySlider({ meta, currentAsOf, onAsOfChange, loading 
             <span className="timing-value">{elapsedLabel}</span>
           </div>
           <div className="timing-pill clock-pill">
-            <span className="clock-icon">🕒</span>
+            <span className="material-symbols-outlined clock-icon">schedule</span>
             <span className="timing-clock">{clockTimeStr}</span>
           </div>
         </div>
@@ -140,9 +138,9 @@ export default function ReplaySlider({ meta, currentAsOf, onAsOfChange, loading 
       {/* Graphical Waveform Spectrum of Telemetry Activity */}
       <div className="scrubber-waveform-container" title="Telemetry Ingestion Volume & Anomaly Density">
         <div className="waveform-label-top">
-          <span>Normal Baseline Traffic</span>
+          <span className="baseline-text">Normal Baseline Traffic</span>
           <span className="onset-text">Onset Peak Spikes</span>
-          <span>Sustained Cascade</span>
+          <span className="cascade-text">Sustained Cascade</span>
         </div>
         <div className="waveform-bars-track">
           {waveBars.map((bar, idx) => (
@@ -188,20 +186,26 @@ export default function ReplaySlider({ meta, currentAsOf, onAsOfChange, loading 
             className={`btn-play-stream ${isPlaying ? 'playing' : ''}`}
             onClick={() => setIsPlaying(!isPlaying)}
           >
-            {isPlaying ? '⏸ Pause Stream' : '▶ Play Stream'}
+            <span className="material-symbols-outlined btn-symbol">
+              {isPlaying ? 'pause' : 'play_arrow'}
+            </span>
+            <span>{isPlaying ? 'Pause Stream' : 'Play Stream'}</span>
           </button>
 
           <button type="button" className="btn-replay-pill" onClick={jumpToIncident}>
-            ⚡ Jump to Onset
+            <span className="material-symbols-outlined btn-symbol">bolt</span>
+            <span>Jump to Onset</span>
           </button>
 
           <button type="button" className="btn-replay-pill" onClick={handleReset}>
-            🔄 Full Incident
+            <span className="material-symbols-outlined btn-symbol">restart_alt</span>
+            <span>Full Incident</span>
           </button>
         </div>
 
         <button type="button" className="link-telemetry-window" onClick={handleReset}>
-          Complete Telemetry Window →
+          <span>Complete Telemetry Window</span>
+          <span className="material-symbols-outlined link-symbol">arrow_forward</span>
         </button>
       </div>
     </div>

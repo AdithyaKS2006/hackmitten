@@ -22,7 +22,10 @@ export default function SettingsView({ role, onRoleChange, health }) {
           </p>
         </div>
         {savedMsg && (
-          <div className="save-toast-pill">✓ Settings Saved Successfully</div>
+          <div className="save-toast-pill">
+            <span className="material-symbols-outlined sym-icon-xs text-success">check_circle</span>
+            <span>Settings Saved Successfully</span>
+          </div>
         )}
       </div>
 
@@ -30,7 +33,7 @@ export default function SettingsView({ role, onRoleChange, health }) {
         {/* Card 1: User & Role Permissions */}
         <div className="settings-card">
           <div className="settings-card-header">
-            <span className="settings-icon">👤</span>
+            <span className="material-symbols-outlined settings-icon text-primary">person</span>
             <div>
               <h3 className="settings-card-title">Operator Profile & Access Level</h3>
               <p className="settings-card-desc">Control investigation authorization sent via X-Role headers.</p>
@@ -69,7 +72,7 @@ export default function SettingsView({ role, onRoleChange, health }) {
         {/* Card 2: ML Model & Causal Scoring */}
         <div className="settings-card">
           <div className="settings-card-header">
-            <span className="settings-icon">🤖</span>
+            <span className="material-symbols-outlined settings-icon text-primary">smart_toy</span>
             <div>
               <h3 className="settings-card-title">Attribution Model & Feature Weights</h3>
               <p className="settings-card-desc">Configure the primary causal ranking engine.</p>
@@ -109,7 +112,7 @@ export default function SettingsView({ role, onRoleChange, health }) {
         {/* Card 3: Backend Telemetry API */}
         <div className="settings-card">
           <div className="settings-card-header">
-            <span className="settings-icon">🌐</span>
+            <span className="material-symbols-outlined settings-icon text-primary">dns</span>
             <div>
               <h3 className="settings-card-title">Telemetry API & Server Connection</h3>
               <p className="settings-card-desc">Live connection details to Django REST API service.</p>
@@ -151,7 +154,7 @@ export default function SettingsView({ role, onRoleChange, health }) {
         {/* Card 4: Governance & Immutable Storage */}
         <div className="settings-card">
           <div className="settings-card-header">
-            <span className="settings-icon">🛡️</span>
+            <span className="material-symbols-outlined settings-icon text-primary">verified_user</span>
             <div>
               <h3 className="settings-card-title">Safety & Audit Guarantees</h3>
               <p className="settings-card-desc">Immutable storage and honest refusal rules.</p>
@@ -164,7 +167,10 @@ export default function SettingsView({ role, onRoleChange, health }) {
                 <strong className="toggle-name">Rule 1: Immutable Telemetry Guarantee</strong>
                 <p className="toggle-desc">All API write/mutation requests to raw telemetry archives are rejected.</p>
               </div>
-              <span className="toggle-locked">ENFORCED</span>
+              <span className="toggle-locked">
+                <span className="material-symbols-outlined sym-icon-xs">lock</span>
+                ENFORCED
+              </span>
             </div>
 
             <div className="toggle-item">
@@ -172,7 +178,10 @@ export default function SettingsView({ role, onRoleChange, health }) {
                 <strong className="toggle-name">Rule 5: Honest Refusal Guard (Threshold 0.45)</strong>
                 <p className="toggle-desc">Return unknown=true if correlation score &lt; 0.45 or outage is external.</p>
               </div>
-              <span className="toggle-locked">ENFORCED</span>
+              <span className="toggle-locked">
+                <span className="material-symbols-outlined sym-icon-xs">lock</span>
+                ENFORCED
+              </span>
             </div>
 
             <div className="toggle-item">
@@ -180,7 +189,10 @@ export default function SettingsView({ role, onRoleChange, health }) {
                 <strong className="toggle-name">Rule 8: Ground Truth Isolation Gate</strong>
                 <p className="toggle-desc">Causal models and API endpoints never read ground truth records.</p>
               </div>
-              <span className="toggle-locked">ENFORCED</span>
+              <span className="toggle-locked">
+                <span className="material-symbols-outlined sym-icon-xs">lock</span>
+                ENFORCED
+              </span>
             </div>
           </div>
 

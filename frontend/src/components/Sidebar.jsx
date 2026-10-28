@@ -2,11 +2,11 @@ import React from 'react';
 
 export default function Sidebar({ currentNav = 'dashboard', onNavChange }) {
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: '🏠', tag: 'Core' },
-    { id: 'incidents', label: 'Incidents', icon: '⚠️', tag: '6' },
-    { id: 'servicemap', label: 'Service Map', icon: '🔗', tag: 'Topo' },
-    { id: 'reports', label: 'Reports', icon: '📄', tag: 'Audit' },
-    { id: 'settings', label: 'Settings', icon: '⚙️', tag: 'Config' },
+    { id: 'dashboard', label: 'Dashboard', icon: 'dashboard', tag: 'Core' },
+    { id: 'incidents', label: 'Incidents', icon: 'warning', tag: '6' },
+    { id: 'servicemap', label: 'Service Map', icon: 'account_tree', tag: 'Topo' },
+    { id: 'reports', label: 'Reports', icon: 'description', tag: 'Audit' },
+    { id: 'settings', label: 'Settings', icon: 'settings', tag: 'Config' },
   ];
 
   return (
@@ -42,7 +42,7 @@ export default function Sidebar({ currentNav = 'dashboard', onNavChange }) {
         </div>
       </div>
 
-      {/* Nav Menu with Light Borders and Distinct Action Buttons */}
+      {/* Nav Menu with Distinct Light Borders and Google Material Symbols */}
       <nav className="sidebar-nav">
         <span className="sidebar-section-label">PLATFORM NAVIGATION</span>
         {navItems.map((item) => {
@@ -56,7 +56,7 @@ export default function Sidebar({ currentNav = 'dashboard', onNavChange }) {
               title={`Switch to ${item.label}`}
             >
               <div className="nav-item-left">
-                <span className="nav-item-icon">{item.icon}</span>
+                <span className="material-symbols-outlined nav-item-icon">{item.icon}</span>
                 <span className="nav-item-label">{item.label}</span>
               </div>
               <span className={`nav-item-pill ${isActive ? 'active-pill' : ''}`}>
@@ -67,7 +67,7 @@ export default function Sidebar({ currentNav = 'dashboard', onNavChange }) {
         })}
       </nav>
 
-      {/* Standard Enterprise Cluster Health Indicator (UI-Industry Standard) */}
+      {/* Standard Enterprise Cluster Health Indicator */}
       <div className="sidebar-footer-card enterprise-health-card">
         <div className="system-status-header">
           <div className="status-badge-live">

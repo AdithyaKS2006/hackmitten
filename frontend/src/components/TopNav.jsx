@@ -18,25 +18,25 @@ export default function TopNav({
   const accountRef = useRef(null);
   const searchRef = useRef(null);
 
-  // Search catalog index
+  // Search catalog index using Google Material Symbols
   const searchCatalog = [
-    { type: 'Service', icon: '🗄️', title: 'payment', subtitle: 'Root Cause • Python Django • Port 8000', action: () => { if (onSelectService) onSelectService('payment'); if (onNavigate) onNavigate('dashboard'); } },
-    { type: 'Service', icon: '🛒', title: 'checkout', subtitle: 'Cascade Victim • Go gRPC • High Latency', action: () => { if (onSelectService) onSelectService('checkout'); if (onNavigate) onNavigate('dashboard'); } },
-    { type: 'Service', icon: '💻', title: 'frontend', subtitle: 'Cascade Victim • Node.js Express Gateway', action: () => { if (onSelectService) onSelectService('frontend'); if (onNavigate) onNavigate('dashboard'); } },
-    { type: 'Service', icon: '🛍️', title: 'cart', subtitle: 'Healthy Service • Java Spring Boot', action: () => { if (onSelectService) onSelectService('cart'); if (onNavigate) onNavigate('dashboard'); } },
-    { type: 'Service', icon: '👤', title: 'user', subtitle: 'Healthy Service • Go Profile Service', action: () => { if (onSelectService) onSelectService('user'); if (onNavigate) onNavigate('dashboard'); } },
-    { type: 'Service', icon: '💾', title: 'db', subtitle: 'PostgreSQL Relational Cluster', action: () => { if (onSelectService) onSelectService('db'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Service', icon: 'credit_card', title: 'payment', subtitle: 'Root Cause • Python Django • Port 8000', action: () => { if (onSelectService) onSelectService('payment'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Service', icon: 'shopping_cart', title: 'checkout', subtitle: 'Cascade Victim • Go gRPC • High Latency', action: () => { if (onSelectService) onSelectService('checkout'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Service', icon: 'desktop_windows', title: 'frontend', subtitle: 'Cascade Victim • Node.js Express Gateway', action: () => { if (onSelectService) onSelectService('frontend'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Service', icon: 'shopping_bag', title: 'cart', subtitle: 'Healthy Service • Java Spring Boot', action: () => { if (onSelectService) onSelectService('cart'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Service', icon: 'person', title: 'user', subtitle: 'Healthy Service • Go Profile Service', action: () => { if (onSelectService) onSelectService('user'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Service', icon: 'database', title: 'db', subtitle: 'PostgreSQL Relational Cluster', action: () => { if (onSelectService) onSelectService('db'); if (onNavigate) onNavigate('dashboard'); } },
 
-    { type: 'Scenario', icon: '⚡', title: 'Payment DB Pool Exhaustion Cascade', subtitle: 'Scenario: mock • Database thread pool starved', action: () => { if (onSelectScenario) onSelectScenario('mock'); if (onNavigate) onNavigate('dashboard'); } },
-    { type: 'Scenario', icon: '⚠️', title: 'Payment DB Connection Pool Starvation', subtitle: 'Scenario: syn_1 • Configuration change 50 -> 5', action: () => { if (onSelectScenario) onSelectScenario('syn_1'); if (onNavigate) onNavigate('dashboard'); } },
-    { type: 'Scenario', icon: '🐞', title: 'Cart Service NullPointer Release Regression', subtitle: 'Scenario: syn_2 • Deployment failure v2', action: () => { if (onSelectScenario) onSelectScenario('syn_2'); if (onNavigate) onNavigate('dashboard'); } },
-    { type: 'Scenario', icon: '🔒', title: 'Database Lock Saturation (No Change)', subtitle: 'Scenario: syn_3 • Row lock contention', action: () => { if (onSelectScenario) onSelectScenario('syn_3'); if (onNavigate) onNavigate('dashboard'); } },
-    { type: 'Scenario', icon: '📈', title: 'Checkout Memory Leak with Red Herring', subtitle: 'Scenario: syn_4 • Heap exhaustion', action: () => { if (onSelectScenario) onSelectScenario('syn_4'); if (onNavigate) onNavigate('dashboard'); } },
-    { type: 'Scenario', icon: '🛡️', title: 'External Payment Gateway Outage', subtitle: 'Scenario: syn_5 • Honest Unknown Refusal Guard', action: () => { if (onSelectScenario) onSelectScenario('syn_5'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Scenario', icon: 'bolt', title: 'Payment DB Pool Exhaustion Cascade', subtitle: 'Scenario: mock • Database thread pool starved', action: () => { if (onSelectScenario) onSelectScenario('mock'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Scenario', icon: 'warning', title: 'Payment DB Connection Pool Starvation', subtitle: 'Scenario: syn_1 • Configuration change 50 -> 5', action: () => { if (onSelectScenario) onSelectScenario('syn_1'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Scenario', icon: 'bug_report', title: 'Cart Service NullPointer Release Regression', subtitle: 'Scenario: syn_2 • Deployment failure v2', action: () => { if (onSelectScenario) onSelectScenario('syn_2'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Scenario', icon: 'lock', title: 'Database Lock Saturation (No Change)', subtitle: 'Scenario: syn_3 • Row lock contention', action: () => { if (onSelectScenario) onSelectScenario('syn_3'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Scenario', icon: 'trending_up', title: 'Checkout Memory Leak with Red Herring', subtitle: 'Scenario: syn_4 • Heap exhaustion', action: () => { if (onSelectScenario) onSelectScenario('syn_4'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Scenario', icon: 'shield', title: 'External Payment Gateway Outage', subtitle: 'Scenario: syn_5 • Honest Unknown Refusal Guard', action: () => { if (onSelectScenario) onSelectScenario('syn_5'); if (onNavigate) onNavigate('dashboard'); } },
 
-    { type: 'Telemetry Signal', icon: '🔍', title: 'Connection Pool Exhausted Logs', subtitle: 'Failed to obtain DB connection within 5000ms', action: () => { if (onSelectService) onSelectService('payment'); if (onNavigate) onNavigate('dashboard'); } },
-    { type: 'Telemetry Signal', icon: '📈', title: 'P99 Latency Spike > 1800ms', subtitle: 'Cross-service cascade from checkout to frontend', action: () => { if (onSelectService) onSelectService('checkout'); if (onNavigate) onNavigate('dashboard'); } },
-    { type: 'Telemetry Signal', icon: '🛡️', title: 'PII Redacted Telemetry Records', subtitle: 'Verified sanitization of credentials and IP addresses', action: () => { if (onNavigate) onNavigate('settings'); } },
+    { type: 'Telemetry Signal', icon: 'search_check', title: 'Connection Pool Exhausted Logs', subtitle: 'Failed to obtain DB connection within 5000ms', action: () => { if (onSelectService) onSelectService('payment'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Telemetry Signal', icon: 'show_chart', title: 'P99 Latency Spike > 1800ms', subtitle: 'Cross-service cascade from checkout to frontend', action: () => { if (onSelectService) onSelectService('checkout'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Telemetry Signal', icon: 'verified_user', title: 'PII Redacted Telemetry Records', subtitle: 'Verified sanitization of credentials and IP addresses', action: () => { if (onNavigate) onNavigate('settings'); } },
   ];
 
   const filteredSearchResults = searchCatalog.filter((item) => {
@@ -53,7 +53,7 @@ export default function TopNav({
     {
       id: 1,
       type: 'critical',
-      icon: '🚨',
+      icon: 'crisis_alert',
       title: 'Payment Connection Pool Starved',
       desc: 'db connection pool_size 50 -> 5 caused thread exhaustion on payment service.',
       time: '13:58:15 UTC',
@@ -63,7 +63,7 @@ export default function TopNav({
     {
       id: 2,
       type: 'warning',
-      icon: '⚠️',
+      icon: 'warning',
       title: 'Checkout Latency Cascade',
       desc: 'Downstream HTTP transactions queued. P99 latency reached 1820ms.',
       time: '13:58:40 UTC',
@@ -73,7 +73,7 @@ export default function TopNav({
     {
       id: 3,
       type: 'change',
-      icon: '⚡',
+      icon: 'bolt',
       title: 'Configuration Change Deployed',
       desc: 'Database connection parameters modified on payment cluster.',
       time: '13:55:00 UTC',
@@ -83,7 +83,7 @@ export default function TopNav({
     {
       id: 4,
       type: 'security',
-      icon: '🛡️',
+      icon: 'verified_user',
       title: 'PII Sanitization Verified',
       desc: 'All customer credentials and IP addresses sanitized before model inference.',
       time: '13:50:00 UTC',
@@ -134,10 +134,7 @@ export default function TopNav({
       {/* Interactive Global Search Bar */}
       <div className="search-bar-container" ref={searchRef}>
         <span className="search-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8a8074" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
+          <span className="material-symbols-outlined">search</span>
         </span>
         <input
           type="text"
@@ -161,7 +158,7 @@ export default function TopNav({
               if (onSearch) onSearch('');
             }}
           >
-            ✕
+            <span className="material-symbols-outlined sym-icon-xs">close</span>
           </button>
         ) : (
           <span className="search-shortcut-pill">Ctrl+K</span>
@@ -183,7 +180,9 @@ export default function TopNav({
                     className="search-result-item"
                     onClick={() => handleSearchResultClick(res)}
                   >
-                    <span className="search-item-icon">{res.icon}</span>
+                    <span className="search-item-icon">
+                      <span className="material-symbols-outlined">{res.icon}</span>
+                    </span>
                     <div className="search-item-text">
                       <div className="search-item-title-row">
                         <strong className="search-item-title">{res.title}</strong>
@@ -217,10 +216,7 @@ export default function TopNav({
               setShowSearchDropdown(false);
             }}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5a5247" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-            </svg>
+            <span className="material-symbols-outlined">notifications</span>
             {unreadCount > 0 && (
               <span className="notification-badge-number">{unreadCount}</span>
             )}
@@ -250,7 +246,9 @@ export default function TopNav({
                     className={`notification-item-card ${n.unread ? 'unread' : ''}`}
                     onClick={() => handleNotificationClick(n)}
                   >
-                    <span className="notif-icon">{n.icon}</span>
+                    <span className="notif-icon">
+                      <span className="material-symbols-outlined sym-icon-sm">{n.icon}</span>
+                    </span>
                     <div className="notif-body">
                       <div className="notif-title-row">
                         <strong className="notif-title">{n.title}</strong>
@@ -296,7 +294,7 @@ export default function TopNav({
               <span className="user-name">Amrutha</span>
               <span className="user-role-label">{role === 'analyst' ? 'Analyst' : 'Auditor'}</span>
             </div>
-            <span className="dropdown-caret">▾</span>
+            <span className="material-symbols-outlined dropdown-caret">arrow_drop_down</span>
           </div>
 
           {/* Interactive Account Dropdown Panel */}
@@ -326,7 +324,7 @@ export default function TopNav({
                       <strong className="role-opt-name">Analyst (Full Access)</strong>
                       <span className="role-opt-desc">Full telemetry analysis, replay & evidence inspector</span>
                     </div>
-                    {role === 'analyst' && <span className="role-check">✓</span>}
+                    {role === 'analyst' && <span className="material-symbols-outlined sym-icon-xs text-primary">check</span>}
                   </div>
 
                   <div
@@ -339,7 +337,7 @@ export default function TopNav({
                       <strong className="role-opt-name">Auditor (Read-Only)</strong>
                       <span className="role-opt-desc">Inspect post-mortem dossiers and governance audit</span>
                     </div>
-                    {role === 'viewer' && <span className="role-check">✓</span>}
+                    {role === 'viewer' && <span className="material-symbols-outlined sym-icon-xs text-primary">check</span>}
                   </div>
                 </div>
               </div>
@@ -355,7 +353,7 @@ export default function TopNav({
                       if (onNavigate) onNavigate('dashboard');
                     }}
                   >
-                    <span>🏠</span>
+                    <span className="material-symbols-outlined sym-icon-sm">dashboard</span>
                     <span>Investigation Dashboard</span>
                   </button>
                   <button
@@ -365,7 +363,7 @@ export default function TopNav({
                       if (onNavigate) onNavigate('incidents');
                     }}
                   >
-                    <span>⚠️</span>
+                    <span className="material-symbols-outlined sym-icon-sm">warning</span>
                     <span>Incident Catalog</span>
                   </button>
                   <button
@@ -375,7 +373,7 @@ export default function TopNav({
                       if (onNavigate) onNavigate('reports');
                     }}
                   >
-                    <span>📄</span>
+                    <span className="material-symbols-outlined sym-icon-sm">description</span>
                     <span>Post-Incident Reports</span>
                   </button>
                   <button
@@ -385,7 +383,7 @@ export default function TopNav({
                       if (onNavigate) onNavigate('settings');
                     }}
                   >
-                    <span>⚙️</span>
+                    <span className="material-symbols-outlined sym-icon-sm">settings</span>
                     <span>System Settings</span>
                   </button>
                 </div>

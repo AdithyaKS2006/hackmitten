@@ -8,9 +8,9 @@ export default function ActionBar({
   onTabChange,
 }) {
   const tabs = [
-    { id: 'investigation', label: 'Investigation Console', icon: '🔍' },
-    { id: 'evaluation', label: 'Benchmark Evaluation', icon: '📊' },
-    { id: 'safety', label: 'Safety & Governance', icon: '🛡️' },
+    { id: 'investigation', label: 'Investigation Console', icon: 'search_check' },
+    { id: 'evaluation', label: 'Benchmark Evaluation', icon: 'analytics' },
+    { id: 'safety', label: 'Safety & Governance', icon: 'security' },
   ];
 
   return (
@@ -19,7 +19,7 @@ export default function ActionBar({
       <div className="scenario-select-container">
         <span className="scenario-field-label">Incident Scenario:</span>
         <div className="scenario-select-wrapper">
-          <span className="scenario-db-icon">🗄️</span>
+          <span className="material-symbols-outlined scenario-db-icon">database</span>
           <select
             className="scenario-select-dropdown"
             value={selectedScenario}
@@ -31,7 +31,7 @@ export default function ActionBar({
               </option>
             ))}
           </select>
-          <span className="select-arrow">▾</span>
+          <span className="material-symbols-outlined select-arrow">arrow_drop_down</span>
         </div>
       </div>
 
@@ -40,10 +40,11 @@ export default function ActionBar({
         {tabs.map((tab) => (
           <button
             key={tab.id}
+            type="button"
             className={`action-tab-btn ${activeTab === tab.id ? 'active' : ''}`}
             onClick={() => onTabChange(tab.id)}
           >
-            <span className="tab-icon">{tab.icon}</span>
+            <span className="material-symbols-outlined tab-icon">{tab.icon}</span>
             <span className="tab-label">{tab.label}</span>
           </button>
         ))}

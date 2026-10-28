@@ -12,16 +12,8 @@ export default function SubHeader({
     <div className="sub-header-bar techinova-hero-banner">
       {/* Title & Description with Neural Radar Icon */}
       <div className="sub-header-left">
-        <div className="engine-icon-badge techinova-radar-badge">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b47836" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" strokeDasharray="3 3"></circle>
-            <circle cx="12" cy="12" r="6"></circle>
-            <circle cx="12" cy="12" r="2" fill="#b47836"></circle>
-            <line x1="12" y1="2" x2="12" y2="4"></line>
-            <line x1="12" y1="20" x2="12" y2="22"></line>
-            <line x1="2" y1="12" x2="4" y2="12"></line>
-            <line x1="20" y1="12" x2="22" y2="12"></line>
-          </svg>
+        <div className="engine-icon-badge techinova-radar-badge division-header-icon-box">
+          <span className="material-symbols-outlined radar-center-symbol">radar</span>
           <div className="radar-pulse-ring"></div>
         </div>
         <div>
@@ -37,7 +29,7 @@ export default function SubHeader({
       <div className="sub-header-right">
         {/* Read-only Storage pill */}
         <div className="pill-btn pill-neutral" title="Rule 1: Historical telemetry archives are strictly immutable">
-          <span className="pill-icon">🔒</span>
+          <span className="material-symbols-outlined pill-icon">lock</span>
           <span>Read-Only Storage</span>
         </div>
 
@@ -67,7 +59,7 @@ export default function SubHeader({
           onClick={onOpenReport}
           title="Open printable post-incident review dossier"
         >
-          <span className="btn-icon">📄</span>
+          <span className="material-symbols-outlined btn-icon">description</span>
           <span>View Report</span>
         </button>
       </div>

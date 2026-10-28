@@ -6,14 +6,14 @@ export default function RankedCauses({
   unknownReason = null,
   onInspectEvidence,
 }) {
-  // Service icons mapping
+  // Service icons mapping using Google Material Symbols
   const serviceIcons = {
-    payment: '🗄️',
-    checkout: '🛒',
-    frontend: '💻',
-    cart: '🛍️',
-    user: '👤',
-    db: '💾',
+    payment: 'credit_card',
+    checkout: 'shopping_cart',
+    frontend: 'desktop_windows',
+    cart: 'shopping_bag',
+    user: 'person',
+    db: 'database',
   };
 
   const formatServiceName = (srv) => {
@@ -29,20 +29,23 @@ export default function RankedCauses({
     return names[srv.toLowerCase()] || `${srv.charAt(0).toUpperCase() + srv.slice(1)} Service`;
   };
 
-  // Feature importance from RCAEval model
+  // Feature importance from RCAEval model with Google Material Symbols
   const featureImportances = [
-    { key: 'sustained_ratio', name: 'Sustained Duration', code: 'sustained_ratio', val: '62.47%', pct: 62, active: true, icon: '🏆' },
-    { key: 'log_max_zscore', name: 'Peak Log Spikes', code: 'log_max_zscore', val: '15.32%', pct: 15, active: false, icon: '📈' },
-    { key: 'mean_zscore', name: 'Mean Signal Drift', code: 'mean_zscore', val: '10.59%', pct: 11, active: false, icon: '📊' },
-    { key: 'metric_anomaly_ratio', name: 'Anomaly Ratio', code: 'metric_anomaly_ratio', val: '7.59%', pct: 8, active: false, icon: '📉' },
-    { key: 'onset_score', name: 'Onset Priority', code: 'onset_score', val: '4.03%', pct: 4, active: false, icon: '⏱' },
+    { key: 'sustained_ratio', name: 'Sustained Duration', code: 'sustained_ratio', val: '62.47%', pct: 62, active: true, icon: 'timer' },
+    { key: 'log_max_zscore', name: 'Peak Log Spikes', code: 'log_max_zscore', val: '15.32%', pct: 15, active: false, icon: 'show_chart' },
+    { key: 'mean_zscore', name: 'Mean Signal Drift', code: 'mean_zscore', val: '10.59%', pct: 11, active: false, icon: 'bar_chart' },
+    { key: 'metric_anomaly_ratio', name: 'Anomaly Ratio', code: 'metric_anomaly_ratio', val: '7.59%', pct: 8, active: false, icon: 'trending_up' },
+    { key: 'onset_score', name: 'Onset Priority', code: 'onset_score', val: '4.03%', pct: 4, active: false, icon: 'alarm' },
   ];
 
   if (unknown) {
     return (
-      <div className="ranked-causes-card">
+      <div className="ranked-causes-card division-causes-card">
         <div className="unknown-panel">
-          <div className="unknown-tag">HONEST ATTRIBUTION GUARANTEE • RULE 5</div>
+          <div className="unknown-tag">
+            <span className="material-symbols-outlined sym-icon-sm">shield</span>
+            <span>HONEST ATTRIBUTION GUARANTEE • RULE 5</span>
+          </div>
           <h3 className="unknown-title">Attribution Status: Unknown Cause</h3>
           <p className="unknown-explanation">
             {unknownReason ||
@@ -103,16 +106,12 @@ export default function RankedCauses({
     'The primary cause is the payment service configuration update (connection pool reduced from 50 to 5), causing connection pool exhaustion and cascading latency across checkout and frontend services.';
 
   return (
-    <div className="ranked-causes-card">
+    <div className="ranked-causes-card division-causes-card">
       {/* Header */}
       <div className="causes-header-row">
         <div className="causes-title-wrap">
           <div className="chart-icon-badge division-header-icon-box">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b47836" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="20" x2="18" y2="10"></line>
-              <line x1="12" y1="20" x2="12" y2="4"></line>
-              <line x1="6" y1="20" x2="6" y2="14"></line>
-            </svg>
+            <span className="material-symbols-outlined">crisis_alert</span>
           </div>
           <div>
             <div className="division-pretitle-tag">AI CAUSAL INFERENCE</div>
@@ -123,14 +122,17 @@ export default function RankedCauses({
           </div>
         </div>
 
-        <span className="candidates-count-pill">{displayCandidates.length} Evaluated</span>
+        <span className="candidates-count-pill">
+          <span className="material-symbols-outlined sym-icon-xs">checklist</span>
+          {displayCandidates.length} Evaluated
+        </span>
       </div>
 
-      {/* Candidates List with Creative Visual Gauges */}
+      {/* Candidates List with Creative Visual Gauges & Distinct Borders */}
       <div className="candidates-list-container">
         {displayCandidates.map((c, idx) => {
           const scorePercent = Math.round(c.score * 100);
-          const icon = serviceIcons[c.service?.toLowerCase()] || '🖥️';
+          const icon = serviceIcons[c.service?.toLowerCase()] || 'dns';
 
           // Badges derivation
           let tags = c.tags;
@@ -153,14 +155,14 @@ export default function RankedCauses({
 
           return (
             <div key={`candidate-${c.rank || idx}`} className={`candidate-row rank-${c.rank}`}>
-              {/* Rank Circle with Creative Glow */}
+              {/* Rank Circle with Creative Border & Glow */}
               <div className={`rank-circle rank-circle-${c.rank}`}>
                 #{c.rank}
               </div>
 
-              {/* Service Icon */}
+              {/* Service Icon with Google Material Symbols */}
               <div className="candidate-service-icon">
-                {icon}
+                <span className="material-symbols-outlined">{icon}</span>
               </div>
 
               {/* Center Info */}
@@ -169,11 +171,20 @@ export default function RankedCauses({
                   <span className="candidate-service-name">{formatServiceName(c.service)}</span>
                   {tags.map((tag, tIdx) => {
                     let tagClass = 'tag-cascade';
-                    if (tag === 'CONFIG UPDATE' || tag === 'ROOT CAUSE') tagClass = 'tag-config';
-                    if (tag === 'CASCADE VICTIM') tagClass = 'tag-impact';
-                    if (tag === 'NORMAL' || tag === 'HEALTHY') tagClass = 'tag-normal';
+                    let tagIcon = 'warning';
+                    if (tag === 'CONFIG UPDATE' || tag === 'ROOT CAUSE') {
+                      tagClass = 'tag-config';
+                      tagIcon = 'bolt';
+                    } else if (tag === 'CASCADE VICTIM') {
+                      tagClass = 'tag-impact';
+                      tagIcon = 'trending_down';
+                    } else if (tag === 'NORMAL' || tag === 'HEALTHY') {
+                      tagClass = 'tag-normal';
+                      tagIcon = 'check_circle';
+                    }
                     return (
                       <span key={`tag-${tIdx}`} className={`cause-tag-pill ${tagClass}`}>
+                        <span className="material-symbols-outlined sym-icon-xs">{tagIcon}</span>
                         {tag}
                       </span>
                     );
@@ -186,14 +197,15 @@ export default function RankedCauses({
                       onClick={() => onInspectEvidence(firstEid, c.service)}
                       title="Inspect verified telemetry record"
                     >
-                      <span>🔍 Evidence</span>
+                      <span className="material-symbols-outlined sym-icon-xs">search</span>
+                      <span>Evidence</span>
                     </button>
                   )}
                 </div>
                 <div className="candidate-description-text">{c.name}</div>
               </div>
 
-              {/* Right Confidence & Bar */}
+              {/* Right Confidence & Bordered Percentage Bar Sub-division */}
               <div className="candidate-score-container">
                 <div className="confidence-level-text">{confText}</div>
                 <div className="score-bar-row">
@@ -203,7 +215,7 @@ export default function RankedCauses({
                       style={{ width: `${scorePercent}%` }}
                     ></div>
                   </div>
-                  <span className="score-percent-label">{scorePercent}%</span>
+                  <span className={`score-percent-label pct-rank-${c.rank}`}>{scorePercent}%</span>
                 </div>
               </div>
             </div>
@@ -211,23 +223,24 @@ export default function RankedCauses({
         })}
       </div>
 
-      {/* Creative Key Reasoning Box */}
+      {/* Creative Key Reasoning Box with Distinct Border and Shadow */}
       <div className="key-reasoning-card creative-reasoning">
         <div className="reasoning-header">
-          <div className="pulse-lightbulb">💡</div>
+          <span className="material-symbols-outlined text-warning reasoning-symbol">lightbulb</span>
           <span className="reasoning-title">Primary Causal Inference & Evidence Rationale</span>
         </div>
         <p className="reasoning-text">{primaryReasoning}</p>
         <div className="reasoning-verdict-row">
+          <span className="material-symbols-outlined sym-icon-xs text-danger">verified</span>
           <span className="verdict-tag">ATTRIBUTION VERDICT:</span>
           <span className="verdict-service">payment service configuration change is the primary cascade origin</span>
         </div>
       </div>
 
-      {/* Top Feature Importance Box with Graphical Visual Bars */}
+      {/* Top Feature Importance Box with Distinct Sub-Division Cards */}
       <div className="feature-importance-card">
         <div className="features-header">
-          <span className="features-icon">📊</span>
+          <span className="material-symbols-outlined text-primary">monitoring</span>
           <span className="features-title">Top ML Feature Importance (RCA Benchmark)</span>
         </div>
         <div className="features-row-grid">
@@ -238,7 +251,7 @@ export default function RankedCauses({
               title={`Technical metric: ${f.code}`}
             >
               <div className="feature-top-label">
-                <span className="chip-icon">{f.icon}</span>
+                <span className="material-symbols-outlined chip-icon sym-icon-sm">{f.icon}</span>
                 <span className="chip-name">{f.name}</span>
               </div>
               <div className="feature-metric-value">{f.val}</div>

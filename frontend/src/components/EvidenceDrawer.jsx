@@ -73,7 +73,7 @@ export default function EvidenceDrawer({ evidenceData, onClose }) {
             {scenario && <span className="drawer-scenario-tag">Scenario: {scenario}</span>}
           </div>
           <button className="btn-drawer-close" onClick={onClose} aria-label="Close drawer">
-            ✕
+            <span className="material-symbols-outlined">close</span>
           </button>
         </div>
 
@@ -81,7 +81,7 @@ export default function EvidenceDrawer({ evidenceData, onClose }) {
         <div className="drawer-body">
           {/* Privacy Guarantee Box */}
           <div className="evidence-guarantee-box">
-            <span className="guarantee-icon">🛡️</span>
+            <span className="material-symbols-outlined guarantee-icon text-primary">verified_user</span>
             <div className="guarantee-text">
               <strong>Sanitized Telemetry Record:</strong> All sensitive identifiers (passwords, JWT tokens, IP addresses, customer emails) were irreversibly redacted before reaching the root cause engine.
             </div>
@@ -93,13 +93,15 @@ export default function EvidenceDrawer({ evidenceData, onClose }) {
               className={`evidence-tab-btn ${activeTab === 'summary' ? 'active' : ''}`}
               onClick={() => setActiveTab('summary')}
             >
-              📋 Readable Summary
+              <span className="material-symbols-outlined sym-icon-xs">article</span>
+              <span>Readable Summary</span>
             </button>
             <button
               className={`evidence-tab-btn ${activeTab === 'raw' ? 'active' : ''}`}
               onClick={() => setActiveTab('raw')}
             >
-              📄 Raw JSON Telemetry
+              <span className="material-symbols-outlined sym-icon-xs">data_object</span>
+              <span>Raw JSON Telemetry</span>
             </button>
           </div>
 
@@ -147,7 +149,8 @@ export default function EvidenceDrawer({ evidenceData, onClose }) {
                   className={`btn-copy-code ${copied ? 'copied-active' : ''}`}
                   onClick={handleCopy}
                 >
-                  {copied ? '✓ Copied to Clipboard!' : '📋 Copy JSON'}
+                  <span className="material-symbols-outlined sym-icon-xs">{copied ? 'check_circle' : 'content_copy'}</span>
+                  <span>{copied ? 'Copied to Clipboard!' : 'Copy JSON'}</span>
                 </button>
               </div>
               <pre className="code-viewer-content">
@@ -167,7 +170,8 @@ export default function EvidenceDrawer({ evidenceData, onClose }) {
             className={`btn-primary-clean ${copied ? 'btn-copied-glow' : ''}`}
             onClick={handleCopy}
           >
-            {copied ? '✓ Copied to Clipboard!' : '📋 Copy Telemetry'}
+            <span className="material-symbols-outlined sym-icon-xs">{copied ? 'check_circle' : 'content_copy'}</span>
+            <span>{copied ? 'Copied to Clipboard!' : 'Copy Telemetry'}</span>
           </button>
         </div>
       </div>

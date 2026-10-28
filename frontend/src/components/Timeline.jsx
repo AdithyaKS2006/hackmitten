@@ -15,7 +15,7 @@ export default function Timeline({
   if (!timeline || timeline.length === 0) {
     return (
       <div className="timeline-empty-card">
-        <span className="empty-icon">🕒</span>
+        <span className="material-symbols-outlined empty-icon">schedule</span>
         <h4>No Incident Events</h4>
         <p>No telemetry events detected for this time window.</p>
       </div>
@@ -38,62 +38,65 @@ export default function Timeline({
     return names[srv.toLowerCase()] || `${srv.charAt(0).toUpperCase() + srv.slice(1)} Service`;
   };
 
+  // Google Material Symbols for services
   const serviceIcons = {
-    payment: '🗄️',
-    checkout: '🛒',
-    frontend: '💻',
-    cart: '🛍️',
-    user: '👤',
-    db: '💾',
+    payment: 'credit_card',
+    checkout: 'shopping_cart',
+    frontend: 'desktop_windows',
+    cart: 'shopping_bag',
+    user: 'person',
+    db: 'database',
+    catalogue: 'inventory_2',
+    orders: 'receipt_long',
   };
 
-  // Human-friendly signal kinds
+  // Human-friendly signal kinds with Google Material Symbols
   const getKindDetails = (kind) => {
     switch (kind?.toLowerCase()) {
       case 'change':
         return {
           label: 'Config Change',
-          color: '#b83280',
-          bg: '#fdf2f8',
-          border: '#fbcfe8',
-          icon: '⚡',
+          color: '#d946ef',
+          bg: '#fdf4ff',
+          border: '#f0abfc',
+          icon: 'bolt',
         };
       case 'metric':
         return {
           label: 'Metric Anomaly',
-          color: '#2b6cb0',
-          bg: '#ebf8ff',
-          border: '#bee3f8',
-          icon: '📈',
+          color: '#2563eb',
+          bg: '#eff6ff',
+          border: '#93c5fd',
+          icon: 'trending_up',
         };
       case 'log':
         return {
           label: 'Log Warning',
-          color: '#c05621',
-          bg: '#fffaf0',
-          border: '#fbd38d',
-          icon: '📝',
+          color: '#d97706',
+          bg: '#fffbeb',
+          border: '#fde68a',
+          icon: 'receipt_long',
         };
       case 'trace':
         return {
           label: 'Trace Latency',
-          color: '#6b46c1',
-          bg: '#faf5ff',
-          border: '#e9d8fd',
-          icon: '⏱️',
+          color: '#7c3aed',
+          bg: '#f5f3ff',
+          border: '#c4b5fd',
+          icon: 'speed',
         };
       default:
         return {
           label: 'System Alert',
-          color: '#c53030',
-          bg: '#fff5f5',
-          border: '#fed7d7',
-          icon: '🚨',
+          color: '#dc2626',
+          bg: '#fef2f2',
+          border: '#fca5a5',
+          icon: 'warning',
         };
     }
   };
 
-  // Clean human-friendly summary text (clean up raw code syntax)
+  // Clean human-friendly summary text
   const formatSummary = (raw) => {
     if (!raw) return '';
     return raw
@@ -115,15 +118,12 @@ export default function Timeline({
   });
 
   return (
-    <div className="timeline-container-card">
+    <div className="timeline-container-card division-timeline-card">
       {/* Header Bar */}
       <div className="timeline-header-bar">
         <div className="timeline-title-group">
           <div className="timeline-header-icon-badge division-header-icon-box">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b47836" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
+            <span className="material-symbols-outlined">timeline</span>
           </div>
           <div>
             <div className="division-pretitle-tag">CHRONOLOGICAL EVENT FEED</div>
@@ -141,37 +141,42 @@ export default function Timeline({
               className={`filter-chip ${filterType === 'all' ? 'active' : ''}`}
               onClick={() => setFilterType('all')}
             >
-              All Events ({timeline.length})
+              <span className="material-symbols-outlined sym-icon-xs">view_list</span>
+              All ({timeline.length})
             </button>
             <button
               className={`filter-chip ${filterType === 'change' ? 'active' : ''}`}
               onClick={() => setFilterType('change')}
             >
+              <span className="material-symbols-outlined sym-icon-xs">bolt</span>
               Changes
             </button>
             <button
               className={`filter-chip ${filterType === 'log' ? 'active' : ''}`}
               onClick={() => setFilterType('log')}
             >
+              <span className="material-symbols-outlined sym-icon-xs">receipt_long</span>
               Logs
             </button>
             <button
               className={`filter-chip ${filterType === 'metric' ? 'active' : ''}`}
               onClick={() => setFilterType('metric')}
             >
+              <span className="material-symbols-outlined sym-icon-xs">trending_up</span>
               Metrics
             </button>
           </div>
 
           {selectedService && (
             <div className="filtered-service-pill">
-              <span>Filtered by: <strong>{formatServiceName(selectedService)}</strong></span>
+              <span className="material-symbols-outlined sym-icon-xs">filter_alt</span>
+              <span>Filtered: <strong>{formatServiceName(selectedService)}</strong></span>
             </div>
           )}
         </div>
       </div>
 
-      {/* Timeline Stream */}
+      {/* Timeline Stream with Distinct Sub-Division Cards */}
       <div className="timeline-stream-wrapper">
         <div className="timeline-vertical-spine"></div>
 
@@ -184,7 +189,7 @@ export default function Timeline({
               topCandidateEvidenceIds.includes(eid)
             );
             const timeStr = item.ts ? item.ts.substring(11, 19) + ' UTC' : '--:--:--';
-            const srvIcon = serviceIcons[item.service?.toLowerCase()] || '🖥️';
+            const srvIcon = serviceIcons[item.service?.toLowerCase()] || 'dns';
 
             return (
               <div
@@ -203,12 +208,12 @@ export default function Timeline({
                     }}
                     title={kindDetails.label}
                   >
-                    <span>{kindDetails.icon}</span>
+                    <span className="material-symbols-outlined sym-icon-sm">{kindDetails.icon}</span>
                   </div>
                 </div>
 
-                {/* Event Card Content */}
-                <div className={`timeline-card-box ${isRootLink ? 'highlight-root' : ''}`}>
+                {/* Event Card Content with Multi-Layer Border and Shadow */}
+                <div className={`timeline-card-box ${isRootLink ? 'highlight-root' : ''} kind-${item.kind?.toLowerCase() || 'default'}`}>
                   <div className="timeline-card-topbar">
                     <div className="badges-cluster">
                       {/* Kind Pill */}
@@ -217,21 +222,24 @@ export default function Timeline({
                         style={{
                           color: kindDetails.color,
                           backgroundColor: kindDetails.bg,
-                          border: `1px solid ${kindDetails.border}`,
+                          border: `1.5px solid ${kindDetails.border}`,
                         }}
                       >
-                        {kindDetails.icon} {kindDetails.label}
+                        <span className="material-symbols-outlined sym-icon-xs">{kindDetails.icon}</span>
+                        {kindDetails.label}
                       </span>
 
                       {/* Service Tag */}
                       <span className="badge-service-pill">
-                        {srvIcon} {formatServiceName(item.service)}
+                        <span className="material-symbols-outlined sym-icon-xs">{srvIcon}</span>
+                        {formatServiceName(item.service)}
                       </span>
 
                       {/* Root Cause Link Tag */}
                       {isRootLink && (
                         <span className="badge-root-link">
-                          ★ Root Cause Evidence
+                          <span className="material-symbols-outlined sym-icon-xs">stars</span>
+                          Root Cause Evidence
                         </span>
                       )}
                     </div>
@@ -245,7 +253,7 @@ export default function Timeline({
                           onClick={() => onInspectEvidence(firstEid, item.service)}
                           title="Open verified raw telemetry proof"
                         >
-                          <span className="btn-icon">🔍</span>
+                          <span className="material-symbols-outlined sym-icon-xs">search</span>
                           <span>View Evidence</span>
                         </button>
                         <span className="evidence-ref-pill">Ref: {firstEid}</span>

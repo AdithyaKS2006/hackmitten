@@ -16,7 +16,11 @@ export default function IncidentsView({
       rootCause: 'Database connection pool starved following config change (50 -> 5).',
       duration: '45 mins',
       status: 'Active Incident',
-      signals: ['⚡ Config Change', '📝 Log Alert', '📈 Metric Spike'],
+      signals: [
+        { icon: 'bolt', text: 'Config Change' },
+        { icon: 'receipt_long', text: 'Log Alert' },
+        { icon: 'trending_up', text: 'Metric Spike' },
+      ],
     },
     syn_1: {
       category: 'resource',
@@ -25,7 +29,10 @@ export default function IncidentsView({
       rootCause: 'Payment service connection pool starvation under traffic spike.',
       duration: '32 mins',
       status: 'Active Incident',
-      signals: ['⚡ Config Change', '📝 Log Alert'],
+      signals: [
+        { icon: 'bolt', text: 'Config Change' },
+        { icon: 'receipt_long', text: 'Log Alert' },
+      ],
     },
     syn_2: {
       category: 'regression',
@@ -34,7 +41,10 @@ export default function IncidentsView({
       rootCause: 'NullPointer exception introduced in release deploy v2.',
       duration: '18 mins',
       status: 'Investigating',
-      signals: ['⚡ Deploy Event', '🚨 Crash Logs'],
+      signals: [
+        { icon: 'bolt', text: 'Deploy Event' },
+        { icon: 'emergency', text: 'Crash Logs' },
+      ],
     },
     syn_3: {
       category: 'database',
@@ -43,7 +53,10 @@ export default function IncidentsView({
       rootCause: 'Row lock contention saturation in core database without deployment.',
       duration: '25 mins',
       status: 'Investigating',
-      signals: ['📈 Latency Metric', '⏱️ Lock Spans'],
+      signals: [
+        { icon: 'trending_up', text: 'Latency Metric' },
+        { icon: 'timer', text: 'Lock Spans' },
+      ],
     },
     syn_4: {
       category: 'memory',
@@ -52,7 +65,10 @@ export default function IncidentsView({
       rootCause: 'JVM heap exhaustion with misleading concurrent frontend release.',
       duration: '50 mins',
       status: 'Investigating',
-      signals: ['📈 Memory Leak', '⚡ Red Herring Deploy'],
+      signals: [
+        { icon: 'trending_up', text: 'Memory Leak' },
+        { icon: 'bolt', text: 'Red Herring Deploy' },
+      ],
     },
     syn_5: {
       category: 'external',
@@ -61,7 +77,10 @@ export default function IncidentsView({
       rootCause: 'Third-party payment gateway outage; safely guarded under Rule 5.',
       duration: '60 mins',
       status: 'External Outage (Guarded)',
-      signals: ['⏱️ Gateway Timeout', '🛡️ Refusal Guard'],
+      signals: [
+        { icon: 'timer', text: 'Gateway Timeout' },
+        { icon: 'shield', text: 'Refusal Guard' },
+      ],
     },
   };
 
@@ -124,7 +143,7 @@ export default function IncidentsView({
             rootCause: 'Telemetry anomaly detected.',
             duration: '30 mins',
             status: 'Investigating',
-            signals: ['📈 Anomaly'],
+            signals: [{ icon: 'trending_up', text: 'Anomaly' }],
           };
 
           const isSelected = selectedScenario === sc.id;
@@ -145,7 +164,10 @@ export default function IncidentsView({
                   </span>
                   <span className="incident-id-pill">ID: {sc.id}</span>
                 </div>
-                <span className="incident-duration-text">⏱ {meta.duration}</span>
+                <span className="incident-duration-text">
+                  <span className="material-symbols-outlined sym-icon-xs">timer</span>
+                  {meta.duration}
+                </span>
               </div>
 
               <h3 className="incident-card-title">{sc.name || sc.id}</h3>
@@ -169,7 +191,8 @@ export default function IncidentsView({
                   <div className="signals-chips-wrap">
                     {meta.signals.map((sig, i) => (
                       <span key={i} className="signal-chip-item">
-                        {sig}
+                        <span className="material-symbols-outlined sym-icon-xs">{sig.icon}</span>
+                        <span>{sig.text}</span>
                       </span>
                     ))}
                   </div>
@@ -186,7 +209,8 @@ export default function IncidentsView({
                     onNavigateToConsole();
                   }}
                 >
-                  Investigate Console →
+                  <span>Investigate Console</span>
+                  <span className="material-symbols-outlined sym-icon-xs">arrow_forward</span>
                 </button>
               </div>
             </div>

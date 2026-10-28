@@ -1,16 +1,16 @@
 import React from 'react';
 
 export default function DependencyGraph({ graph, anomalousServices = {}, selectedService, onSelectService }) {
-  // Service icons mapping
+  // Service icons mapping using official Google Material Symbols
   const serviceIcons = {
-    frontend: '💻',
-    checkout: '🛒',
-    payment: '🗄️',
-    cart: '🛍️',
-    user: '👤',
-    db: '💾',
-    catalogue: '📦',
-    orders: '📋',
+    frontend: 'desktop_windows',
+    checkout: 'shopping_cart',
+    payment: 'credit_card',
+    cart: 'shopping_bag',
+    user: 'person',
+    db: 'database',
+    catalogue: 'inventory_2',
+    orders: 'receipt_long',
   };
 
   // Fixed visual layout positions for standard topologies
@@ -63,22 +63,16 @@ export default function DependencyGraph({ graph, anomalousServices = {}, selecte
   };
 
   // Node dimension
-  const nodeWidth = 145;
-  const nodeHeight = 58;
+  const nodeWidth = 148;
+  const nodeHeight = 60;
 
   return (
-    <div className="topology-graph-card">
+    <div className="topology-graph-card division-topology-card">
       {/* Header */}
       <div className="topology-header-row">
         <div className="topology-title-wrap">
           <div className="graph-icon-badge division-header-icon-box">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b47836" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="18" cy="5" r="3"></circle>
-              <circle cx="6" cy="12" r="3"></circle>
-              <circle cx="18" cy="19" r="3"></circle>
-              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-            </svg>
+            <span className="material-symbols-outlined">hub</span>
           </div>
           <div>
             <div className="division-pretitle-tag">NETWORK TOPOLOGY MAP</div>
@@ -89,24 +83,24 @@ export default function DependencyGraph({ graph, anomalousServices = {}, selecte
           </div>
         </div>
 
-        {/* Legend */}
+        {/* Legend with Google Material Symbols & distinct border styling */}
         <div className="topology-legend">
-          <div className="legend-item">
-            <span className="legend-dot dot-cause"></span>
+          <div className="legend-item legend-cause">
+            <span className="material-symbols-outlined sym-cause">error</span>
             <span>Root Cause</span>
           </div>
-          <div className="legend-item">
-            <span className="legend-dot dot-victim"></span>
+          <div className="legend-item legend-victim">
+            <span className="material-symbols-outlined sym-victim">warning</span>
             <span>Cascade Victim</span>
           </div>
-          <div className="legend-item">
-            <span className="legend-dot dot-healthy"></span>
+          <div className="legend-item legend-healthy">
+            <span className="material-symbols-outlined sym-healthy">check_circle</span>
             <span>Healthy</span>
           </div>
         </div>
       </div>
 
-      {/* SVG Canvas Area */}
+      {/* SVG Canvas Area with Distinct Cyber Mesh Border */}
       <div className="topology-canvas-container">
         <svg className="topology-svg" viewBox="0 0 580 380" width="100%" height="380">
           <defs>
@@ -120,7 +114,18 @@ export default function DependencyGraph({ graph, anomalousServices = {}, selecte
               markerHeight="6"
               orient="auto-start-reverse"
             >
-              <path d="M 0 1 L 9 5 L 0 9 z" fill="#9c9285" />
+              <path d="M 0 1 L 9 5 L 0 9 z" fill="#10b981" />
+            </marker>
+            <marker
+              id="topo-arrow-danger"
+              viewBox="0 0 10 10"
+              refX="8"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M 0 1 L 9 5 L 0 9 z" fill="#ef4444" />
             </marker>
           </defs>
 
@@ -144,15 +149,16 @@ export default function DependencyGraph({ graph, anomalousServices = {}, selecte
                   id={`edge-path-${idx}`}
                   d={pathData}
                   fill="none"
-                  stroke={isAnomalousEdge ? '#e08363' : '#b4a99a'}
-                  strokeWidth={isAnomalousEdge ? '2.2' : '1.8'}
-                  markerEnd="url(#topo-arrow)"
+                  stroke={isAnomalousEdge ? '#f87171' : '#a7f3d0'}
+                  strokeWidth={isAnomalousEdge ? '2.4' : '1.8'}
+                  strokeDasharray={isAnomalousEdge ? 'none' : '4,2'}
+                  markerEnd={isAnomalousEdge ? 'url(#topo-arrow-danger)' : 'url(#topo-arrow)'}
                 />
 
                 {/* Animated telemetry pulse packet */}
-                <circle r="3.2" fill={isAnomalousEdge ? '#e04848' : '#22a06b'}>
+                <circle r="3.5" fill={isAnomalousEdge ? '#ef4444' : '#10b981'}>
                   <animateMotion
-                    dur={`${2.2 + idx * 0.4}s`}
+                    dur={`${2.0 + idx * 0.4}s`}
                     repeatCount="indefinite"
                     path={pathData}
                   />
@@ -166,28 +172,28 @@ export default function DependencyGraph({ graph, anomalousServices = {}, selecte
             const pos = fixedPositions[node] || { x: 150, y: 150 };
             const status = getNodeStatus(node);
             const isSelected = selectedService === node;
-            const icon = serviceIcons[node] || '🖥️';
+            const icon = serviceIcons[node] || 'dns';
             const telemetry = getNodeTelemetry(node);
 
             // Status styling
-            let borderColor = '#9ae6b4';
-            let bgColor = '#f0fff4';
+            let borderColor = '#a7f3d0';
+            let bgColor = '#ffffff';
             let badgeText = 'HEALTHY';
-            let badgeBg = '#22a06b';
-            let dotColor = '#22a06b';
+            let badgeBg = '#10b981';
+            let dotColor = '#10b981';
 
             if (status === 'cause') {
-              borderColor = '#feb2b2';
+              borderColor = '#fca5a5';
               bgColor = '#fff5f5';
               badgeText = 'CAUSE';
-              badgeBg = '#e04848';
-              dotColor = '#e04848';
+              badgeBg = '#ef4444';
+              dotColor = '#ef4444';
             } else if (status === 'victim') {
-              borderColor = '#fbd38d';
-              bgColor = '#fffaf0';
+              borderColor = '#fde68a';
+              bgColor = '#fffbeb';
               badgeText = 'VICTIM';
-              badgeBg = '#d9822b';
-              dotColor = '#d9822b';
+              badgeBg = '#f59e0b';
+              dotColor = '#f59e0b';
             }
 
             return (
@@ -198,7 +204,7 @@ export default function DependencyGraph({ graph, anomalousServices = {}, selecte
                 onClick={() => onSelectService && onSelectService(selectedService === node ? null : node)}
                 style={{ cursor: 'pointer' }}
               >
-                {/* Node Box */}
+                {/* Node Box with Multi-Layer Border */}
                 <rect
                   x="0"
                   y="0"
@@ -206,9 +212,9 @@ export default function DependencyGraph({ graph, anomalousServices = {}, selecte
                   height={nodeHeight}
                   rx="10"
                   fill={bgColor}
-                  stroke={isSelected ? '#b47836' : borderColor}
-                  strokeWidth={isSelected ? '2.5' : '1.6'}
-                  filter="drop-shadow(0px 2px 5px rgba(0,0,0,0.03))"
+                  stroke={isSelected ? '#059669' : borderColor}
+                  strokeWidth={isSelected ? '2.5' : '1.8'}
+                  filter="drop-shadow(0px 3px 6px rgba(0,0,0,0.06))"
                 />
 
                 {/* Top Status Tag */}
@@ -216,13 +222,15 @@ export default function DependencyGraph({ graph, anomalousServices = {}, selecte
                   <rect
                     x="0"
                     y="0"
-                    width={badgeText.length * 7 + 12}
+                    width={badgeText.length * 7 + 14}
                     height="18"
-                    rx="4"
+                    rx="5"
                     fill={badgeBg}
+                    stroke="#ffffff"
+                    strokeWidth="1.2"
                   />
                   <text
-                    x={badgeText.length * 3.5 + 6}
+                    x={badgeText.length * 3.5 + 7}
                     y="13"
                     textAnchor="middle"
                     fill="#ffffff"
@@ -234,17 +242,26 @@ export default function DependencyGraph({ graph, anomalousServices = {}, selecte
                   </text>
                 </g>
 
-                {/* Service Icon */}
-                <text x="14" y="32" fontSize="17">
+                {/* Service Icon rendered via Google Material Symbols */}
+                <text
+                  x="14"
+                  y="38"
+                  style={{
+                    fontFamily: "'Material Symbols Outlined'",
+                    fontSize: '22px',
+                    fill: status === 'cause' ? '#dc2626' : status === 'victim' ? '#d97706' : '#059669',
+                    userSelect: 'none',
+                  }}
+                >
                   {icon}
                 </text>
 
                 {/* Service Name */}
                 <text
-                  x="40"
+                  x="42"
                   y="28"
-                  fill="#2d2823"
-                  fontSize="12.5"
+                  fill="#1f2937"
+                  fontSize="13"
                   fontWeight="700"
                   fontFamily="Inter, system-ui, sans-serif"
                 >
@@ -253,9 +270,9 @@ export default function DependencyGraph({ graph, anomalousServices = {}, selecte
 
                 {/* Telemetry subline: P99 & Error */}
                 <text
-                  x="40"
+                  x="42"
                   y="46"
-                  fill="#786c5e"
+                  fill="#4b5563"
                   fontSize="10"
                   fontWeight="600"
                   fontFamily="JetBrains Mono, monospace"
@@ -264,7 +281,7 @@ export default function DependencyGraph({ graph, anomalousServices = {}, selecte
                 </text>
 
                 {/* Right Status Dot */}
-                <circle cx={nodeWidth - 14} cy="28" r="4.5" fill={dotColor} />
+                <circle cx={nodeWidth - 14} cy="28" r="4.5" fill={dotColor} stroke="#ffffff" strokeWidth="1.5" />
               </g>
             );
           })}

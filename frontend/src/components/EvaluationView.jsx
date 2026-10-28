@@ -45,14 +45,18 @@ export default function EvaluationView({ role }) {
       {/* Hero Header */}
       <div className="eval-hero-card">
         <div className="eval-hero-text">
-          <div className="badge-eval-pill">AUDITED BENCHMARK • RULE 6 COMPLIANT</div>
+          <div className="badge-eval-pill">
+            <span className="material-symbols-outlined sym-icon-xs">verified</span>
+            <span>AUDITED BENCHMARK • RULE 6 COMPLIANT</span>
+          </div>
           <h2 className="eval-hero-title">Automated Benchmark Performance</h2>
           <p className="eval-hero-desc">
             Attribution accuracy and time-to-candidate metrics measured across 6 microservice incident failure patterns.
           </p>
         </div>
         <button className="btn-refresh-eval" onClick={loadEval} disabled={loading}>
-          {loading ? 'Evaluating...' : '↻ Re-run Benchmark'}
+          <span className="material-symbols-outlined sym-icon-xs">refresh</span>
+          <span>{loading ? 'Evaluating...' : 'Re-run Benchmark'}</span>
         </button>
       </div>
 
@@ -65,6 +69,7 @@ export default function EvaluationView({ role }) {
               {summary.top_1_accuracy_pct !== undefined ? `${summary.top_1_accuracy_pct}%` : '100%'}
             </span>
             <span className="metric-subtag success">
+              <span className="material-symbols-outlined sym-icon-xs">check_circle</span>
               {summary.top_1_hits || 6}/{summary.total_scenarios || 6} Scenarios
             </span>
           </div>
@@ -77,7 +82,10 @@ export default function EvaluationView({ role }) {
             <span className="metric-huge-number">
               {summary.top_3_accuracy_pct !== undefined ? `${summary.top_3_accuracy_pct}%` : '100%'}
             </span>
-            <span className="metric-subtag success">100% Coverage</span>
+            <span className="metric-subtag success">
+              <span className="material-symbols-outlined sym-icon-xs">verified</span>
+              100% Coverage
+            </span>
           </div>
           <p className="metric-footnote">True root cause ranked in top 3 hypotheses</p>
         </div>
@@ -90,7 +98,10 @@ export default function EvaluationView({ role }) {
                 ? `${summary.mean_time_to_candidate_s}s`
                 : '66s'}
             </span>
-            <span className="metric-subtag highlight">Real-Time Streaming</span>
+            <span className="metric-subtag highlight">
+              <span className="material-symbols-outlined sym-icon-xs">speed</span>
+              Real-Time Streaming
+            </span>
           </div>
           <p className="metric-footnote">
             Average time from incident onset until the Top-1 cause is isolated
@@ -101,7 +112,10 @@ export default function EvaluationView({ role }) {
           <span className="metric-label">EXTERNAL ATTRIBUTION GUARD</span>
           <div className="metric-value-row">
             <span className="metric-huge-number">100%</span>
-            <span className="metric-subtag shield">Rule 5 Guard</span>
+            <span className="metric-subtag shield">
+              <span className="material-symbols-outlined sym-icon-xs">shield</span>
+              Rule 5 Guard
+            </span>
           </div>
           <p className="metric-footnote">Safe refusal on third-party outages without guessing</p>
         </div>
@@ -178,7 +192,8 @@ export default function EvaluationView({ role }) {
                       </td>
                       <td>
                         <span className="status-badge success">
-                          ✓ Verified
+                          <span className="material-symbols-outlined sym-icon-xs">check_circle</span>
+                          Verified
                         </span>
                       </td>
                     </tr>
