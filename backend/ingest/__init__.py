@@ -4,17 +4,7 @@ from pathlib import Path
 from typing import Any
 from backend.models import Event
 
-EMAIL_REGEX = re.compile(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+")
-PHONE_REGEX = re.compile(r"(\+?\d{1,3}[-.\s]?)?(\(?\d{3}\)?[-.\s]?)?\d{3}[-.\s]?\d{4}")
-
-
-def redact_text(s: str) -> str:
-    """Redact email addresses and phone numbers from raw strings."""
-    if not isinstance(s, str):
-        return s
-    redacted = EMAIL_REGEX.sub("[EMAIL]", s)
-    redacted = PHONE_REGEX.sub("[PHONE]", redacted)
-    return redacted
+from backend.ingest.redact import redact_text, redaction_sample
 
 
 def load_scenario(id: str) -> dict[str, Any]:

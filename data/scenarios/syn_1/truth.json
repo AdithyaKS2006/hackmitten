@@ -1,0 +1,5 @@
+{
+  "cause_kind": "change",
+  "cause_name": "payment config pool_size 50->5",
+  "notes": "Config change on payment at minute 37 reduces pool size causing exhaustion."
+}

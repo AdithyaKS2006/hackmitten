@@ -1,0 +1,5 @@
+{
+  "cause_kind": "external",
+  "cause_name": "external dependency outage",
+  "notes": "Third-party payment provider outage; correct answer is unknown=True."
+}

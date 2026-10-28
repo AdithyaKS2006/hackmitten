@@ -1,0 +1,5 @@
+{
+  "cause_kind": "change",
+  "cause_name": "cart service release deploy v2.4.0 -> v2.5.0",
+  "notes": "Bad release deployment of cart at minute 38 causes exceptions."
+}

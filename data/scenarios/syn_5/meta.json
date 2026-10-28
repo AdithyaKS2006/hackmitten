@@ -1,0 +1,10 @@
+{
+  "id": "syn_5",
+  "name": "External Payment Provider Outage (Unknown Case)",
+  "incident_start": "2026-10-28T17:40:00Z",
+  "baseline_end": "2026-10-28T17:35:00Z",
+  "time_range": [
+    "2026-10-28T17:00:00Z",
+    "2026-10-28T18:00:00Z"
+  ]
+}

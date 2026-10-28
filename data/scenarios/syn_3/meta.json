@@ -1,0 +1,10 @@
+{
+  "id": "syn_3",
+  "name": "Database Lock Saturation (No Change)",
+  "incident_start": "2026-10-28T15:40:00Z",
+  "baseline_end": "2026-10-28T15:35:00Z",
+  "time_range": [
+    "2026-10-28T15:00:00Z",
+    "2026-10-28T16:00:00Z"
+  ]
+}

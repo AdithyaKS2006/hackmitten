@@ -1,0 +1,31 @@
+{
+  "nodes": [
+    "frontend",
+    "checkout",
+    "payment",
+    "cart",
+    "db"
+  ],
+  "edges": [
+    [
+      "frontend",
+      "checkout"
+    ],
+    [
+      "checkout",
+      "payment"
+    ],
+    [
+      "checkout",
+      "cart"
+    ],
+    [
+      "payment",
+      "db"
+    ],
+    [
+      "cart",
+      "db"
+    ]
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "cause_kind": "service",
+  "cause_name": "checkout service degradation",
+  "notes": "Slow memory leak in checkout; cart docs deploy is an unrelated red herring."
+}

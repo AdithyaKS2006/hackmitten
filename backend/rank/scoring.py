@@ -67,6 +67,19 @@ def rank_candidates(
             "All services degraded simultaneously within 15s with no internal change records. Indicative of external dependency outage.",
         )
 
+    # Check for external dependency outage (only external timeouts, no internal changes or downstream anomalies)
+    if not change_events:
+        for s in anomalous_services:
+            reasons_text = " ".join([a.reason for a in anomalies_by_svc[s]]).lower()
+            if any(term in reasons_text for term in ("third-party", "external payment", "external dependency", "gateway timeout 504")):
+                downstream_anoms = [d for d in downstream_dependencies(G, s) if d in anomalous_services]
+                if not downstream_anoms:
+                    return (
+                        [],
+                        True,
+                        f"Only generic timeouts on {s}; no change records, no upstream anomaly. The cause is likely outside the supplied data.",
+                    )
+
     # 3. Calculate service scores
     service_scores: dict[str, float] = {}
     service_breakdowns: dict[str, dict[str, float]] = {}

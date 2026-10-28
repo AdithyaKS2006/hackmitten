@@ -1,0 +1,10 @@
+{
+  "id": "syn_2",
+  "name": "Cart Service NullPointer Release Regression",
+  "incident_start": "2026-10-28T14:40:00Z",
+  "baseline_end": "2026-10-28T14:35:00Z",
+  "time_range": [
+    "2026-10-28T14:00:00Z",
+    "2026-10-28T15:00:00Z"
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "cause_kind": "service",
+  "cause_name": "db service degradation",
+  "notes": "DB CPU and lock saturation without any preceding deployment or change."
+}
