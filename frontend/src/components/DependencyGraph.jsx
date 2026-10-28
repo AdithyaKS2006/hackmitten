@@ -6,21 +6,21 @@ export default function DependencyGraph({ graph, anomalousServices = {}, selecte
     frontend: '💻',
     checkout: '🛒',
     payment: '🗄️',
-    cart: '🛒',
+    cart: '🛍️',
     user: '👤',
     db: '💾',
     catalogue: '📦',
     orders: '📋',
   };
 
-  // Fixed visual layout positions for standard topologies, or fallback to auto
+  // Fixed visual layout positions for standard topologies
   const fixedPositions = {
-    frontend: { x: 230, y: 30 },
-    checkout: { x: 230, y: 110 },
-    payment: { x: 130, y: 200 },
-    cart: { x: 330, y: 200 },
-    user: { x: 230, y: 280 },
-    db: { x: 230, y: 280 },
+    frontend: { x: 230, y: 25 },
+    checkout: { x: 230, y: 115 },
+    payment: { x: 125, y: 215 },
+    cart: { x: 335, y: 215 },
+    user: { x: 230, y: 305 },
+    db: { x: 125, y: 305 },
   };
 
   const nodes = graph?.nodes || ['frontend', 'checkout', 'payment', 'cart', 'user'];
@@ -37,15 +37,34 @@ export default function DependencyGraph({ graph, anomalousServices = {}, selecte
     const status = anomalousServices[node];
     if (status === 'cause') return 'cause';
     if (status === 'victim') return 'victim';
-    // Defaults if mock scenario
     if (node === 'payment') return 'cause';
     if (node === 'checkout' || node === 'frontend') return 'victim';
     return 'healthy';
   };
 
+  // Node telemetry stats
+  const getNodeTelemetry = (node) => {
+    switch (node) {
+      case 'payment':
+        return { latency: '2450ms', error: '18.4%' };
+      case 'checkout':
+        return { latency: '1820ms', error: '12.1%' };
+      case 'frontend':
+        return { latency: '1940ms', error: '9.3%' };
+      case 'cart':
+        return { latency: '42ms', error: '0.0%' };
+      case 'user':
+        return { latency: '35ms', error: '0.0%' };
+      case 'db':
+        return { latency: '15ms', error: '0.0%' };
+      default:
+        return { latency: '30ms', error: '0.0%' };
+    }
+  };
+
   // Node dimension
-  const nodeWidth = 140;
-  const nodeHeight = 54;
+  const nodeWidth = 145;
+  const nodeHeight = 58;
 
   return (
     <div className="topology-graph-card">
@@ -64,7 +83,7 @@ export default function DependencyGraph({ graph, anomalousServices = {}, selecte
           <div>
             <h3 className="topology-title">Service Dependency Topology</h3>
             <p className="topology-subtitle">
-              Causal propagation graph. Red indicates root cause, amber indicates cascade victims. Click a service to filter timeline.
+              Interactive causal propagation graph. Red indicates root cause, amber indicates cascade victims.
             </p>
           </div>
         </div>
@@ -88,7 +107,7 @@ export default function DependencyGraph({ graph, anomalousServices = {}, selecte
 
       {/* SVG Canvas Area */}
       <div className="topology-canvas-container">
-        <svg className="topology-svg" viewBox="0 0 580 360" width="100%" height="360">
+        <svg className="topology-svg" viewBox="0 0 580 380" width="100%" height="380">
           <defs>
             {/* Arrow Marker */}
             <marker
@@ -104,7 +123,7 @@ export default function DependencyGraph({ graph, anomalousServices = {}, selecte
             </marker>
           </defs>
 
-          {/* Edges */}
+          {/* Edges with animated packet pulses */}
           {edges.map(([fromNode, toNode], idx) => {
             const pFrom = fixedPositions[fromNode] || { x: 100 + idx * 60, y: 50 };
             const pTo = fixedPositions[toNode] || { x: 150 + idx * 60, y: 220 };
@@ -114,15 +133,29 @@ export default function DependencyGraph({ graph, anomalousServices = {}, selecte
             const endX = pTo.x + nodeWidth / 2;
             const endY = pTo.y;
 
+            const pathData = `M ${startX} ${startY} C ${startX} ${startY + 25}, ${endX} ${endY - 25}, ${endX} ${endY}`;
+            const isAnomalousEdge = fromNode === 'payment' || toNode === 'payment' || fromNode === 'checkout';
+
             return (
               <g key={`edge-${fromNode}-${toNode}-${idx}`}>
+                {/* Edge line */}
                 <path
-                  d={`M ${startX} ${startY} C ${startX} ${startY + 25}, ${endX} ${endY - 25}, ${endX} ${endY}`}
+                  id={`edge-path-${idx}`}
+                  d={pathData}
                   fill="none"
-                  stroke="#b4a99a"
-                  strokeWidth="1.8"
+                  stroke={isAnomalousEdge ? '#e08363' : '#b4a99a'}
+                  strokeWidth={isAnomalousEdge ? '2.2' : '1.8'}
                   markerEnd="url(#topo-arrow)"
                 />
+
+                {/* Animated telemetry pulse packet */}
+                <circle r="3.2" fill={isAnomalousEdge ? '#e04848' : '#22a06b'}>
+                  <animateMotion
+                    dur={`${2.2 + idx * 0.4}s`}
+                    repeatCount="indefinite"
+                    path={pathData}
+                  />
+                </circle>
               </g>
             );
           })}
@@ -133,6 +166,7 @@ export default function DependencyGraph({ graph, anomalousServices = {}, selecte
             const status = getNodeStatus(node);
             const isSelected = selectedService === node;
             const icon = serviceIcons[node] || '🖥️';
+            const telemetry = getNodeTelemetry(node);
 
             // Status styling
             let borderColor = '#9ae6b4';
@@ -171,9 +205,9 @@ export default function DependencyGraph({ graph, anomalousServices = {}, selecte
                   height={nodeHeight}
                   rx="10"
                   fill={bgColor}
-                  stroke={isSelected ? '#3182ce' : borderColor}
+                  stroke={isSelected ? '#b47836' : borderColor}
                   strokeWidth={isSelected ? '2.5' : '1.6'}
-                  filter="drop-shadow(0px 2px 4px rgba(0,0,0,0.03))"
+                  filter="drop-shadow(0px 2px 5px rgba(0,0,0,0.03))"
                 />
 
                 {/* Top Status Tag */}
@@ -200,24 +234,36 @@ export default function DependencyGraph({ graph, anomalousServices = {}, selecte
                 </g>
 
                 {/* Service Icon */}
-                <text x="16" y="34" fontSize="18">
+                <text x="14" y="32" fontSize="17">
                   {icon}
                 </text>
 
                 {/* Service Name */}
                 <text
-                  x="44"
-                  y="33"
+                  x="40"
+                  y="28"
                   fill="#2d2823"
-                  fontSize="13"
-                  fontWeight="600"
+                  fontSize="12.5"
+                  fontWeight="700"
                   fontFamily="Inter, system-ui, sans-serif"
                 >
                   {node}
                 </text>
 
+                {/* Telemetry subline: P99 & Error */}
+                <text
+                  x="40"
+                  y="46"
+                  fill="#786c5e"
+                  fontSize="10"
+                  fontWeight="600"
+                  fontFamily="JetBrains Mono, monospace"
+                >
+                  P99: {telemetry.latency} • {telemetry.error} err
+                </text>
+
                 {/* Right Status Dot */}
-                <circle cx={nodeWidth - 18} cy="27" r="4.5" fill={dotColor} />
+                <circle cx={nodeWidth - 14} cy="28" r="4.5" fill={dotColor} />
               </g>
             );
           })}

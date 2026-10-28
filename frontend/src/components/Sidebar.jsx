@@ -11,24 +11,40 @@ export default function Sidebar({ currentNav = 'dashboard', onNavChange }) {
 
   return (
     <aside className="app-sidebar">
-      {/* Brand Logo & Name */}
+      {/* Brand Logo & Name: TechInova */}
       <div className="sidebar-brand">
-        <div className="brand-cube-icon">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#b47836" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" fill="#f6ece0" />
-            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-            <line x1="12" y1="22.08" x2="12" y2="12" />
+        <div className="brand-cube-icon techinova-logo-wrap">
+          <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            {/* Hexagonal Server Frame */}
+            <path
+              d="M16 2L29 9.5V22.5L16 30L3 22.5V9.5L16 2Z"
+              stroke="#b47836"
+              strokeWidth="2.2"
+              fill="#faf4ec"
+            />
+            {/* TechInova Stylized 'T' & Network Core */}
+            <path
+              d="M10 10H22M16 10V22"
+              stroke="#8c5221"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            />
+            {/* Interconnected Server Nodes */}
+            <circle cx="10" cy="10" r="2.2" fill="#b47836" />
+            <circle cx="22" cy="10" r="2.2" fill="#b47836" />
+            <circle cx="16" cy="22" r="2.5" fill="#22a06b" />
+            <circle cx="16" cy="10" r="1.8" fill="#ffffff" />
           </svg>
         </div>
         <div className="brand-text">
-          <h2 className="brand-title">Hackmitten</h2>
-          <span className="brand-subtitle">AIOps Root Cause Analysis</span>
+          <h2 className="brand-title">TechInova</h2>
+          <span className="brand-subtitle">AIOps Incident Intelligence</span>
         </div>
       </div>
 
       {/* Nav Menu with Light Borders and Distinct Action Buttons */}
       <nav className="sidebar-nav">
-        <span className="sidebar-section-label">MAIN NAVIGATION</span>
+        <span className="sidebar-section-label">PLATFORM NAVIGATION</span>
         {navItems.map((item) => {
           const isActive = currentNav === item.id;
           return (
@@ -51,13 +67,13 @@ export default function Sidebar({ currentNav = 'dashboard', onNavChange }) {
         })}
       </nav>
 
-      {/* Bottom Online Status Badge */}
+      {/* Bottom Health Badge - Replaced technical raw API URL with user-friendly cluster health */}
       <div className="sidebar-footer-card">
         <div className="status-indicator-row">
           <span className="status-dot-green"></span>
-          <span className="status-text-bold">System Online</span>
+          <span className="status-text-bold">Cluster Health: Healthy</span>
         </div>
-        <div className="status-timestamp">API: http://localhost:8000</div>
+        <div className="status-subtext">6 Services Monitored • Live ML Inference</div>
       </div>
     </aside>
   );

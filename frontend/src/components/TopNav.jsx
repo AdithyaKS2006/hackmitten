@@ -5,10 +5,50 @@ export default function TopNav({
   role = 'analyst',
   onRoleChange,
   onNavigate,
+  onSelectScenario,
+  onSelectService,
 }) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [unreadCount, setUnreadCount] = useState(4);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+
+  const notifRef = useRef(null);
+  const accountRef = useRef(null);
+  const searchRef = useRef(null);
+
+  // Search catalog index
+  const searchCatalog = [
+    { type: 'Service', icon: '🗄️', title: 'payment', subtitle: 'Root Cause • Python Django • Port 8000', action: () => { if (onSelectService) onSelectService('payment'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Service', icon: '🛒', title: 'checkout', subtitle: 'Cascade Victim • Go gRPC • High Latency', action: () => { if (onSelectService) onSelectService('checkout'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Service', icon: '💻', title: 'frontend', subtitle: 'Cascade Victim • Node.js Express Gateway', action: () => { if (onSelectService) onSelectService('frontend'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Service', icon: '🛍️', title: 'cart', subtitle: 'Healthy Service • Java Spring Boot', action: () => { if (onSelectService) onSelectService('cart'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Service', icon: '👤', title: 'user', subtitle: 'Healthy Service • Go Profile Service', action: () => { if (onSelectService) onSelectService('user'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Service', icon: '💾', title: 'db', subtitle: 'PostgreSQL Relational Cluster', action: () => { if (onSelectService) onSelectService('db'); if (onNavigate) onNavigate('dashboard'); } },
+
+    { type: 'Scenario', icon: '⚡', title: 'Payment DB Pool Exhaustion Cascade', subtitle: 'Scenario: mock • Database thread pool starved', action: () => { if (onSelectScenario) onSelectScenario('mock'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Scenario', icon: '⚠️', title: 'Payment DB Connection Pool Starvation', subtitle: 'Scenario: syn_1 • Configuration change 50 -> 5', action: () => { if (onSelectScenario) onSelectScenario('syn_1'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Scenario', icon: '🐞', title: 'Cart Service NullPointer Release Regression', subtitle: 'Scenario: syn_2 • Deployment failure v2', action: () => { if (onSelectScenario) onSelectScenario('syn_2'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Scenario', icon: '🔒', title: 'Database Lock Saturation (No Change)', subtitle: 'Scenario: syn_3 • Row lock contention', action: () => { if (onSelectScenario) onSelectScenario('syn_3'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Scenario', icon: '📈', title: 'Checkout Memory Leak with Red Herring', subtitle: 'Scenario: syn_4 • Heap exhaustion', action: () => { if (onSelectScenario) onSelectScenario('syn_4'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Scenario', icon: '🛡️', title: 'External Payment Gateway Outage', subtitle: 'Scenario: syn_5 • Honest Unknown Refusal Guard', action: () => { if (onSelectScenario) onSelectScenario('syn_5'); if (onNavigate) onNavigate('dashboard'); } },
+
+    { type: 'Telemetry Signal', icon: '🔍', title: 'Connection Pool Exhausted Logs', subtitle: 'Failed to obtain DB connection within 5000ms', action: () => { if (onSelectService) onSelectService('payment'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Telemetry Signal', icon: '📈', title: 'P99 Latency Spike > 1800ms', subtitle: 'Cross-service cascade from checkout to frontend', action: () => { if (onSelectService) onSelectService('checkout'); if (onNavigate) onNavigate('dashboard'); } },
+    { type: 'Telemetry Signal', icon: '🛡️', title: 'PII Redacted Telemetry Records', subtitle: 'Verified sanitization of credentials and IP addresses', action: () => { if (onNavigate) onNavigate('settings'); } },
+  ];
+
+  const filteredSearchResults = searchCatalog.filter((item) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      item.title.toLowerCase().includes(q) ||
+      item.subtitle.toLowerCase().includes(q) ||
+      item.type.toLowerCase().includes(q)
+    );
+  });
+
   const [notifications, setNotifications] = useState([
     {
       id: 1,
@@ -52,9 +92,6 @@ export default function TopNav({
     },
   ]);
 
-  const notifRef = useRef(null);
-  const accountRef = useRef(null);
-
   // Close menus when clicking outside
   useEffect(() => {
     function handleClickOutside(e) {
@@ -63,6 +100,9 @@ export default function TopNav({
       }
       if (accountRef.current && !accountRef.current.contains(e.target)) {
         setShowAccountMenu(false);
+      }
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setShowSearchDropdown(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -83,10 +123,16 @@ export default function TopNav({
     if (onNavigate) onNavigate('dashboard');
   };
 
+  const handleSearchResultClick = (item) => {
+    item.action();
+    setShowSearchDropdown(false);
+    setSearchQuery('');
+  };
+
   return (
     <header className="top-navbar">
-      {/* Search Input Bar */}
-      <div className="search-bar-container">
+      {/* Interactive Global Search Bar */}
+      <div className="search-bar-container" ref={searchRef}>
         <span className="search-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8a8074" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8"></circle>
@@ -96,9 +142,65 @@ export default function TopNav({
         <input
           type="text"
           className="search-input"
-          placeholder="Search service, incident scenario or telemetry keyword..."
-          onChange={(e) => onSearch && onSearch(e.target.value)}
+          placeholder="Search services, incident scenarios or telemetry signals..."
+          value={searchQuery}
+          onFocus={() => setShowSearchDropdown(true)}
+          onChange={(e) => {
+            setSearchQuery(e.target.value);
+            setShowSearchDropdown(true);
+            if (onSearch) onSearch(e.target.value);
+          }}
         />
+
+        {searchQuery ? (
+          <button
+            type="button"
+            className="search-clear-btn"
+            onClick={() => {
+              setSearchQuery('');
+              if (onSearch) onSearch('');
+            }}
+          >
+            ✕
+          </button>
+        ) : (
+          <span className="search-shortcut-pill">Ctrl+K</span>
+        )}
+
+        {/* Live Search Results Dropdown */}
+        {showSearchDropdown && (
+          <div className="search-results-dropdown">
+            <div className="search-results-header">
+              <span>Quick Navigation & Telemetry Index</span>
+              <span className="search-count-badge">{filteredSearchResults.length} matches</span>
+            </div>
+
+            <div className="search-results-list">
+              {filteredSearchResults.length > 0 ? (
+                filteredSearchResults.map((res, idx) => (
+                  <div
+                    key={idx}
+                    className="search-result-item"
+                    onClick={() => handleSearchResultClick(res)}
+                  >
+                    <span className="search-item-icon">{res.icon}</span>
+                    <div className="search-item-text">
+                      <div className="search-item-title-row">
+                        <strong className="search-item-title">{res.title}</strong>
+                        <span className="search-item-type">{res.type}</span>
+                      </div>
+                      <span className="search-item-subtitle">{res.subtitle}</span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="search-empty-state">
+                  <span>No matches found for "{searchQuery}". Try "payment", "cascade", or "pool".</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Right Controls: Notifications & User Profile */}
@@ -112,6 +214,7 @@ export default function TopNav({
             onClick={() => {
               setShowNotifications(!showNotifications);
               setShowAccountMenu(false);
+              setShowSearchDropdown(false);
             }}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5a5247" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -178,13 +281,14 @@ export default function TopNav({
           )}
         </div>
 
-        {/* User Profile / Account Menu */}
+        {/* User Profile / Account Menu: TechInova */}
         <div className="top-nav-dropdown-wrapper" ref={accountRef}>
           <div
             className={`user-profile-badge ${showAccountMenu ? 'active' : ''}`}
             onClick={() => {
               setShowAccountMenu(!showAccountMenu);
               setShowNotifications(false);
+              setShowSearchDropdown(false);
             }}
           >
             <div className="user-avatar-circle">A</div>
@@ -204,7 +308,7 @@ export default function TopNav({
                 <div className="user-full-details">
                   <h4 className="account-user-name">Amrutha</h4>
                   <span className="account-user-email">Lead SRE & Incident Commander</span>
-                  <span className="account-team-badge">AO-03 SRE Response Team</span>
+                  <span className="account-team-badge">TechInova SRE Team</span>
                 </div>
               </div>
 
@@ -291,12 +395,12 @@ export default function TopNav({
               <div className="account-panel-footer">
                 <div className="session-status-text">
                   <span className="dot-green"></span>
-                  <span>Session: Active (Local API 8000)</span>
+                  <span>Session: Active (TechInova Cluster)</span>
                 </div>
                 <button
                   className="btn-account-logout"
                   onClick={() => {
-                    alert('Session reset for operator Amrutha.');
+                    alert('Session verified for operator Amrutha.');
                     setShowAccountMenu(false);
                   }}
                 >

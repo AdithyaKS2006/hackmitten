@@ -40,7 +40,7 @@ export default function PostIncidentReport({ analysis, onClose, isEmbedded = fal
       {/* Report Header */}
       <div className="report-header">
         <div className="report-meta-top">
-          <span>AO-03 ROOT CAUSE EVIDENCE ENGINE</span>
+          <span>TECHINOVA ROOT CAUSE INTELLIGENCE</span>
           <span>INCIDENT POST-MORTEM DOSSIER</span>
         </div>
         <h1 className="report-title">Post-Incident Attributions: {scenarioId.toUpperCase()}</h1>
@@ -126,7 +126,7 @@ export default function PostIncidentReport({ analysis, onClose, isEmbedded = fal
       <div className="report-section">
         <h2 className="report-section-heading">3. Governance, Privacy & Read-Only Guarantee</h2>
         <p style={{ fontSize: '12px', color: '#475569', lineHeight: 1.5 }}>
-          This post-incident review was generated automatically by the AO-03 Root Cause Evidence Engine.
+          This post-incident review was generated automatically by the TechInova Root Cause Intelligence Engine.
           Telemetry records were ingested in read-only mode from immutable archives. Personal Data (PII) including
           usernames, IP addresses, credentials, and customer records were sanitized prior to analysis.
           Explanations are hypotheses intended to guide site reliability engineers in remediation and verification.
@@ -134,7 +134,7 @@ export default function PostIncidentReport({ analysis, onClose, isEmbedded = fal
       </div>
 
       <div className="report-footer">
-        <span>AO-03 Root Cause Evidence Engine &copy; 2026</span>
+        <span>TechInova Root Cause Intelligence &copy; 2026</span>
         <span>Confidential - For Internal Site Reliability Review Only</span>
       </div>
     </div>

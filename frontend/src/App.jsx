@@ -93,7 +93,7 @@ export default function App() {
   };
 
   return (
-    <div className="hackmitten-layout-root">
+    <div className="techinova-layout-root">
       {/* 1. Left Sidebar with Visible Light Borders */}
       <Sidebar
         currentNav={currentNav}
@@ -102,12 +102,22 @@ export default function App() {
 
       {/* 2. Main Right Container */}
       <div className="app-main-viewport">
-        {/* Top Navbar with Notifications & Account Menus */}
+        {/* Top Navbar with Interactive Search, Notifications & Account Menus */}
         <TopNav
           onSearch={setSearchQuery}
           role={role}
           onRoleChange={setRole}
           onNavigate={setCurrentNav}
+          onSelectScenario={(scId) => {
+            setSelectedScenario(scId);
+            setSelectedService(null);
+            setAsOf(null);
+            setCurrentNav('dashboard');
+          }}
+          onSelectService={(svc) => {
+            setSelectedService(svc);
+            setCurrentNav('dashboard');
+          }}
         />
 
         {/* View 1: Main Investigation Dashboard */}

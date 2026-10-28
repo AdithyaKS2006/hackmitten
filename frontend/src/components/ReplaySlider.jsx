@@ -85,6 +85,29 @@ export default function ReplaySlider({ meta, currentAsOf, onAsOfChange, loading 
     setSliderVal(incidentPercent);
   };
 
+  // Generate 48 graphical telemetry density waveform bars
+  const waveBars = Array.from({ length: 48 }, (_, i) => {
+    const barPercent = (i / 48) * 100;
+    let height = 6;
+    let color = '#d6c9ba';
+
+    if (barPercent < incidentPercent - 5) {
+      // Baseline normal traffic
+      height = 5 + (i % 3) * 3;
+      color = '#b7cfbd';
+    } else if (barPercent >= incidentPercent - 5 && barPercent <= incidentPercent + 15) {
+      // Anomaly onset spike
+      height = 20 + ((i * 7) % 14);
+      color = '#e05252';
+    } else {
+      // Cascade elevated state
+      height = 12 + ((i * 5) % 10);
+      color = '#e2993a';
+    }
+
+    return { height, color, isPassed: barPercent <= sliderVal };
+  });
+
   return (
     <div className="replay-scrubber-card">
       {/* Card Header */}
@@ -96,7 +119,7 @@ export default function ReplaySlider({ meta, currentAsOf, onAsOfChange, loading 
             </svg>
           </div>
           <div>
-            <h3 className="scrubber-title">Incident Replay Scrubber</h3>
+            <h3 className="scrubber-title">Incident Replay & Causal Scrubber</h3>
             <p className="scrubber-subtitle">Simulate real-time causal attribution as telemetry streams in.</p>
           </div>
         </div>
@@ -110,6 +133,27 @@ export default function ReplaySlider({ meta, currentAsOf, onAsOfChange, loading 
             <span className="clock-icon">🕒</span>
             <span className="timing-clock">{clockTimeStr}</span>
           </div>
+        </div>
+      </div>
+
+      {/* Graphical Waveform Spectrum of Telemetry Activity */}
+      <div className="scrubber-waveform-container" title="Telemetry Ingestion Volume & Anomaly Density">
+        <div className="waveform-label-top">
+          <span>Normal Baseline Traffic</span>
+          <span className="onset-text">Onset Peak Spikes</span>
+          <span>Sustained Cascade</span>
+        </div>
+        <div className="waveform-bars-track">
+          {waveBars.map((bar, idx) => (
+            <div
+              key={idx}
+              className={`wave-bar-col ${bar.isPassed ? 'active-passed' : 'dimmed'}`}
+              style={{
+                height: `${bar.height}px`,
+                backgroundColor: bar.isPassed ? bar.color : '#e2d7cb',
+              }}
+            ></div>
+          ))}
         </div>
       </div>
 
@@ -139,22 +183,23 @@ export default function ReplaySlider({ meta, currentAsOf, onAsOfChange, loading 
       <div className="scrubber-actions-row">
         <div className="scrubber-btn-group">
           <button
+            type="button"
             className={`btn-play-stream ${isPlaying ? 'playing' : ''}`}
             onClick={() => setIsPlaying(!isPlaying)}
           >
             {isPlaying ? '⏸ Pause Stream' : '▶ Play Stream'}
           </button>
 
-          <button className="btn-replay-pill" onClick={jumpToIncident}>
+          <button type="button" className="btn-replay-pill" onClick={jumpToIncident}>
             ⚡ Jump to Onset
           </button>
 
-          <button className="btn-replay-pill" onClick={handleReset}>
+          <button type="button" className="btn-replay-pill" onClick={handleReset}>
             🔄 Full Incident
           </button>
         </div>
 
-        <button className="link-telemetry-window" onClick={handleReset}>
+        <button type="button" className="link-telemetry-window" onClick={handleReset}>
           Complete Telemetry Window →
         </button>
       </div>
