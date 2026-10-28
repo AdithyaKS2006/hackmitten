@@ -107,14 +107,15 @@ export default function RankedCauses({
       {/* Header */}
       <div className="causes-header-row">
         <div className="causes-title-wrap">
-          <div className="chart-icon-badge">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b47836" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <div className="chart-icon-badge division-header-icon-box">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b47836" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="20" x2="18" y2="10"></line>
               <line x1="12" y1="20" x2="12" y2="4"></line>
               <line x1="6" y1="20" x2="6" y2="14"></line>
             </svg>
           </div>
           <div>
+            <div className="division-pretitle-tag">AI CAUSAL INFERENCE</div>
             <h3 className="causes-title">Ranked Root Cause Hypotheses</h3>
             <p className="causes-subtitle">
               Causal suspects evaluated by onset timing, topology impact, change proximity, and signal consensus.

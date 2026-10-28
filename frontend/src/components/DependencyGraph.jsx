@@ -71,8 +71,8 @@ export default function DependencyGraph({ graph, anomalousServices = {}, selecte
       {/* Header */}
       <div className="topology-header-row">
         <div className="topology-title-wrap">
-          <div className="graph-icon-badge">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b47836" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <div className="graph-icon-badge division-header-icon-box">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b47836" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="18" cy="5" r="3"></circle>
               <circle cx="6" cy="12" r="3"></circle>
               <circle cx="18" cy="19" r="3"></circle>
@@ -81,6 +81,7 @@ export default function DependencyGraph({ graph, anomalousServices = {}, selecte
             </svg>
           </div>
           <div>
+            <div className="division-pretitle-tag">NETWORK TOPOLOGY MAP</div>
             <h3 className="topology-title">Service Dependency Topology</h3>
             <p className="topology-subtitle">
               Interactive causal propagation graph. Red indicates root cause, amber indicates cascade victims.

@@ -113,12 +113,13 @@ export default function ReplaySlider({ meta, currentAsOf, onAsOfChange, loading 
       {/* Card Header */}
       <div className="scrubber-header-row">
         <div className="scrubber-title-group">
-          <div className="waveform-icon-badge">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b47836" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <div className="waveform-icon-badge division-header-icon-box">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b47836" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M2 12h3l2-6 4 12 3-9 2 5 2-2h4"></path>
             </svg>
           </div>
           <div>
+            <div className="division-pretitle-tag">LIVE INCIDENT REPLAY</div>
             <h3 className="scrubber-title">Incident Replay & Causal Scrubber</h3>
             <p className="scrubber-subtitle">Simulate real-time causal attribution as telemetry streams in.</p>
           </div>

@@ -33,7 +33,8 @@
   --healthy-green-bg: #f0fff4;
   --healthy-green-border: #9ae6b4;
 
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
 }
 
 * {
@@ -4011,27 +4012,145 @@ body {
   gap: 16px;
 }
 
-/* Elegant frosted glass cards allowing animated network mesh to shine through */
+/* ==========================================================================
+   ENHANCED DIVISION HEADINGS & TYPOGRAPHY SYSTEM
+   ========================================================================== */
+
+.division-pretitle-tag {
+  font-size: 9.5px !important;
+  font-weight: 800 !important;
+  color: #b47836 !important;
+  letter-spacing: 0.9px !important;
+  text-transform: uppercase !important;
+  margin-bottom: 2px !important;
+  display: inline-block !important;
+  font-family: var(--font-sans) !important;
+}
+
+.division-header-icon-box {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 11px !important;
+  background: linear-gradient(135deg, #ffffff 0%, #fcf4eb 100%) !important;
+  border: 1.5px solid rgba(180, 120, 54, 0.28) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 2px 8px rgba(180, 120, 54, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  flex-shrink: 0 !important;
+}
+
+.scrubber-title,
+.topology-title,
+.causes-title,
+.timeline-heading {
+  font-family: var(--font-sans) !important;
+  font-size: 16.5px !important;
+  font-weight: 800 !important;
+  color: #1a140e !important;
+  letter-spacing: -0.35px !important;
+  line-height: 1.25 !important;
+  margin: 0 !important;
+}
+
+.scrubber-subtitle,
+.topology-subtitle,
+.causes-subtitle,
+.timeline-subheading {
+  font-family: var(--font-sans) !important;
+  font-size: 12.5px !important;
+  color: #615548 !important;
+  line-height: 1.45 !important;
+  margin-top: 3px !important;
+  font-weight: 500 !important;
+}
+
+/* ==========================================================================
+   INDIVIDUAL CREATIVE SHADOW STYLES FOR EACH DIVISION (DEFINING ONE BY ONE)
+   ========================================================================== */
+
 .replay-scrubber-card,
 .topology-graph-card,
 .ranked-causes-card,
 .timeline-section-card {
-  background: rgba(255, 255, 255, 0.94) !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
-  border: 1px solid rgba(230, 215, 200, 0.88) !important;
+  position: relative !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
   border-radius: 14px !important;
-  box-shadow: 0 4px 20px rgba(45, 35, 25, 0.04) !important;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
+/* Division 1: Replay Scrubber - Defined with gold-amber ambient depth */
+.replay-scrubber-card {
+  border: 1.5px solid rgba(225, 205, 185, 0.9) !important;
+  box-shadow: 
+    0 1px 2px rgba(45, 35, 25, 0.04),
+    0 8px 24px -4px rgba(180, 120, 54, 0.11),
+    0 16px 36px -8px rgba(45, 35, 25, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+
+/* Division 2: Service Topology Graph - Defined with emerald network ambient depth */
+.topology-graph-card {
+  border: 1.5px solid rgba(220, 205, 185, 0.9) !important;
+  box-shadow: 
+    0 1px 2px rgba(45, 35, 25, 0.04),
+    0 8px 26px -4px rgba(34, 160, 107, 0.10),
+    0 18px 38px -8px rgba(45, 35, 25, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+
+/* Division 3: Ranked Root Cause Hypotheses - Defined with warm causal alert depth */
+.ranked-causes-card {
+  border: 1.5px solid rgba(220, 205, 185, 0.9) !important;
+  box-shadow: 
+    0 1px 2px rgba(45, 35, 25, 0.04),
+    0 8px 26px -4px rgba(224, 72, 72, 0.09),
+    0 18px 38px -8px rgba(45, 35, 25, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+
+/* Division 4: Correlated Event Timeline - Defined with deep sequence audit depth */
+.timeline-section-card {
+  border: 1.5px solid rgba(220, 205, 185, 0.9) !important;
+  box-shadow: 
+    0 1px 2px rgba(45, 35, 25, 0.04),
+    0 10px 30px -4px rgba(180, 120, 54, 0.12),
+    0 20px 42px -8px rgba(45, 35, 25, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+
+/* Distinct hover elevation defining each division when focused */
 .replay-scrubber-card:hover,
 .topology-graph-card:hover,
 .ranked-causes-card:hover,
 .timeline-section-card:hover {
-  border-color: rgba(180, 120, 54, 0.4) !important;
-  box-shadow: 0 10px 32px rgba(180, 120, 54, 0.1) !important;
-  transform: translateY(-1px);
+  transform: translateY(-2px) !important;
+  border-color: rgba(180, 120, 54, 0.5) !important;
+  box-shadow: 
+    0 2px 4px rgba(45, 35, 25, 0.05),
+    0 16px 40px -4px rgba(180, 120, 54, 0.18),
+    0 28px 52px -8px rgba(45, 35, 25, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+
+/* ==========================================================================
+   GLOBAL FONT MANAGEMENT SCALE & CONTRAST
+   ========================================================================== */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans);
+  color: #1a140e;
+  letter-spacing: -0.3px;
+}
+
+p, span, div, label, select, button {
+  font-family: var(--font-sans);
+}
+
+code, pre, .font-mono, .s-metric-val, .scenario-id-badge, .code-ref-pill, .incident-id-pill {
+  font-family: var(--font-mono) !important;
 }
 
 

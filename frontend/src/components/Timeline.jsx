@@ -119,13 +119,14 @@ export default function Timeline({
       {/* Header Bar */}
       <div className="timeline-header-bar">
         <div className="timeline-title-group">
-          <div className="timeline-header-icon-badge">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b47836" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <div className="timeline-header-icon-badge division-header-icon-box">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b47836" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10"></circle>
               <polyline points="12 6 12 12 16 14"></polyline>
             </svg>
           </div>
           <div>
+            <div className="division-pretitle-tag">CHRONOLOGICAL EVENT FEED</div>
             <h3 className="timeline-heading">Correlated Incident Sequence</h3>
             <p className="timeline-subheading">
               Chronological feed of configuration changes, error logs, and performance anomalies.
