@@ -1,10 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-/**
- * Interactive Incident Replay Slider / Time Scrubber
- * Allows scrubbing through time from incident_start to incident_end.
- * Debounces API analysis calls and shows real-time elapsed offset (mm:ss).
- */
 export default function ReplaySlider({ meta, currentAsOf, onAsOfChange, loading }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [sliderVal, setSliderVal] = useState(100); // 0 to 100 percentage
@@ -38,10 +33,18 @@ export default function ReplaySlider({ meta, currentAsOf, onAsOfChange, loading 
   const secs = absSec % 60;
   const elapsedLabel = `${isBeforeIncident ? '-' : '+'}${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 
+  // Formatted clock time
+  const clockTimeStr = new Date(currentTsMs).toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    timeZone: 'UTC',
+  }) + ' UTC';
+
   // Debounced update to parent
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (sliderVal === 100) {
+      if (sliderVal >= 99) {
         onAsOfChange(null); // Full telemetry
       } else {
         onAsOfChange(currentIso);
@@ -62,7 +65,7 @@ export default function ReplaySlider({ meta, currentAsOf, onAsOfChange, loading 
           }
           return Math.min(100, prev + 2);
         });
-      }, 600);
+      }, 500);
     } else {
       if (playTimerRef.current) clearInterval(playTimerRef.current);
     }
@@ -83,92 +86,77 @@ export default function ReplaySlider({ meta, currentAsOf, onAsOfChange, loading 
   };
 
   return (
-    <div className="replay-slider-card">
-      <div className="replay-header">
-        <div className="replay-title-wrap">
-          <span className="replay-live-dot"></span>
+    <div className="replay-scrubber-card">
+      {/* Card Header */}
+      <div className="scrubber-header-row">
+        <div className="scrubber-title-group">
+          <div className="waveform-icon-badge">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b47836" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M2 12h3l2-6 4 12 3-9 2 5 2-2h4"></path>
+            </svg>
+          </div>
           <div>
-            <h4 className="replay-title">Incident Replay Scrubber</h4>
-            <span className="replay-subtitle">
-              Simulate real-time causal attribution as telemetry streams in
-            </span>
+            <h3 className="scrubber-title">Incident Replay Scrubber</h3>
+            <p className="scrubber-subtitle">Simulate real-time causal attribution as telemetry streams in.</p>
           </div>
         </div>
 
-        <div className="replay-meta-badges">
-          <span className="replay-chip">
-            Offset: <strong>{elapsedLabel}</strong>
-          </span>
-          <span className="replay-chip replay-time">
-            {new Date(currentTsMs).toLocaleTimeString()} UTC
-          </span>
-          {sliderVal < 100 && (
-            <span className="replay-badge-active">
-              Replay Active (as_of)
-            </span>
-          )}
+        <div className="scrubber-timing-badges">
+          <div className="timing-pill">
+            <span className="timing-label">Offset</span>
+            <span className="timing-value">{elapsedLabel}</span>
+          </div>
+          <div className="timing-pill clock-pill">
+            <span className="clock-icon">🕒</span>
+            <span className="timing-clock">{clockTimeStr}</span>
+          </div>
         </div>
       </div>
 
-      <div className="slider-track-wrap">
+      {/* Slider Track with Incident Marker */}
+      <div className="scrubber-track-container">
         <input
           type="range"
           min="0"
           max="100"
+          step="1"
           value={sliderVal}
-          onChange={(e) => {
-            setIsPlaying(false);
-            setSliderVal(Number(e.target.value));
-          }}
-          className="time-range-slider"
-          disabled={loading}
+          onChange={(e) => setSliderVal(Number(e.target.value))}
+          className="scrubber-range-input"
         />
 
-        {/* Incident Start Marker */}
+        {/* Incident Start Marker Flag */}
         <div
-          className="incident-marker"
+          className="incident-start-marker"
           style={{ left: `${incidentPercent}%` }}
-          title={`Incident Injected at: ${incidentStartIso}`}
         >
+          <div className="marker-flag">Incident Start</div>
           <div className="marker-pin"></div>
-          <span className="marker-label">Incident Start</span>
         </div>
       </div>
 
-      <div className="replay-controls">
-        <div className="btn-group">
+      {/* Control Buttons */}
+      <div className="scrubber-actions-row">
+        <div className="scrubber-btn-group">
           <button
-            className={`btn-control ${isPlaying ? 'active' : ''}`}
+            className={`btn-play-stream ${isPlaying ? 'playing' : ''}`}
             onClick={() => setIsPlaying(!isPlaying)}
-            title={isPlaying ? 'Pause replay' : 'Play replay simulation'}
           >
-            {isPlaying ? '⏸ Pause' : '▶ Play Stream'}
+            {isPlaying ? '⏸ Pause Stream' : '▶ Play Stream'}
           </button>
-          <button
-            className="btn-control"
-            onClick={jumpToIncident}
-            title="Jump to injected incident fault start"
-          >
+
+          <button className="btn-replay-pill" onClick={jumpToIncident}>
             ⚡ Jump to Onset
           </button>
-          <button
-            className="btn-control"
-            onClick={handleReset}
-            title="View full completed scenario telemetry"
-          >
-            ↺ Full Incident
+
+          <button className="btn-replay-pill" onClick={handleReset}>
+            🔄 Full Incident
           </button>
         </div>
 
-        <div className="replay-status-indicator">
-          {loading ? (
-            <span className="loading-spinner-inline">Re-correlating causal graph...</span>
-          ) : sliderVal === 100 ? (
-            <span className="status-complete">Complete Telemetry Window</span>
-          ) : (
-            <span className="status-window">Partial Telemetry Window ({sliderVal}%)</span>
-          )}
-        </div>
+        <button className="link-telemetry-window" onClick={handleReset}>
+          Complete Telemetry Window →
+        </button>
       </div>
     </div>
   );

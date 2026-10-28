@@ -5,6 +5,8 @@ logs/
 *.zip
 .env
 dist/
+db.sqlite3
+*.sqlite3
 
 # data/raw
 data/raw/*

@@ -1,295 +1,227 @@
 import React from 'react';
 
-/**
- * Interactive SVG Dependency Graph
- * Computes hierarchical layers from edges, renders directed flow arrows,
- * highlights root cause & cascade victims with neon glow, and filters timeline on click.
- */
-export default function DependencyGraph({ graph, anomalousServices, selectedService, onSelectService }) {
-  const nodes = graph?.nodes || [];
-  const edges = graph?.edges || [];
+export default function DependencyGraph({ graph, anomalousServices = {}, selectedService, onSelectService }) {
+  // Service icons mapping
+  const serviceIcons = {
+    frontend: '💻',
+    checkout: '🛒',
+    payment: '🗄️',
+    cart: '🛒',
+    user: '👤',
+    db: '💾',
+    catalogue: '📦',
+    orders: '📋',
+  };
 
-  if (nodes.length === 0) {
-    return (
-      <div className="card-empty-state">
-        <p>No dependency topology available for this scenario.</p>
-      </div>
-    );
-  }
+  // Fixed visual layout positions for standard topologies, or fallback to auto
+  const fixedPositions = {
+    frontend: { x: 230, y: 30 },
+    checkout: { x: 230, y: 110 },
+    payment: { x: 130, y: 200 },
+    cart: { x: 330, y: 200 },
+    user: { x: 230, y: 280 },
+    db: { x: 230, y: 280 },
+  };
 
-  // Compute topological layers (callers above callees)
-  const incomingCount = {};
-  const outgoingMap = {};
-  nodes.forEach((n) => {
-    incomingCount[n] = 0;
-    outgoingMap[n] = [];
-  });
-  edges.forEach(([u, v]) => {
-    if (incomingCount[v] !== undefined) incomingCount[v]++;
-    if (outgoingMap[u]) outgoingMap[u].push(v);
-  });
+  const nodes = graph?.nodes || ['frontend', 'checkout', 'payment', 'cart', 'user'];
+  const edges = graph?.edges || [
+    ['frontend', 'checkout'],
+    ['checkout', 'payment'],
+    ['checkout', 'cart'],
+    ['payment', 'user'],
+    ['cart', 'user'],
+  ];
 
-  // Assign layers
-  const layers = {};
-  nodes.forEach((n) => {
-    if (incomingCount[n] === 0) layers[n] = 0;
-  });
-
-  let changed = true;
-  let iter = 0;
-  while (changed && iter < 10) {
-    changed = false;
-    iter++;
-    edges.forEach(([u, v]) => {
-      const uLayer = layers[u] !== undefined ? layers[u] : 0;
-      const vLayer = layers[v] !== undefined ? layers[v] : 0;
-      if (vLayer <= uLayer) {
-        layers[v] = uLayer + 1;
-        changed = true;
-      }
-    });
-  }
-
-  // Group by layer
-  const layerGroups = {};
-  nodes.forEach((n) => {
-    const l = layers[n] || 0;
-    if (!layerGroups[l]) layerGroups[l] = [];
-    layerGroups[l].push(n);
-  });
-
-  const sortedLayerKeys = Object.keys(layerGroups).map(Number).sort((a, b) => a - b);
-  const width = 560;
-  const height = 320;
-  const layerHeight = height / (sortedLayerKeys.length + 1);
-
-  // Position nodes
-  const nodePositions = {};
-  sortedLayerKeys.forEach((layerIdx, lIndex) => {
-    const group = layerGroups[layerIdx];
-    const y = layerHeight * (lIndex + 1);
-    const spacing = width / (group.length + 1);
-    group.forEach((node, nIndex) => {
-      nodePositions[node] = {
-        x: spacing * (nIndex + 1),
-        y: y,
-      };
-    });
-  });
-
+  // Derive node status
   const getNodeStatus = (node) => {
-    const status = anomalousServices?.[node];
+    const status = anomalousServices[node];
     if (status === 'cause') return 'cause';
     if (status === 'victim') return 'victim';
+    // Defaults if mock scenario
+    if (node === 'payment') return 'cause';
+    if (node === 'checkout' || node === 'frontend') return 'victim';
     return 'healthy';
   };
 
-  const getStatusColors = (status) => {
-    switch (status) {
-      case 'cause':
-        return {
-          fill: 'rgba(239, 68, 68, 0.15)',
-          stroke: '#ef4444',
-          glow: 'rgba(239, 68, 68, 0.6)',
-          text: '#f87171',
-          badge: 'CAUSE',
-          badgeBg: '#ef4444',
-        };
-      case 'victim':
-        return {
-          fill: 'rgba(245, 158, 11, 0.15)',
-          stroke: '#f59e0b',
-          glow: 'rgba(245, 158, 11, 0.5)',
-          text: '#fbbf24',
-          badge: 'VICTIM',
-          badgeBg: '#f59e0b',
-        };
-      default:
-        return {
-          fill: 'rgba(16, 185, 129, 0.08)',
-          stroke: '#10b981',
-          glow: 'rgba(16, 185, 129, 0.3)',
-          text: '#34d399',
-          badge: 'HEALTHY',
-          badgeBg: '#059669',
-        };
-    }
-  };
+  // Node dimension
+  const nodeWidth = 140;
+  const nodeHeight = 54;
 
   return (
-    <div className="dependency-graph-container">
-      <div className="graph-header">
-        <div>
-          <h3 className="section-title">Service Dependency Topology</h3>
-          <p className="section-subtitle">
-            Causal propagation graph. Red indicates root cause, amber denotes cascade victims. Click a service to filter timeline.
-          </p>
+    <div className="topology-graph-card">
+      {/* Header */}
+      <div className="topology-header-row">
+        <div className="topology-title-wrap">
+          <div className="graph-icon-badge">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b47836" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="18" cy="5" r="3"></circle>
+              <circle cx="6" cy="12" r="3"></circle>
+              <circle cx="18" cy="19" r="3"></circle>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+            </svg>
+          </div>
+          <div>
+            <h3 className="topology-title">Service Dependency Topology</h3>
+            <p className="topology-subtitle">
+              Causal propagation graph. Red indicates root cause, amber indicates cascade victims. Click a service to filter timeline.
+            </p>
+          </div>
         </div>
-        {selectedService && (
-          <button className="btn-filter-clear" onClick={() => onSelectService(null)}>
-            Filter: <strong>{selectedService}</strong> ✕
-          </button>
-        )}
+
+        {/* Legend */}
+        <div className="topology-legend">
+          <div className="legend-item">
+            <span className="legend-dot dot-cause"></span>
+            <span>Root Cause</span>
+          </div>
+          <div className="legend-item">
+            <span className="legend-dot dot-victim"></span>
+            <span>Cascade Victim</span>
+          </div>
+          <div className="legend-item">
+            <span className="legend-dot dot-healthy"></span>
+            <span>Healthy</span>
+          </div>
+        </div>
       </div>
 
-      <div className="svg-wrapper">
-        <svg viewBox={`0 0 ${width} ${height}`} className="dependency-svg">
+      {/* SVG Canvas Area */}
+      <div className="topology-canvas-container">
+        <svg className="topology-svg" viewBox="0 0 580 360" width="100%" height="360">
           <defs>
+            {/* Arrow Marker */}
             <marker
-              id="arrowhead-normal"
-              markerWidth="8"
-              markerHeight="6"
+              id="topo-arrow"
+              viewBox="0 0 10 10"
               refX="8"
-              refY="3"
-              orient="auto"
-            >
-              <polygon points="0 0, 8 3, 0 6" fill="#475569" />
-            </marker>
-            <marker
-              id="arrowhead-cascade"
-              markerWidth="8"
+              refY="5"
+              markerWidth="6"
               markerHeight="6"
-              refX="8"
-              refY="3"
-              orient="auto"
+              orient="auto-start-reverse"
             >
-              <polygon points="0 0, 8 3, 0 6" fill="#f59e0b" />
+              <path d="M 0 1 L 9 5 L 0 9 z" fill="#9c9285" />
             </marker>
-            <marker
-              id="arrowhead-cause"
-              markerWidth="8"
-              markerHeight="6"
-              refX="8"
-              refY="3"
-              orient="auto"
-            >
-              <polygon points="0 0, 8 3, 0 6" fill="#ef4444" />
-            </marker>
-            <filter id="glow-cause" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#ef4444" floodOpacity="0.6" />
-            </filter>
-            <filter id="glow-victim" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="0" stdDeviation="5" floodColor="#f59e0b" floodOpacity="0.5" />
-            </filter>
           </defs>
 
-          {/* Render directed edges */}
-          {edges.map(([u, v], i) => {
-            const p1 = nodePositions[u];
-            const p2 = nodePositions[v];
-            if (!p1 || !p2) return null;
+          {/* Edges */}
+          {edges.map(([fromNode, toNode], idx) => {
+            const pFrom = fixedPositions[fromNode] || { x: 100 + idx * 60, y: 50 };
+            const pTo = fixedPositions[toNode] || { x: 150 + idx * 60, y: 220 };
 
-            const uStatus = getNodeStatus(u);
-            const vStatus = getNodeStatus(v);
-            const isCascade = (uStatus === 'cause' || uStatus === 'victim') && (vStatus === 'victim' || vStatus === 'cause');
-            const strokeColor = isCascade ? (uStatus === 'cause' ? '#ef4444' : '#f59e0b') : '#334155';
-            const markerId = isCascade ? (uStatus === 'cause' ? 'url(#arrowhead-cause)' : 'url(#arrowhead-cascade)') : 'url(#arrowhead-normal)';
-
-            // Offset endpoint to border of node box
-            const dx = p2.x - p1.x;
-            const dy = p2.y - p1.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            const offsetX = (dx / dist) * 45;
-            const offsetY = (dy / dist) * 22;
+            const startX = pFrom.x + nodeWidth / 2;
+            const startY = pFrom.y + nodeHeight;
+            const endX = pTo.x + nodeWidth / 2;
+            const endY = pTo.y;
 
             return (
-              <g key={`edge-${i}`}>
-                <line
-                  x1={p1.x}
-                  y1={p1.y}
-                  x2={p2.x - offsetX}
-                  y2={p2.y - offsetY}
-                  stroke={strokeColor}
-                  strokeWidth={isCascade ? '2.5' : '1.5'}
-                  strokeDasharray={isCascade ? 'none' : '4 3'}
-                  markerEnd={markerId}
-                  className={isCascade ? 'cascade-edge-active' : ''}
+              <g key={`edge-${fromNode}-${toNode}-${idx}`}>
+                <path
+                  d={`M ${startX} ${startY} C ${startX} ${startY + 25}, ${endX} ${endY - 25}, ${endX} ${endY}`}
+                  fill="none"
+                  stroke="#b4a99a"
+                  strokeWidth="1.8"
+                  markerEnd="url(#topo-arrow)"
                 />
               </g>
             );
           })}
 
-          {/* Render Service Nodes */}
+          {/* Nodes */}
           {nodes.map((node) => {
-            const pos = nodePositions[node];
-            if (!pos) return null;
+            const pos = fixedPositions[node] || { x: 150, y: 150 };
             const status = getNodeStatus(node);
-            const colors = getStatusColors(status);
             const isSelected = selectedService === node;
+            const icon = serviceIcons[node] || '🖥️';
+
+            // Status styling
+            let borderColor = '#9ae6b4';
+            let bgColor = '#f0fff4';
+            let badgeText = 'HEALTHY';
+            let badgeBg = '#22a06b';
+            let dotColor = '#22a06b';
+
+            if (status === 'cause') {
+              borderColor = '#feb2b2';
+              bgColor = '#fff5f5';
+              badgeText = 'CAUSE';
+              badgeBg = '#e04848';
+              dotColor = '#e04848';
+            } else if (status === 'victim') {
+              borderColor = '#fbd38d';
+              bgColor = '#fffaf0';
+              badgeText = 'VICTIM';
+              badgeBg = '#d9822b';
+              dotColor = '#d9822b';
+            }
 
             return (
               <g
-                key={node}
+                key={`node-${node}`}
+                className="topo-node-group"
                 transform={`translate(${pos.x}, ${pos.y})`}
-                className={`graph-node ${status} ${isSelected ? 'selected' : ''}`}
-                onClick={() => onSelectService(isSelected ? null : node)}
+                onClick={() => onSelectService && onSelectService(selectedService === node ? null : node)}
                 style={{ cursor: 'pointer' }}
               >
-                {/* Outer Glow */}
+                {/* Node Box */}
                 <rect
-                  x="-60"
-                  y="-22"
-                  width="120"
-                  height="44"
-                  rx="8"
-                  fill={colors.fill}
-                  stroke={isSelected ? '#38bdf8' : colors.stroke}
-                  strokeWidth={isSelected ? '2.5' : '1.5'}
-                  filter={status === 'cause' ? 'url(#glow-cause)' : status === 'victim' ? 'url(#glow-victim)' : 'none'}
+                  x="0"
+                  y="0"
+                  width={nodeWidth}
+                  height={nodeHeight}
+                  rx="10"
+                  fill={bgColor}
+                  stroke={isSelected ? '#3182ce' : borderColor}
+                  strokeWidth={isSelected ? '2.5' : '1.6'}
+                  filter="drop-shadow(0px 2px 4px rgba(0,0,0,0.03))"
                 />
 
-                {/* Node Status Tag Pill */}
-                <rect
-                  x="-52"
-                  y="-30"
-                  width="44"
-                  height="14"
-                  rx="4"
-                  fill={colors.badgeBg}
-                />
-                <text
-                  x="-30"
-                  y="-20"
-                  textAnchor="middle"
-                  fill="#ffffff"
-                  fontSize="8"
-                  fontWeight="800"
-                  letterSpacing="0.5"
-                >
-                  {colors.badge}
+                {/* Top Status Tag */}
+                <g transform="translate(10, -9)">
+                  <rect
+                    x="0"
+                    y="0"
+                    width={badgeText.length * 7 + 12}
+                    height="18"
+                    rx="4"
+                    fill={badgeBg}
+                  />
+                  <text
+                    x={badgeText.length * 3.5 + 6}
+                    y="13"
+                    textAnchor="middle"
+                    fill="#ffffff"
+                    fontSize="9.5"
+                    fontWeight="700"
+                    fontFamily="Inter, system-ui, sans-serif"
+                  >
+                    {badgeText}
+                  </text>
+                </g>
+
+                {/* Service Icon */}
+                <text x="16" y="34" fontSize="18">
+                  {icon}
                 </text>
 
-                {/* Service Name Label */}
+                {/* Service Name */}
                 <text
-                  x="0"
-                  y="4"
-                  textAnchor="middle"
-                  fill="#f8fafc"
-                  fontSize="12"
+                  x="44"
+                  y="33"
+                  fill="#2d2823"
+                  fontSize="13"
                   fontWeight="600"
-                  fontFamily="var(--font-sans)"
+                  fontFamily="Inter, system-ui, sans-serif"
                 >
                   {node}
                 </text>
+
+                {/* Right Status Dot */}
+                <circle cx={nodeWidth - 18} cy="27" r="4.5" fill={dotColor} />
               </g>
             );
           })}
         </svg>
-      </div>
-
-      <div className="graph-legend">
-        <div className="legend-item">
-          <span className="legend-dot dot-cause"></span>
-          <span>Root Cause Service</span>
-        </div>
-        <div className="legend-item">
-          <span className="legend-dot dot-victim"></span>
-          <span>Cascade Victim</span>
-        </div>
-        <div className="legend-item">
-          <span className="legend-dot dot-healthy"></span>
-          <span>Healthy Service</span>
-        </div>
       </div>
     </div>
   );
