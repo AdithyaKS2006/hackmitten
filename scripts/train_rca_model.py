@@ -49,7 +49,11 @@ def fetch_file(case_name: str) -> Path:
 
 
 def extract_incident_features(case_name: str, metrics_file: Path, root_cause_svc: str, normal_n: int = 2100) -> list[dict]:
-    """Extract candidate service features from raw time-series metrics."""
+    """
+    Extract causal candidate service features from raw time-series metrics.
+    Uses robust baseline statistics with minimum meaningful deviation thresholds,
+    sustained run filtering (>=3 consecutive anomalous points), and multi-metric causal indicators.
+    """
     try:
         df = pd.read_parquet(metrics_file)
     except Exception as e:
@@ -71,7 +75,6 @@ def extract_incident_features(case_name: str, metrics_file: Path, root_cause_svc
         services.setdefault(svc, []).append(c)
 
     svc_stats = []
-    earliest_onset_overall = 999999
 
     for svc, scols in services.items():
         max_z = 0.0
@@ -79,6 +82,7 @@ def extract_incident_features(case_name: str, metrics_file: Path, root_cause_svc
         anom_points_total = 0
         mean_zs = []
         anom_metric_count = 0
+        lat_err_count = 0
 
         for c in scols:
             b_vals = base_df[c].to_numpy(dtype=float)
@@ -86,51 +90,67 @@ def extract_incident_features(case_name: str, metrics_file: Path, root_cause_svc
 
             med = float(np.median(b_vals))
             mad = float(np.median(np.abs(b_vals - med)))
-            scale = max(1.4826 * mad, 0.01)
 
-            z = (f_vals - med) / scale
-            abs_z = np.abs(z)
+            # Meaningful change threshold (prevents flat constant metrics with near-zero MAD from producing fake huge z-scores)
+            min_change = max(abs(med) * 0.05, 0.05)
+            scale = max(1.4826 * mad, min_change * 0.3)
 
-            peak = float(np.max(abs_z))
+            abs_dev = np.abs(f_vals - med)
+            z = abs_dev / scale
+            peak = float(np.max(z)) if len(z) > 0 else 0.0
             if peak > max_z:
                 max_z = peak
 
-            anom_idx = np.where(abs_z >= 3.0)[0]
-            if len(anom_idx) >= 3:
+            # Sustained anomaly run (>= 3 consecutive points above threshold and meaningful absolute change)
+            is_anom = ((z >= 3.0) & (abs_dev >= min_change)).astype(int)
+            sustained = np.convolve(is_anom, np.ones(3), mode="valid") == 3
+            onset_pts = np.where(sustained)[0]
+
+            if len(onset_pts) > 0:
                 anom_metric_count += 1
-                onset = int(anom_idx[0])
+                onset = int(onset_pts[0])
                 if onset < earliest_svc_onset:
                     earliest_svc_onset = onset
-                anom_points_total += len(anom_idx)
+                if any(k in c.lower() for k in ["latency", "error", "err", "loss", "delay", "duration"]):
+                    lat_err_count += 1
 
-            mean_zs.append(float(np.mean(abs_z)))
+            anom_points_total += int(np.sum(is_anom))
+            mean_zs.append(float(np.mean(z)) if len(z) > 0 else 0.0)
 
-        if earliest_svc_onset < earliest_onset_overall:
-            earliest_onset_overall = earliest_svc_onset
-
+        sust_ratio = anom_points_total / (len(scols) * max(1, len(fault_df)))
         svc_stats.append({
             "service": svc,
             "max_zscore": max_z,
             "earliest_onset": earliest_svc_onset,
             "mean_zscore": float(np.mean(mean_zs)) if mean_zs else 0.0,
-            "sustained_ratio": anom_points_total / (len(scols) * max(1, len(fault_df))),
+            "sustained_ratio": sust_ratio,
             "metric_anomaly_ratio": anom_metric_count / max(1, len(scols)),
+            "lat_err_count": lat_err_count,
+            "total_metrics": len(scols),
         })
 
-    # Normalize onset ranks relative to other services in this specific incident
-    valid_onsets = [s["earliest_onset"] for s in svc_stats if s["earliest_onset"] != 999999]
-    min_onset = min(valid_onsets) if valid_onsets else 0
-    max_onset = max(valid_onsets) if valid_onsets else 1
+    # Normalized onset ranks relative to other services in this specific incident
+    valid_onsets = [s["earliest_onset"] for s in svc_stats if s["earliest_onset"] != 999999 and s["sustained_ratio"] >= 0.05]
+    min_onset = min(valid_onsets) if valid_onsets else (min([s["earliest_onset"] for s in svc_stats if s["earliest_onset"] != 999999] or [0]))
+    max_onset = max(valid_onsets) if valid_onsets else (max([s["earliest_onset"] for s in svc_stats if s["earliest_onset"] != 999999] or [1]))
     onset_span = max(1, max_onset - min_onset)
+
+    max_sust = max([s["sustained_ratio"] for s in svc_stats] or [1.0])
+    max_z_all = max([s["max_zscore"] for s in svc_stats] or [1.0])
 
     rows = []
     for s in svc_stats:
         if s["earliest_onset"] == 999999:
             onset_score = 0.0
         else:
-            onset_score = max(0.0, 1.0 - (s["earliest_onset"] - min_onset) / onset_span)
+            raw_score = max(0.0, 1.0 - (s["earliest_onset"] - min_onset) / onset_span)
+            onset_score = raw_score if s["sustained_ratio"] >= 0.05 else raw_score * 0.1
 
         is_target = 1 if (s["service"].lower() == root_cause_svc.lower() or root_cause_svc.lower() in s["service"].lower()) else 0
+
+        rel_sust = float(s["sustained_ratio"] / (max_sust + 1e-6))
+        rel_z = float(s["max_zscore"] / (max_z_all + 1e-6))
+        causal_strength = float(onset_score * (0.6 * rel_sust + 0.4 * rel_z))
 
         rows.append({
             "case": case_name,
@@ -140,6 +160,11 @@ def extract_incident_features(case_name: str, metrics_file: Path, root_cause_svc
             "sustained_ratio": float(s["sustained_ratio"]),
             "mean_zscore": float(np.log1p(min(1000.0, s["mean_zscore"]))),
             "metric_anomaly_ratio": float(s["metric_anomaly_ratio"]),
+            "lat_err_count": float(s["lat_err_count"]),
+            "rel_sustained": rel_sust,
+            "rel_max_z": rel_z,
+            "causal_strength": causal_strength,
+            "total_metrics": float(s["total_metrics"]),
             "is_root_cause": is_target,
         })
 
@@ -211,8 +236,8 @@ def build_and_train_rca_pipeline():
     dataset_df.to_csv(DATA_DIR / "rca_features.csv", index=False)
 
     print(f"Generated {len(dataset_df)} total candidate candidate-service pairs.")
-    print(f"  - Train candidate samples: {len(dataset_df[dataset_df['split'] == 'train'])} ({len(train_cases)} incidents)")
-    print(f"  - Test candidate samples:  {len(dataset_df[dataset_df['split'] == 'test'])} ({len(test_cases)} incidents)")
+    print(f"  - Train candidate samples:   {len(dataset_df[dataset_df['split'] == 'train'])} ({len(train_cases)} incidents)")
+    print(f"  - Test candidate samples:    {len(dataset_df[dataset_df['split'] == 'test'])} ({len(test_cases)} incidents)")
     print(f"  - Holdout candidate samples: {len(dataset_df[dataset_df['split'] == 'holdout'])} ({len(holdout_cases)} incidents)")
 
     feature_cols = [
@@ -221,6 +246,11 @@ def build_and_train_rca_pipeline():
         "sustained_ratio",
         "mean_zscore",
         "metric_anomaly_ratio",
+        "lat_err_count",
+        "rel_sustained",
+        "rel_max_z",
+        "causal_strength",
+        "total_metrics",
     ]
 
     train_df = dataset_df[dataset_df["split"] == "train"]
@@ -235,18 +265,20 @@ def build_and_train_rca_pipeline():
 
     # 4. Train Gradient Boosted & Random Forest Causal Models
     print("\n4. Training Machine Learning Models...")
+    # Balance class weights to handle natural candidate-to-root-cause ratio
+    train_weights = np.where(y_train == 1, 10.0, 1.0)
     gb_model = GradientBoostingClassifier(
-        n_estimators=100,
-        learning_rate=0.08,
+        n_estimators=120,
+        learning_rate=0.03,
         max_depth=3,
         subsample=0.85,
         random_state=42,
     )
-    gb_model.fit(X_train, y_train)
+    gb_model.fit(X_train, y_train, sample_weight=train_weights)
 
     rf_model = RandomForestClassifier(
-        n_estimators=100,
-        max_depth=4,
+        n_estimators=150,
+        max_depth=6,
         class_weight="balanced",
         random_state=42,
     )
@@ -260,7 +292,7 @@ def build_and_train_rca_pipeline():
 
     print(f"Saved trained models to {MODELS_DIR}/rca_gradient_boosted.joblib and rca_random_forest.joblib")
 
-    # 5. Evaluate on 20% Test Set (Incident-by-Incident Ranking)
+    # 5. Evaluate on 20% Test Set and 5% Holdout Set (Incident-by-Incident Ranking)
     def evaluate_model(model, df_subset, name="Model"):
         probs = model.predict_proba(df_subset[feature_cols].values)[:, 1]
         df_eval = df_subset.copy()
@@ -312,6 +344,12 @@ def build_and_train_rca_pipeline():
     print(f"  • ROC-AUC Score:                     {gb_test_metrics['roc_auc']}")
     print("=" * 70)
 
+    print("\n6. Benchmarking Models on Holdout Set (5% Split - Reserved Test Cases)...")
+    gb_holdout_metrics = evaluate_model(gb_model, holdout_df, "Gradient Boosted RCA Ranker")
+    rf_holdout_metrics = evaluate_model(rf_model, holdout_df, "Random Forest RCA Ranker")
+    print(f"Gradient Boosted Holdout Top-1 Accuracy: {gb_holdout_metrics['top1_accuracy']}% ({gb_holdout_metrics['incidents_evaluated']} cases)")
+    print(f"Random Forest Holdout Top-1 Accuracy:    {rf_holdout_metrics['top1_accuracy']}% ({rf_holdout_metrics['incidents_evaluated']} cases)")
+
     # Feature Importance Analysis
     feat_importances = dict(zip(feature_cols, [round(float(v), 4) for v in gb_model.feature_importances_]))
     print("\nLearned Feature Importances (What the model pays attention to):")
@@ -331,13 +369,15 @@ def build_and_train_rca_pipeline():
         "feature_importances": feat_importances,
         "test_metrics": gb_test_metrics,
         "rf_test_metrics": rf_test_metrics,
+        "holdout_metrics": gb_holdout_metrics,
+        "rf_holdout_metrics": rf_holdout_metrics,
     }
 
     with open(DATA_DIR / "evaluation_report.json", "w") as f:
         json.dump(report, f, indent=2)
 
     print(f"\nSaved evaluation report to {DATA_DIR}/evaluation_report.json")
-    print(f"Holdout Cases (Reserved for your own test): {holdout_cases['case'].tolist()}")
+    print(f"Holdout Cases: {holdout_cases['case'].tolist()}")
     return report
 
 

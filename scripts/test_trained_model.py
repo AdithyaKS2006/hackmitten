@@ -12,16 +12,29 @@ import numpy as np
 import pandas as pd
 import joblib
 
+import argparse
+
 DATA_DIR = Path("data/rca_dataset")
 MODELS_DIR = Path("backend/models")
 
-def run_holdout_evaluation():
+def run_evaluation(split="holdout", dataset=None, fault=None, case=None, model_type="gradient_boosted"):
     print("=" * 80)
-    print("AO-03: TESTING TRAINED MODEL ON 5% HOLDOUT SET (RESERVED TEST CASES)")
+    print(f"AO-03: TESTING {model_type.upper()} MODEL ON DATASET")
+    filter_desc = []
+    if case:
+        filter_desc.append(f"Specific Case: {case}")
+    elif split:
+        filter_desc.append(f"Split: {split}")
+    if dataset:
+        filter_desc.append(f"Dataset/App: {dataset}")
+    if fault:
+        filter_desc.append(f"Injected Fault: {fault}")
+    print(f"Filters: {', '.join(filter_desc) if filter_desc else 'All Available Cases'}")
     print("=" * 80)
 
     # 1. Load trained model & feature specs
-    model_path = MODELS_DIR / "rca_gradient_boosted.joblib"
+    model_filename = "rca_gradient_boosted.joblib" if model_type == "gradient_boosted" else "rca_random_forest.joblib"
+    model_path = MODELS_DIR / model_filename
     feat_path = MODELS_DIR / "rca_features.json"
     features_parquet = DATA_DIR / "rca_features.parquet"
 
@@ -34,24 +47,41 @@ def run_holdout_evaluation():
         feature_cols = json.load(f)
 
     df = pd.read_parquet(features_parquet)
-    holdout_df = df[df["split"] == "holdout"].copy()
 
-    holdout_cases = holdout_df["case"].unique()
-    print(f"Loaded {len(holdout_cases)} holdout cases never seen during training or initial testing:")
-    for i, c in enumerate(holdout_cases, 1):
-        c_fault = holdout_df[holdout_df["case"] == c]["fault"].iloc[0]
-        c_dataset = holdout_df[holdout_df["case"] == c]["dataset"].iloc[0]
-        print(f"  [{i}] Case: {c:<25} (App: {c_dataset}, Injected Fault: {c_fault})")
+    # Filter dataframe
+    target_df = df.copy()
+    if case:
+        target_df = target_df[target_df["case"] == case]
+    else:
+        if split and split != "all":
+            target_df = target_df[target_df["split"] == split]
+        if dataset:
+            target_df = target_df[target_df["dataset"].str.upper() == dataset.upper()]
+        if fault:
+            target_df = target_df[target_df["fault"].str.lower() == fault.lower()]
+
+    cases = target_df["case"].unique()
+    if len(cases) == 0:
+        print("No cases found matching the specified filters.")
+        return
+
+    print(f"\nLoaded {len(cases)} incident cases for evaluation:")
+    for i, c in enumerate(cases[:15], 1):
+        c_fault = target_df[target_df["case"] == c]["fault"].iloc[0]
+        c_dataset = target_df[target_df["case"] == c]["dataset"].iloc[0]
+        print(f"  [{i:>2}] Case: {c:<28} (App: {c_dataset}, Fault: {c_fault})")
+    if len(cases) > 15:
+        print(f"  ... and {len(cases) - 15} more cases")
 
     print("\n" + "-" * 80)
-    print("EVALUATING EACH HOLDOUT INCIDENT CASE IN REAL TIME:")
+    print("EVALUATING INCIDENT CASES IN REAL TIME:")
     print("-" * 80)
 
     correct_top1 = 0
     correct_top3 = 0
 
-    for idx, c in enumerate(holdout_cases, 1):
-        c_group = holdout_df[holdout_df["case"] == c].copy()
+    for idx, c in enumerate(cases, 1):
+        c_group = target_df[target_df["case"] == c].copy()
         
         # Predict probability of being root cause
         X = c_group[feature_cols].values
@@ -61,14 +91,16 @@ def run_holdout_evaluation():
         # Rank descending
         ranked = c_group.sort_values("rca_confidence", ascending=False).reset_index(drop=True)
 
-        true_row = ranked[ranked["is_root_cause"] == 1]
-        true_service = true_row["service"].iloc[0] if len(true_row) > 0 else "unknown"
+        true_rows = ranked[ranked["is_root_cause"] == 1]
+        true_services = true_rows["service"].tolist()
         predicted_top1 = ranked.iloc[0]["service"]
 
-        true_rank = ranked[ranked["service"] == true_service].index[0] + 1 if len(true_row) > 0 else 99
+        true_service = true_services[0] if true_services else "unknown"
+        is_top1 = (predicted_top1 in true_services)
 
-        is_top1 = (true_rank == 1)
-        is_top3 = (true_rank <= 3)
+        ranks = [ranked[ranked["service"] == s].index[0] + 1 for s in true_services if s in ranked["service"].values]
+        best_rank = min(ranks) if ranks else 99
+        is_top3 = (best_rank <= 3)
 
         if is_top1:
             correct_top1 += 1
@@ -76,8 +108,9 @@ def run_holdout_evaluation():
             correct_top3 += 1
 
         status_badge = "✅ HIT (Rank #1)" if is_top1 else ("⚠️ TOP-3 HIT" if is_top3 else "❌ MISS")
-        print(f"\n[Incident {idx}/{len(holdout_cases)}] Case ID: {c}")
-        print(f"  • True Root Cause Service : \033[1;32m{true_service}\033[0m")
+        display_true = " / ".join(true_services) if true_services else true_service
+        print(f"\n[Incident {idx}/{len(cases)}] Case ID: {c}")
+        print(f"  • True Root Cause Service : \033[1;32m{display_true}\033[0m")
         print(f"  • Model Top-1 Prediction  : \033[1;36m{predicted_top1}\033[0m ({ranked.iloc[0]['rca_confidence']*100:.1f}% confidence)")
         print(f"  • Outcome                 : {status_badge}")
         print(f"  • Candidate Ranking Output:")
@@ -90,11 +123,24 @@ def run_holdout_evaluation():
             print(f"    #{r_idx+1:<4} | {row['service']:<22} | {row['rca_confidence']*100:6.2f}%    | {row['sustained_ratio']*100:6.2f}%    | {np.expm1(row['log_max_zscore']):8.2f}    | {marker}")
 
     print("\n" + "=" * 80)
-    print("HOLDOUT SET FINAL BENCHMARK SUMMARY (5% UNTOUCHED DATA):")
-    print(f"  • Total Holdout Incidents : {len(holdout_cases)}")
-    print(f"  • Top-1 Accuracy (Hit@1)  : {(correct_top1 / len(holdout_cases))*100:.1f}% ({correct_top1}/{len(holdout_cases)})")
-    print(f"  • Top-3 Accuracy (Hit@3)  : {(correct_top3 / len(holdout_cases))*100:.1f}% ({correct_top3}/{len(holdout_cases)})")
+    print(f"DATASET BENCHMARK SUMMARY ({len(cases)} INCIDENTS):")
+    print(f"  • Top-1 Accuracy (Hit@1)  : {(correct_top1 / len(cases))*100:.1f}% ({correct_top1}/{len(cases)})")
+    print(f"  • Top-3 Accuracy (Hit@3)  : {(correct_top3 / len(cases))*100:.1f}% ({correct_top3}/{len(cases)})")
     print("=" * 80)
 
 if __name__ == "__main__":
-    run_holdout_evaluation()
+    parser = argparse.ArgumentParser(description="Test RCA model against different datasets and splits.")
+    parser.add_argument("--case", default=None,
+                        help="Evaluate a specific real incident case ID (e.g., re1ss_catalogue_loss_3).")
+    parser.add_argument("--split", choices=["holdout", "test", "train", "all"], default="test",
+                        help="Data split to evaluate (default: test).")
+    parser.add_argument("--dataset", choices=["RE1-OB", "RE1-SS", "all"], default=None,
+                        help="Benchmark app: RE1-OB (Online Boutique) or RE1-SS (Sock Shop).")
+    parser.add_argument("--fault", choices=["cpu", "mem", "disk", "delay", "loss"], default=None,
+                        help="Filter by specific fault injection type.")
+    parser.add_argument("--model", choices=["gradient_boosted", "random_forest"], default="gradient_boosted",
+                        help="Model architecture to evaluate.")
+    args = parser.parse_args()
+
+    ds = None if args.dataset == "all" else args.dataset
+    run_evaluation(split=args.split, dataset=ds, fault=args.fault, case=args.case, model_type=args.model)

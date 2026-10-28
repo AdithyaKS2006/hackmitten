@@ -3,5 +3,10 @@
   "onset_score",
   "sustained_ratio",
   "mean_zscore",
-  "metric_anomaly_ratio"
+  "metric_anomaly_ratio",
+  "lat_err_count",
+  "rel_sustained",
+  "rel_max_z",
+  "causal_strength",
+  "total_metrics"
 ]

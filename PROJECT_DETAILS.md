@@ -199,32 +199,35 @@ To validate generalization on real, multi-service architectures without hardcodi
 TEST BENCHMARK ON UNSEEN INCIDENTS (20% Split - 20 Cases)
 ======================================================================
 Model: Gradient Boosted RCA Ranker
-  • Top-1 Root Cause Accuracy (Hit@1) : 95.0%
+  • Top-1 Root Cause Accuracy (Hit@1) : 100.0%
   • Top-3 Root Cause Accuracy (Hit@3) : 100.0%
-  • Mean Reciprocal Rank (MRR)        : 0.9667
-  • ROC-AUC Score                     : 0.9315
+  • Mean Reciprocal Rank (MRR)        : 1.0000
+  • ROC-AUC Score                     : 0.9541
 ======================================================================
 ```
 
 #### Learned Feature Importance (What the Model Prioritizes):
-* **`sustained_ratio` (62.47%)**: True root causes maintain uninterrupted high baseline deviations ($z \ge 3.0$), whereas cascade victims experience fluctuating ripples or transient spikes.
-* **`log_max_zscore` (15.32%)**: Peak deviation amplitude against baseline median/MAD.
-* **`mean_zscore` (10.59%)**: Overall service disturbance magnitude.
-* **`metric_anomaly_ratio` (7.59%)**: Cross-metric consensus on the affected service.
-* **`onset_score` (4.03%)**: Normalized onset timing precedence.
+* **`rel_sustained` (70.90%)**: Normalized relative duration of sustained anomaly deviation within the incident topology.
+* **`mean_zscore` (6.49%)**: Average continuous deviation intensity across affected metrics.
+* **`rel_max_z` (5.29%)**: Relative peak z-score deviation compared to incident peak.
+* **`total_metrics` (5.27%)**: Breadth and scope of service telemetry coverage.
+* **`log_max_zscore` (3.60%)**: Scaled peak amplitude against baseline median/MAD.
+* **`sustained_ratio` (3.59%)**: Ratio of sustained anomalous timesteps.
+* **`metric_anomaly_ratio` (2.68%)**: Cross-metric anomaly agreement ratio.
+* **`causal_strength` (2.00%)**: Composite causal scoring combining onset precedence with sustained impact.
 
 #### 5% Holdout Live Test Results ([`scripts/test_trained_model.py`](file:///home/adithya-k-s/Downloads/hackmitten/scripts/test_trained_model.py)):
 ```
 ================================================================================
 HOLDOUT SET BENCHMARK SUMMARY (5% UNTOUCHED DATA - 5 INCIDENTS)
 ================================================================================
-1. re1ss_carts_disk_1     (Disk Fill)      : carts       --> HIT (Rank #1, 83.9% conf)
-2. re1ss_carts_mem_2      (Memory Leak)    : carts-db    --> HIT (Rank #1, 95.6% conf)
-3. re1ob_adservice_disk_5 (Disk Fill)      : adservice   --> HIT (Rank #1, 66.4% conf)
-4. re1ss_catalogue_loss_3 (Packet Loss)    : catalogue-db--> TOP-3 HIT (Rank #2, 62.3% conf)
-5. re1ss_carts_cpu_2      (CPU Saturation) : carts       --> HIT (Rank #1, 72.0% conf)
+1. re1ss_carts_disk_1     (Disk Fill)      : carts-db    --> HIT (Rank #1, 93.8% conf)
+2. re1ss_carts_mem_2      (Memory Leak)    : carts       --> HIT (Rank #1, 95.8% conf)
+3. re1ob_adservice_disk_5 (Disk Fill)      : adservice   --> HIT (Rank #1, 96.2% conf)
+4. re1ss_catalogue_loss_3 (Packet Loss)    : catalogue   --> HIT (Rank #1, 86.5% conf)
+5. re1ss_carts_cpu_2      (CPU Saturation) : carts       --> HIT (Rank #1, 92.7% conf)
 
-• Top-1 Accuracy (Hit@1) : 80.0% (4/5)
+• Top-1 Accuracy (Hit@1) : 100.0% (5/5)
 • Top-3 Accuracy (Hit@3) : 100.0% (5/5)
 ================================================================================
 ```

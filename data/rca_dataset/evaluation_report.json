@@ -14,26 +14,47 @@
     ]
   },
   "feature_importances": {
-    "log_max_zscore": 0.1532,
-    "onset_score": 0.0403,
-    "sustained_ratio": 0.6247,
-    "mean_zscore": 0.1059,
-    "metric_anomaly_ratio": 0.0759
+    "log_max_zscore": 0.036,
+    "onset_score": 0.0013,
+    "sustained_ratio": 0.0359,
+    "mean_zscore": 0.0649,
+    "metric_anomaly_ratio": 0.0268,
+    "lat_err_count": 0.0005,
+    "rel_sustained": 0.709,
+    "rel_max_z": 0.0529,
+    "causal_strength": 0.02,
+    "total_metrics": 0.0527
   },
   "test_metrics": {
     "model_name": "Gradient Boosted RCA Ranker",
     "incidents_evaluated": 20,
-    "top1_accuracy": 95.0,
+    "top1_accuracy": 100.0,
     "top3_accuracy": 100.0,
-    "mrr": 0.9667,
-    "roc_auc": 0.9315
+    "mrr": 1.0,
+    "roc_auc": 0.9541
   },
   "rf_test_metrics": {
     "model_name": "Random Forest RCA Ranker",
     "incidents_evaluated": 20,
-    "top1_accuracy": 95.0,
+    "top1_accuracy": 100.0,
     "top3_accuracy": 100.0,
-    "mrr": 0.9667,
-    "roc_auc": 0.9506
+    "mrr": 1.0,
+    "roc_auc": 0.943
+  },
+  "holdout_metrics": {
+    "model_name": "Gradient Boosted RCA Ranker",
+    "incidents_evaluated": 5,
+    "top1_accuracy": 100.0,
+    "top3_accuracy": 100.0,
+    "mrr": 1.0,
+    "roc_auc": 0.9552
+  },
+  "rf_holdout_metrics": {
+    "model_name": "Random Forest RCA Ranker",
+    "incidents_evaluated": 5,
+    "top1_accuracy": 80.0,
+    "top3_accuracy": 100.0,
+    "mrr": 0.9,
+    "roc_auc": 0.9462
   }
 }

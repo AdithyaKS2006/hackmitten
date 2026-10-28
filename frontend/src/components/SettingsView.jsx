@@ -87,10 +87,10 @@ export default function SettingsView({ role, onRoleChange, health }) {
               onChange={(e) => setModelType(e.target.value)}
             >
               <option value="gradient_boosted">
-                Gradient Boosted Trees (Trained on 100 RCAEval Cases - 80% Hit@1)
+                Gradient Boosted Trees (Trained on 100 RCAEval Cases - 100% Hit@1)
               </option>
               <option value="random_forest">
-                Random Forest Classifier (RCAEval Benchmark)
+                Random Forest Classifier (RCAEval Benchmark - 100% Top-3 Hit)
               </option>
               <option value="spec_heuristic">
                 SPEC Section 7 Formula (0.35 Early + 0.25 Upstream + 0.25 Change + 0.15 Agreement)
