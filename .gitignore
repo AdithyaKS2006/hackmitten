@@ -9,3 +9,4 @@ dist/
 # data/raw
 data/raw/*
 !data/raw/.gitkeep
+data/rca_dataset/cache/

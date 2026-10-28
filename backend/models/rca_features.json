@@ -1,0 +1,7 @@
+[
+  "log_max_zscore",
+  "onset_score",
+  "sustained_ratio",
+  "mean_zscore",
+  "metric_anomaly_ratio"
+]

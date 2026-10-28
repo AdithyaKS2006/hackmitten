@@ -1,0 +1,39 @@
+{
+  "dataset": "RCAEval (Online Boutique & Sock Shop)",
+  "total_cases": 100,
+  "splits": {
+    "train_cases_count": 75,
+    "test_cases_count": 20,
+    "holdout_cases_count": 5,
+    "holdout_cases_list": [
+      "re1ss_carts_disk_1",
+      "re1ss_carts_mem_2",
+      "re1ob_adservice_disk_5",
+      "re1ss_catalogue_loss_3",
+      "re1ss_carts_cpu_2"
+    ]
+  },
+  "feature_importances": {
+    "log_max_zscore": 0.1532,
+    "onset_score": 0.0403,
+    "sustained_ratio": 0.6247,
+    "mean_zscore": 0.1059,
+    "metric_anomaly_ratio": 0.0759
+  },
+  "test_metrics": {
+    "model_name": "Gradient Boosted RCA Ranker",
+    "incidents_evaluated": 20,
+    "top1_accuracy": 95.0,
+    "top3_accuracy": 100.0,
+    "mrr": 0.9667,
+    "roc_auc": 0.9315
+  },
+  "rf_test_metrics": {
+    "model_name": "Random Forest RCA Ranker",
+    "incidents_evaluated": 20,
+    "top1_accuracy": 95.0,
+    "top3_accuracy": 100.0,
+    "mrr": 0.9667,
+    "roc_auc": 0.9506
+  }
+}
