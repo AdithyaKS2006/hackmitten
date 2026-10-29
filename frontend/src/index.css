@@ -4674,42 +4674,101 @@ body {
   box-shadow: 0 4px 10px rgba(245, 158, 11, 0.15) !important;
 }
 
-/* 8. Timeline Cards & Filter Sub-divisions */
+/* 8. Timeline Cards & Filter Sub-divisions with High-Visibility Crisp Borders */
 .timeline-card-box {
-  border: 1.2px solid #e5e7eb !important;
-  border-left: 4.5px solid #8b5cf6 !important;
+  border: 1.5px solid #cbb8a3 !important;
+  border-left: 5px solid #8b5cf6 !important;
   background: #ffffff !important;
-  border-radius: 10px !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
-  transition: all 0.2s ease !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(45, 35, 25, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-.timeline-card-box.kind-change {
-  border-left-color: #d946ef !important;
-}
-
+/* Metric Anomaly Cards (e.g. Frontend Gateway & Payment Latency) */
 .timeline-card-box.kind-metric {
-  border-left-color: #2563eb !important;
+  border: 1.5px solid #93c5fd !important;
+  border-left: 5px solid #2563eb !important;
+  background: linear-gradient(135deg, #f8faff 0%, #ffffff 100%) !important;
+  box-shadow: 0 3px 12px rgba(37, 99, 235, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
 }
 
+/* Log Warning Cards (e.g. Checkout Service & Payment Connection Pool Warnings) */
 .timeline-card-box.kind-log {
-  border-left-color: #d97706 !important;
+  border: 1.5px solid #fcd34d !important;
+  border-left: 5px solid #d97706 !important;
+  background: linear-gradient(135deg, #fffdf5 0%, #ffffff 100%) !important;
+  box-shadow: 0 3px 12px rgba(217, 119, 6, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
 }
 
-.timeline-card-box.kind-trace {
-  border-left-color: #7c3aed !important;
-}
-
-.timeline-card-box.highlight-root {
-  border: 1.5px solid #f87171 !important;
+/* System Alert & Anomaly Cards (e.g. Frontend Gateway & Checkout Peak Alerts) */
+.timeline-card-box.kind-anomaly,
+.timeline-card-box.kind-alert,
+.timeline-card-box.kind-system,
+.timeline-card-box.kind-default {
+  border: 1.5px solid #fca5a5 !important;
   border-left: 5px solid #dc2626 !important;
+  background: linear-gradient(135deg, #fff8f8 0%, #ffffff 100%) !important;
+  box-shadow: 0 3px 12px rgba(220, 38, 38, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+
+/* Config Change Event Cards */
+.timeline-card-box.kind-change {
+  border: 1.5px solid #f0abfc !important;
+  border-left: 5px solid #d946ef !important;
+  background: linear-gradient(135deg, #fdf4ff 0%, #ffffff 100%) !important;
+  box-shadow: 0 3px 12px rgba(217, 70, 239, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+
+/* Trace Latency Event Cards */
+.timeline-card-box.kind-trace {
+  border: 1.5px solid #c4b5fd !important;
+  border-left: 5px solid #7c3aed !important;
+  background: linear-gradient(135deg, #faf5ff 0%, #ffffff 100%) !important;
+  box-shadow: 0 3px 12px rgba(124, 58, 237, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+
+/* Root Cause Evidence Highlight Cards */
+.timeline-card-box.highlight-root {
+  border: 1.8px solid #f87171 !important;
+  border-left: 5.5px solid #dc2626 !important;
   background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%) !important;
-  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.12) !important;
+  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.14), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
 }
 
 .timeline-card-box:hover {
-  transform: translateX(3px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+  transform: translateX(4px) !important;
+  box-shadow: 0 6px 18px rgba(45, 35, 25, 0.12) !important;
+}
+
+/* Sub-division Inner Badges & Buttons with Clear Visible Borders */
+.badge-service-pill {
+  border: 1.3px solid #d4c4b2 !important;
+  background: #fdfbf8 !important;
+  color: #3b332b !important;
+  font-weight: 700 !important;
+  box-shadow: 0 1px 3px rgba(45, 35, 25, 0.04) !important;
+}
+
+.btn-inspect-evidence-clean {
+  border: 1.3px solid #cbb8a3 !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 4px rgba(45, 35, 25, 0.05) !important;
+  border-radius: 8px !important;
+}
+
+.btn-inspect-evidence-clean:hover {
+  border-color: #b47836 !important;
+  background: #faf5ee !important;
+  box-shadow: 0 3px 8px rgba(180, 120, 54, 0.15) !important;
+}
+
+.evidence-ref-pill {
+  border: 1.2px solid #d4c4b2 !important;
+  background: #f8f6f0 !important;
+  color: #524538 !important;
+  font-weight: 600 !important;
+  box-shadow: 0 1px 3px rgba(45, 35, 25, 0.04) !important;
+  border-radius: 6px !important;
 }
 
 .timeline-type-filters .filter-chip {
@@ -4732,25 +4791,7 @@ body {
   box-shadow: 0 3px 10px rgba(139, 92, 246, 0.18) !important;
 }
 
-.btn-inspect-evidence-clean {
-  border: 1.2px solid #d1d5db !important;
-  background: #ffffff !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
-  border-radius: 8px !important;
-}
 
-.btn-inspect-evidence-clean:hover {
-  border-color: #8b5cf6 !important;
-  background: #f5f3ff !important;
-  box-shadow: 0 3px 10px rgba(139, 92, 246, 0.15) !important;
-}
-
-.evidence-ref-pill {
-  border: 1px solid #e5e7eb !important;
-  background: #f9fafb !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
-  border-radius: 6px !important;
-}
 
 /* ==========================================================================
    GLOBAL FONT MANAGEMENT SCALE & CONTRAST
