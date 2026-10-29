@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 
 export default function SettingsView({ role, onRoleChange, health }) {
   const [modelType, setModelType] = useState('gradient_boosted');
-  const [apiUrl, setApiUrl] = useState('http://localhost:8000');
+  const [apiUrl, setApiUrl] = useState(
+    typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
+      ? window.location.origin
+      : 'http://localhost:8000'
+  );
   const [savedMsg, setSavedMsg] = useState(false);
 
   const handleSave = () => {
